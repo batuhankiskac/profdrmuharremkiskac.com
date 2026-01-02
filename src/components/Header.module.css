@@ -3,7 +3,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 3rem;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(253, 251, 247, 0.95);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-sm);
   position: sticky;
@@ -43,11 +43,11 @@
   border-radius: var(--radius-lg); /* Rounded pills */
   font-weight: 600;
   transition: all 0.3s;
-  box-shadow: 0 4px 14px 0 rgba(15, 76, 92, 0.39);
+  box-shadow: 0 4px 14px 0 rgba(74, 93, 78, 0.25);
 }
 
 .ctaButton:hover {
-  background-color: #0c3b49;
+  background-color: #38463B;
   transform: translateY(-1px);
 }
 

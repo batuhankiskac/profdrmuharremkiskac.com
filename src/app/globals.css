@@ -1,11 +1,11 @@
 :root {
-  --color-primary: #0F4C5C; /* SIBO Teal */
-  --color-secondary: #E0B1CB; /* SIBO Rose */
-  --color-bg: #FFFFFF;
+  --color-primary: #4A5D4E; /* Sage Green */
+  --color-secondary: #BC6C25; /* Terracotta */
+  --color-bg: #FDFBF7; /* Ivory / Cream */
   --color-surface: #FFFFFF;
-  --color-bg-alt: #F8F9FA;
-  --color-text: #333333;
-  --color-text-light: #666666;
+  --color-bg-alt: #F1EFE9; /* Muted stone beige */
+  --color-text: #2A312B; /* Deep Forest Green/Black */
+  --color-text-light: #5C635E;
 
   --radius-sm: 8px;
   --radius-md: 12px;

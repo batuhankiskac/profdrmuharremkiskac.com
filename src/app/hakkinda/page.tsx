@@ -13,14 +13,12 @@ export default function AboutPage() {
       <h1 className={styles.title}>Hakkında</h1>
 
       <div className={styles.content}>
-        <p className={styles.highlight}>{bioData.short_bio}</p>
+        <p style={{ marginBottom: "1.5rem" }}>{bioData.short_bio}</p>
 
-        {bioData.bio.split(". ").map((sentence, index) => (
-          sentence && (
-            <p key={index}>
-              {sentence}.
-            </p>
-          )
+        {bioData.bio_paragraphs.map((paragraph, index) => (
+          <p key={index} style={{ marginBottom: "1rem" }}>
+            {paragraph}
+          </p>
         ))}
       </div>
     </main>
