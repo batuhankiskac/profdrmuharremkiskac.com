@@ -13,6 +13,18 @@ export default function AboutPage() {
       <h1 className={styles.title}>Hakkında</h1>
 
       <div className={styles.content}>
+        <div style={{ float: "right", marginLeft: "2rem", marginBottom: "1rem" }}>
+          <img
+            src="/images/profile.jpg"
+            alt="Prof. Dr. Muharrem Kıskaç"
+            style={{
+              borderRadius: "var(--radius-lg)",
+              width: "300px",
+              height: "auto",
+              boxShadow: "var(--shadow-md)"
+            }}
+          />
+        </div>
         <p style={{ marginBottom: "1.5rem" }}>{bioData.short_bio}</p>
 
         {bioData.bio_paragraphs.map((paragraph, index) => (

@@ -14,7 +14,7 @@ export default function Header() {
         <Link href="/hizmetler" className={styles.navLink}>Hizmetler</Link>
         <Link href="/makaleler" className={styles.navLink}>Makaleler</Link>
         <Link href="/videolar" className={styles.navLink}>Videolar</Link>
-        <Link href="/iletisim" className={styles.navLink}>İletişim</Link>
+
         <Link href="/iletisim" className={styles.ctaButton}>Randevu Al</Link>
       </nav>
     </header>

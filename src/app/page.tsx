@@ -13,51 +13,83 @@ export default function Home() {
         alignItems: "center",
         justifyContent: "center",
         gap: "2.5rem",
-        background: "linear-gradient(135deg, #FDFBF7 0%, #F1EFE9 100%)",
+        position: "relative",
+        overflow: "hidden",
         padding: "2rem",
-        textAlign: "center"
+        textAlign: "center",
+        color: "white"
       }}>
-        <h1 style={{
-          fontSize: "3.5rem",
-          fontWeight: "700",
-          color: "var(--color-primary)",
-          maxWidth: "900px",
-          lineHeight: "1.1"
-        }}>
-          Sağlıklı Bir Yaşam İçin <br />
-          <span style={{ fontStyle: "italic", color: "var(--color-secondary)" }}>Bütüncül Yaklaşım</span>
-        </h1>
+        {/* Blurred Background Layer */}
+        <div style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage: "url('/images/home-hero.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(4px)",
+            zIndex: 0
+        }} />
 
-        <p style={{
-          fontSize: "1.25rem",
-          color: "var(--color-text-light)",
-          maxWidth: "700px",
-          lineHeight: "1.6"
-        }}>
-          İç hastalıkları, diyabet ve fonksiyonel tıp alanında bilimsel ve kişiye özel çözümlerle sağlığınızı en üst seviyeye taşıyın.
-        </p>
+        {/* Dark Overlay for Readability */}
+        <div style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
+            zIndex: 1
+        }} />
 
-        <div style={{ display: "flex", gap: "1rem", marginTop: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
-          <Link href="/hakkinda" style={{
-            padding: "1rem 2.5rem",
-            background: "var(--color-primary)",
-            color: "white",
-            borderRadius: "var(--radius-lg)",
-            fontWeight: "600",
-            boxShadow: "0 4px 14px 0 rgba(74, 93, 78, 0.2)"
-          }}>
-            Hakkımda
-          </Link>
-          <Link href="/hizmetler" style={{
-            padding: "1rem 2.5rem",
-            background: "transparent",
-            border: "2px solid var(--color-primary)",
-            color: "var(--color-primary)",
-            borderRadius: "var(--radius-lg)",
-            fontWeight: "600"
-          }}>
-            Hizmetlerimiz
-          </Link>
+        {/* Hero Content */}
+        <div style={{ position: "relative", zIndex: 2 }}>
+            <h1 style={{
+              fontSize: "3.5rem",
+              fontWeight: "700",
+              color: "white",
+              maxWidth: "900px",
+              lineHeight: "1.1",
+              marginBottom: "1rem"
+            }}>
+              Sağlıklı Bir Yaşam İçin <br />
+              <span style={{ fontStyle: "italic", color: "#FDFBF7" }}>Bütüncül Yaklaşım</span>
+            </h1>
+
+            <p style={{
+              fontSize: "1.25rem",
+              color: "#F1EFE9",
+              maxWidth: "700px",
+              lineHeight: "1.6",
+              margin: "0 auto 2rem auto"
+            }}>
+              İç hastalıkları, diyabet ve fonksiyonel tıp alanında bilimsel ve kişiye özel çözümlerle sağlığınızı en üst seviyeye taşıyın.
+            </p>
+
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
+              <Link href="/hakkinda" style={{
+                padding: "1rem 2.5rem",
+                background: "var(--color-primary)",
+                color: "white",
+                borderRadius: "var(--radius-lg)",
+                fontWeight: "600",
+                boxShadow: "0 4px 14px 0 rgba(255, 255, 255, 0.2)"
+              }}>
+                Hakkımda
+              </Link>
+              <Link href="/hizmetler" style={{
+                padding: "1rem 2.5rem",
+                background: "transparent",
+                border: "2px solid white",
+                color: "white",
+                borderRadius: "var(--radius-lg)",
+                fontWeight: "600"
+              }}>
+                Hizmetlerimiz
+              </Link>
+            </div>
         </div>
       </section>
 
@@ -84,14 +116,21 @@ export default function Home() {
           width: "100%",
           maxWidth: "1200px"
         }}>
-          {servicesData.slice(0, 3).map((service) => (
-             <ServiceCard
-               key={service.id}
-               title={service.title}
-               description={service.description}
-               iconName={service.icon}
-             />
-          ))}
+          {servicesData.slice(0, 3).map((service) => {
+             let img = "";
+             if (service.id === 'diabetes') img = "/images/service-diabetes.png";
+             if (service.id === 'functional-medicine' || service.id === 'metabolic-syndrome') img = "/images/service-nutrition.png";
+
+             return (
+              <ServiceCard
+                key={service.id}
+                title={service.title}
+                description={service.description}
+                iconName={service.icon}
+                imageSrc={img}
+              />
+             );
+          })}
         </div>
 
         <div style={{ marginTop: "3rem" }}>
@@ -126,10 +165,35 @@ export default function Home() {
           Sağlıklı yaşam, beslenme ve hastalıklar hakkında detaylı bilgilere ulaşabileceğiniz videolarımıza göz atın.
         </p>
 
-        <div style={{
-            display: "flex",
-            justifyContent: "center"
-        }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2rem" }}>
+            {/* Featured Video Thumbnail */}
+            <div style={{
+                width: "100%",
+                maxWidth: "800px",
+                borderRadius: "var(--radius-lg)",
+                overflow: "hidden",
+                boxShadow: "var(--shadow-lg)",
+                position: "relative"
+            }}>
+                <img src="/images/video-placeholder.png" alt="Featured Video" style={{ width: "100%", height: "auto", display: "block" }} />
+                <div style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: "80px",
+                    height: "80px",
+                    background: "rgba(255,255,255,0.8)",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer"
+                }}>
+                    <div style={{ borderLeft: "20px solid var(--color-primary)", borderTop: "12px solid transparent", borderBottom: "12px solid transparent" }}></div>
+                </div>
+            </div>
+
            <Link href="/videolar" style={{
             padding: "1rem 2.5rem",
             background: "var(--color-primary)",
