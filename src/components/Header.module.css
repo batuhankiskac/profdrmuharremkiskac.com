@@ -1,0 +1,58 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 3rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+}
+
+.nav {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.navLink {
+  color: var(--color-text);
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: var(--color-primary);
+}
+
+.ctaButton {
+  padding: 0.75rem 2rem;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-lg); /* Rounded pills */
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 4px 14px 0 rgba(15, 76, 92, 0.39);
+}
+
+.ctaButton:hover {
+  background-color: #0c3b49;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .nav {
+    display: none;
+  }
+}
