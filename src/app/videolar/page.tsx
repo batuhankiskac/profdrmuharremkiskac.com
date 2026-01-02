@@ -11,18 +11,9 @@ export default function VideosPage() {
     <main className={styles.container}>
       <h1 className={styles.heading}>Videolar</h1>
       <div className={styles.grid}>
-        <div className={styles.videoCard}>
-          <div className={styles.videoPlaceholder}>Video Önizleme</div>
-          <div className={styles.videoInfo}>
-            <h3 className={styles.videoTitle}>Sağlıklı Yaşam İpuçları</h3>
-          </div>
-        </div>
-        <div className={styles.videoCard}>
-          <div className={styles.videoPlaceholder}>Video Önizleme</div>
-          <div className={styles.videoInfo}>
-            <h3 className={styles.videoTitle}>Diyabet Yönetimi</h3>
-          </div>
-        </div>
+        <p style={{ gridColumn: "1 / -1", textAlign: "center", color: "var(--color-text-light)", padding: "2rem" }}>
+          Videolar yakında eklenecektir.
+        </p>
       </div>
     </main>
   );

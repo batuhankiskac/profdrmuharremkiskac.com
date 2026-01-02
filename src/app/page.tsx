@@ -116,7 +116,7 @@ export default function Home() {
           width: "100%",
           maxWidth: "1200px"
         }}>
-          {servicesData.slice(0, 3).map((service) => {
+          {servicesData.length > 0 ? servicesData.slice(0, 3).map((service) => {
              let img = "";
              if (service.id === 'diabetes') img = "/images/service-diabetes.png";
              if (service.id === 'functional-medicine' || service.id === 'metabolic-syndrome') img = "/images/service-nutrition.png";
@@ -130,7 +130,9 @@ export default function Home() {
                 imageSrc={img}
               />
              );
-          })}
+          }) : (
+            <p style={{ gridColumn: "1 / -1", color: "var(--color-text-light)" }}>Hizmetlerimiz yakında eklenecektir.</p>
+          )}
         </div>
 
         <div style={{ marginTop: "3rem" }}>
@@ -166,33 +168,7 @@ export default function Home() {
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2rem" }}>
-            {/* Featured Video Thumbnail */}
-            <div style={{
-                width: "100%",
-                maxWidth: "800px",
-                borderRadius: "var(--radius-lg)",
-                overflow: "hidden",
-                boxShadow: "var(--shadow-lg)",
-                position: "relative"
-            }}>
-                <img src="/images/video-placeholder.png" alt="Featured Video" style={{ width: "100%", height: "auto", display: "block" }} />
-                <div style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: "80px",
-                    height: "80px",
-                    background: "rgba(255,255,255,0.8)",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer"
-                }}>
-                    <div style={{ borderLeft: "20px solid var(--color-primary)", borderTop: "12px solid transparent", borderBottom: "12px solid transparent" }}></div>
-                </div>
-            </div>
+
 
            <Link href="/videolar" style={{
             padding: "1rem 2.5rem",
