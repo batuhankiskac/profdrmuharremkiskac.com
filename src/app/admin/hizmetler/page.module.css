@@ -1,0 +1,81 @@
+.container {
+  max-width: 1000px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  color: var(--color-primary);
+}
+
+.addButton {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover {
+  background-color: #3d4d41;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.listItem {
+  background-color: var(--color-surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.description {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editButton,
+.deleteButton {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+}
+
+.editButton {
+  background-color: #e0e0e0;
+  color: var(--color-text);
+}
+
+.deleteButton {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.editButton:hover {
+  background-color: #d6d6d6;
+}
+
+.deleteButton:hover {
+  background-color: #ffcdd2;
+}
