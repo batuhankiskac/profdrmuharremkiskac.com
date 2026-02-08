@@ -1,6 +1,5 @@
 import Link from "next/link";
-import ServiceCard from "@/components/ServiceCard";
-import servicesData from "@/data/services.json";
+import ServicesSection from "@/components/ServicesSection";
 
 export default function Home() {
   return (
@@ -21,131 +20,80 @@ export default function Home() {
       }}>
         {/* Blurred Background Layer */}
         <div style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundImage: "url('/images/home-hero.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            filter: "blur(4px)",
-            zIndex: 0
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage: "url('/images/home-hero.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          filter: "blur(4px)",
+          zIndex: 0
         }} />
 
         {/* Dark Overlay for Readability */}
         <div style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.4)",
-            zIndex: 1
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.4)",
+          zIndex: 1
         }} />
 
         {/* Hero Content */}
         <div style={{ position: "relative", zIndex: 2 }}>
-            <h1 style={{
-              fontSize: "3.5rem",
-              fontWeight: "700",
+          <h1 style={{
+            fontSize: "3.5rem",
+            fontWeight: "700",
+            color: "white",
+            maxWidth: "900px",
+            lineHeight: "1.1",
+            marginBottom: "1rem"
+          }}>
+            Sağlıklı Bir Yaşam İçin <br />
+            <span style={{ fontStyle: "italic", color: "#FDFBF7" }}>Bütüncül Yaklaşım</span>
+          </h1>
+
+          <p style={{
+            fontSize: "1.25rem",
+            color: "#F1EFE9",
+            maxWidth: "700px",
+            lineHeight: "1.6",
+            margin: "0 auto 2rem auto"
+          }}>
+            İç hastalıkları, diyabet ve fonksiyonel tıp alanında bilimsel ve kişiye özel çözümlerle sağlığınızı en üst seviyeye taşıyın.
+          </p>
+
+          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
+            <Link href="/hakkinda" style={{
+              padding: "1rem 2.5rem",
+              background: "var(--color-primary)",
               color: "white",
-              maxWidth: "900px",
-              lineHeight: "1.1",
-              marginBottom: "1rem"
+              borderRadius: "var(--radius-lg)",
+              fontWeight: "600",
+              boxShadow: "0 4px 14px 0 rgba(255, 255, 255, 0.2)"
             }}>
-              Sağlıklı Bir Yaşam İçin <br />
-              <span style={{ fontStyle: "italic", color: "#FDFBF7" }}>Bütüncül Yaklaşım</span>
-            </h1>
-
-            <p style={{
-              fontSize: "1.25rem",
-              color: "#F1EFE9",
-              maxWidth: "700px",
-              lineHeight: "1.6",
-              margin: "0 auto 2rem auto"
+              Hakkımda
+            </Link>
+            <Link href="/hizmetler" style={{
+              padding: "1rem 2.5rem",
+              background: "transparent",
+              border: "2px solid white",
+              color: "white",
+              borderRadius: "var(--radius-lg)",
+              fontWeight: "600"
             }}>
-              İç hastalıkları, diyabet ve fonksiyonel tıp alanında bilimsel ve kişiye özel çözümlerle sağlığınızı en üst seviyeye taşıyın.
-            </p>
-
-            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
-              <Link href="/hakkinda" style={{
-                padding: "1rem 2.5rem",
-                background: "var(--color-primary)",
-                color: "white",
-                borderRadius: "var(--radius-lg)",
-                fontWeight: "600",
-                boxShadow: "0 4px 14px 0 rgba(255, 255, 255, 0.2)"
-              }}>
-                Hakkımda
-              </Link>
-              <Link href="/hizmetler" style={{
-                padding: "1rem 2.5rem",
-                background: "transparent",
-                border: "2px solid white",
-                color: "white",
-                borderRadius: "var(--radius-lg)",
-                fontWeight: "600"
-              }}>
-                Hizmetlerimiz
-              </Link>
-            </div>
+              Hizmetlerimiz
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Services Section */}
-      <section style={{
-        padding: "5rem 2rem",
-        background: "var(--color-bg)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center"
-      }}>
-        <h2 style={{
-          fontSize: "2.5rem",
-          marginBottom: "3rem",
-          textAlign: "center"
-        }}>
-          Uzmanlık Alanları
-        </h2>
-
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "2rem",
-          width: "100%",
-          maxWidth: "1200px"
-        }}>
-          {servicesData.length > 0 ? servicesData.slice(0, 3).map((service) => {
-             let img = "";
-             if (service.id === 'diabetes') img = "/images/service-diabetes.png";
-             if (service.id === 'functional-medicine' || service.id === 'metabolic-syndrome') img = "/images/service-nutrition.png";
-
-             return (
-              <ServiceCard
-                key={service.id}
-                title={service.title}
-                description={service.description}
-                iconName={service.icon}
-                imageSrc={img}
-              />
-             );
-          }) : (
-            <p style={{ gridColumn: "1 / -1", color: "var(--color-text-light)" }}>Hizmetlerimiz yakında eklenecektir.</p>
-          )}
-        </div>
-
-        <div style={{ marginTop: "3rem" }}>
-             <Link href="/hizmetler" style={{
-              color: "var(--color-primary)",
-              fontWeight: "600",
-              borderBottom: "2px solid var(--color-secondary)",
-              paddingBottom: "2px"
-            }}>
-              Tüm Hizmetleri Görüntüle &rarr;
-            </Link>
-        </div>
-      </section>
+      <ServicesSection limit={3} showButton={true} />
 
       {/* Videos / Content Section */}
       <section style={{
@@ -153,7 +101,7 @@ export default function Home() {
         background: "var(--color-bg-alt)",
         textAlign: "center"
       }}>
-         <h2 style={{
+        <h2 style={{
           fontSize: "2.5rem",
           marginBottom: "1.5rem"
         }}>
@@ -170,7 +118,7 @@ export default function Home() {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2rem" }}>
 
 
-           <Link href="/videolar" style={{
+          <Link href="/videolar" style={{
             padding: "1rem 2.5rem",
             background: "var(--color-primary)",
             color: "white",

@@ -1,6 +1,5 @@
 import styles from "./page.module.css";
-import servicesData from "@/data/services.json";
-import ServiceCard from "@/components/ServiceCard";
+import ServicesSection from "@/components/ServicesSection";
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -18,16 +17,7 @@ export default function ServicesPage() {
         </p>
       </div>
 
-      <div className={styles.grid}>
-        {servicesData.map((service) => (
-          <ServiceCard
-            key={service.id}
-            title={service.title}
-            description={service.description}
-            iconName={service.icon}
-          />
-        ))}
-      </div>
+      <ServicesSection />
     </main>
   );
 }

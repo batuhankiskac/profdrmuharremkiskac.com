@@ -1,6 +1,7 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase/config";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
@@ -13,16 +14,12 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-
-    if (result?.error) {
-      setError("Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
-    } else {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
       router.push("/admin");
+    } catch (err) {
+      setError("Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
+      console.error(err);
     }
   };
 

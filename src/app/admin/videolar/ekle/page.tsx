@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "@/firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "@/firebase/config";
 import styles from "./page.module.css";
 
 export default function AddVideoPage() {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
+  const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -31,9 +33,21 @@ export default function AddVideoPage() {
     }
 
     try {
+      let imageUrl = "";
+
+      if (image) {
+        const storageRef = ref(storage, `videos/${Date.now()}_${image.name}`);
+        const snapshot = await uploadBytes(storageRef, image);
+        imageUrl = await getDownloadURL(snapshot.ref);
+      } else {
+        // Fallback to YouTube max res thumbnail if no custom image is provided
+        imageUrl = `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`;
+      }
+
       await addDoc(collection(db, "videos"), {
         title,
         youtubeId,
+        image: imageUrl,
         createdAt: new Date(),
       });
 
@@ -73,6 +87,22 @@ export default function AddVideoPage() {
             required
             className={styles.input}
           />
+        </div>
+
+        <div className={styles.group}>
+          <label htmlFor="image">Özel Kapak Resmi (İsteğe Bağlı)</label>
+          <input
+            type="file"
+            id="image"
+            accept="image/*"
+            onChange={(e) => {
+              if (e.target.files && e.target.files[0]) {
+                setImage(e.target.files[0]);
+              }
+            }}
+            className={styles.fileInput}
+          />
+          <small className={styles.helperText}>Yüklenmezse YouTube otomatik kapak resmi kullanılır.</small>
         </div>
 
         <button type="submit" disabled={loading} className={styles.button}>

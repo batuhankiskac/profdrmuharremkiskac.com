@@ -34,7 +34,7 @@ export default function AddArticlePage() {
         summary,
         content,
         citations: citations.split("\n").filter((c) => c.trim() !== ""),
-        imageUrl,
+        image: imageUrl,
         createdAt: new Date(),
       });
 

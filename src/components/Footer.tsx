@@ -30,7 +30,6 @@ export default function Footer() {
           <div className={styles.links}>
             <p>{contactData.address}</p>
             <a href={`tel:${contactData.phone.replace(/ /g, "")}`}>{contactData.phone}</a>
-            <a href={`mailto:${contactData.email}`}>{contactData.email}</a>
           </div>
         </div>
       </div>

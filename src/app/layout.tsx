@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Outfit } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { AuthContextProvider } from "@/context/AuthContext";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -29,9 +30,11 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className={`${outfit.variable} ${playfair.variable}`}>
-        <Header />
-        {children}
-        <Footer />
+        <AuthContextProvider>
+          <Header />
+          {children}
+          <Footer />
+        </AuthContextProvider>
       </body>
     </html>
   );

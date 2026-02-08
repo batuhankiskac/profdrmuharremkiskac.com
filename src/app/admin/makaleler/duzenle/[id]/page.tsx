@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/firebase/config";
-import styles from "../ekle/page.module.css"; // Reuse styles
+import styles from "../../ekle/page.module.css"; // Reuse styles
 
 export default function EditArticlePage({
   params,

@@ -30,7 +30,7 @@ export default function AddServicePage() {
       await addDoc(collection(db, "services"), {
         title,
         description,
-        imageUrl,
+        image: imageUrl,
         createdAt: new Date(),
       });
 
