@@ -15,8 +15,14 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push("/admin");
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      // Get the ID token
+      const token = await userCredential.user.getIdToken();
+
+      // Set the cookie
+      document.cookie = `auth_token=${token}; path=/; max-age=3600; SameSite=Strict; Secure`;
+
+      router.push("/admin/hizmetler");
     } catch (err) {
       setError("Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
       console.error(err);

@@ -25,6 +25,8 @@ export default function AdminLayout({
   const handleSignOut = async () => {
     try {
       await signOut(auth);
+      // Clear the cookie
+      document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       router.push("/login");
     } catch (error) {
       console.error("Error signing out:", error);
@@ -48,9 +50,7 @@ export default function AdminLayout({
       <aside className={styles.sidebar}>
         <div className={styles.logo}>Admin Panel</div>
         <nav className={styles.nav}>
-          <Link href="/admin" className={styles.link}>
-            Dashboard
-          </Link>
+
           <Link href="/admin/hizmetler" className={styles.link}>
             Hizmetler
           </Link>
