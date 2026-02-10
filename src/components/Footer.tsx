@@ -29,7 +29,7 @@ export default function Footer() {
           <h3>İletişim</h3>
           <div className={styles.links}>
             <p>{contactData.address}</p>
-            <a href={`tel:${contactData.phone.replace(/ /g, "")}`}>{contactData.phone}</a>
+            <p>{contactData.phone}</p>
           </div>
         </div>
       </div>

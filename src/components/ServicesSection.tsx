@@ -91,7 +91,7 @@ export default function ServicesSection({ limit, showButton }: ServicesSectionPr
                         />
                     );
                 }) : (
-                    <p style={{ gridColumn: "1 / -1", color: "var(--color-text-light)" }}>Hizmetlerimiz yakında eklenecektir.</p>
+                    <p style={{ gridColumn: "1 / -1", color: "var(--color-text-light)", textAlign: "center" }}>Hizmetlerimiz yakında eklenecektir.</p>
                 )}
             </div>
 
