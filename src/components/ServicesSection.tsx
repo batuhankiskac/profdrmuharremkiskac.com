@@ -63,13 +63,7 @@ export default function ServicesSection({ limit, showButton }: ServicesSectionPr
             flexDirection: "column",
             alignItems: "center"
         }}>
-            <h2 style={{
-                fontSize: "2.5rem",
-                marginBottom: "3rem",
-                textAlign: "center"
-            }}>
-                Uzmanlık Alanları
-            </h2>
+
 
             <div style={{
                 display: "grid",

@@ -92,8 +92,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Services Section */}
-      <ServicesSection limit={3} showButton={true} />
+      {/* Services Section Removed as per request */}
 
       {/* Videos / Content Section */}
       <section style={{
