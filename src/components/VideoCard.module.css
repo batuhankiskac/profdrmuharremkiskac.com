@@ -1,38 +1,51 @@
 .card {
-    display: block;
-    text-decoration: none;
-    background: white;
-    border-radius: var(--radius-md);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border-radius: 12px;
     overflow: hidden;
-    transition: transform 0.2s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
 }
 
 .card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
 .imageContainer {
     position: relative;
     width: 100%;
-    padding-top: 56.25%;
-    /* 16:9 */
+    aspect-ratio: 16 / 9;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.videoContainer {
+    width: 100%;
+    aspect-ratio: 16 / 9;
     background-color: #000;
 }
 
+.iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
 .image {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.9;
-    transition: opacity 0.2s;
+    transition: transform 0.3s ease;
 }
 
 .card:hover .image {
-    opacity: 1;
+    transform: scale(1.05);
 }
 
 .playOverlay {
@@ -41,15 +54,15 @@
     left: 0;
     width: 100%;
     height: 100%;
+    background: rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.2);
-    transition: background 0.2s;
+    transition: background 0.3s ease;
 }
 
 .card:hover .playOverlay {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 .playButton {
@@ -61,18 +74,33 @@
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    color: var(--color-primary);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    color: var(--primary-color);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, background 0.3s ease;
+    padding-left: 4px;
+    /* Optically center the play icon */
+}
+
+.card:hover .playButton {
+    transform: scale(1.1);
+    background: #ffffff;
 }
 
 .content {
-    padding: 1rem;
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .title {
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--color-text);
-    line-height: 1.4;
+    color: var(--text-color);
     margin: 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
