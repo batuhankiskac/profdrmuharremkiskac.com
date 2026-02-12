@@ -1,10 +1,12 @@
 .card {
   background: var(--color-surface);
-  padding: 2.5rem; /* More padding */
-  border-radius: var(--radius-lg); /* Larger radius */
+  padding: 2.5rem;
+  /* More padding */
+  border-radius: var(--radius-lg);
+  /* Larger radius */
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
-  border: 1px solid rgba(0,0,0,0.03);
+  border: 1px solid rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -33,9 +35,18 @@
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-primary);
+  word-wrap: break-word;
+  /* Prevent long words from breaking layout */
 }
 
 .description {
   color: var(--color-text-light);
   line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  /* Limit to 4 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
 }

@@ -84,6 +84,7 @@ export default function ServicesSection({ limit, showButton }: ServicesSectionPr
                     return (
                         <ServiceCard
                             key={service.id}
+                            id={service.id}
                             title={service.title}
                             description={service.description}
                             iconName={service.icon}

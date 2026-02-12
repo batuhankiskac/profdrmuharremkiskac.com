@@ -72,6 +72,8 @@
     color: var(--color-text);
     margin-bottom: 0.75rem;
     line-height: 1.4;
+    word-wrap: break-word;
+    /* Prevent long words from breaking layout */
 }
 
 .summary {

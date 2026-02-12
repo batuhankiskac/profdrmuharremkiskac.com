@@ -38,7 +38,7 @@ export default function EditArticlePage({
           setCitations(
             Array.isArray(data.citations) ? data.citations.join("\n") : ""
           );
-          setCurrentImage(data.imageUrl);
+          setCurrentImage(data.imageUrl || "");
         } else {
           alert("Makale bulunamadı");
           router.push("/admin/makaleler");
@@ -59,7 +59,7 @@ export default function EditArticlePage({
     setLoading(true);
 
     try {
-      let imageUrl = currentImage;
+      let imageUrl = currentImage || null; // Ensure it's not undefined
 
       if (image) {
         const storageRef = ref(storage, `articles/${Date.now()}_${image.name}`);
