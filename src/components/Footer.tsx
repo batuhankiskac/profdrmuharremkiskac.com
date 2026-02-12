@@ -26,6 +26,20 @@ export default function Footer() {
         </div>
 
         <div className={styles.column}>
+          <h3>Diğer Sitelerimiz</h3>
+          <div className={styles.links}>
+            <a href="https://doktorhacamat.com" target="_blank" rel="noopener noreferrer">Doktor Hacamat</a>
+            <a href="https://siboklinik.com" target="_blank" rel="noopener noreferrer">Sibo Klinik</a>
+          </div>
+
+          <h3 style={{ marginTop: '2rem' }}>Sosyal Medya</h3>
+          <div className={styles.links}>
+            <a href={contactData.social.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href={contactData.social.youtube} target="_blank" rel="noopener noreferrer">YouTube</a>
+          </div>
+        </div>
+
+        <div className={styles.column}>
           <h3>İletişim</h3>
           <div className={styles.links}>
             <p>{contactData.address}</p>
