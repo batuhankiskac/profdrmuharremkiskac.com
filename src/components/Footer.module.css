@@ -13,6 +13,17 @@
   margin-bottom: 3rem;
 }
 
+@media (max-width: 640px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer {
+    padding: 3rem 1.5rem 1rem;
+  }
+}
+
 .column h3 {
   color: var(--color-secondary);
   font-family: var(--font-playfair), serif;

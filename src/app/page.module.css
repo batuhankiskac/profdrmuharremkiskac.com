@@ -1,0 +1,158 @@
+.main {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.hero {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+    text-align: center;
+    color: white;
+}
+
+.heroBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/home-hero.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(4px);
+    z-index: 0;
+}
+
+.heroOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.heroContent {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.heroTitle {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: white;
+    max-width: 900px;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+    font-style: italic;
+    color: #FDFBF7;
+}
+
+.heroText {
+    font-size: 1.25rem;
+    color: #F1EFE9;
+    max-width: 700px;
+    line-height: 1.6;
+    margin: 0 auto 2rem auto;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.primaryButton {
+    padding: 1rem 2.5rem;
+    background: var(--color-primary);
+    color: white;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    box-shadow: 0 4px 14px 0 rgba(255, 255, 255, 0.2);
+    transition: transform 0.2s;
+}
+
+.primaryButton:hover {
+    transform: translateY(-2px);
+}
+
+.secondaryButton {
+    padding: 1rem 2.5rem;
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+}
+
+.secondaryButton:hover {
+    background: white;
+    color: var(--color-primary);
+}
+
+.videosSection {
+    padding: 5rem 2rem;
+    background: var(--color-bg-alt);
+    text-align: center;
+}
+
+.sectionTitle {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.sectionText {
+    max-width: 600px;
+    margin: 0 auto 3rem auto;
+    color: var(--color-text-light);
+}
+
+.videosContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .heroTitle {
+        font-size: 2.25rem;
+    }
+
+    .heroText {
+        font-size: 1rem;
+    }
+
+    .buttonGroup {
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .primaryButton,
+    .secondaryButton {
+        width: 100%;
+        text-align: center;
+    }
+
+    .videosSection {
+        padding: 3rem 1.5rem;
+    }
+}
