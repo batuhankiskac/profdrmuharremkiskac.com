@@ -5,7 +5,7 @@ export default function ServiceCard({ id, title, description, iconName, imageSrc
   return (
     <Link href={`/hizmetler/${id}`} className={styles.card} style={{ textDecoration: "none", color: "inherit" }}>
       {imageSrc ? (
-        <div style={{ width: "100%", height: "200px", borderRadius: "var(--radius-sm)", overflow: "hidden", marginBottom: "1rem" }}>
+        <div style={{ width: "100%", aspectRatio: "1 / 1", borderRadius: "var(--radius-sm)", overflow: "hidden", marginBottom: "1rem" }}>
           {/* Using img for simplicity, in production next/image is better */}
           <img src={imageSrc} alt={title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
