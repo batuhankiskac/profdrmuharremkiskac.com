@@ -6,6 +6,8 @@ import { db } from "@/firebase/config";
 import styles from "./page.module.css";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Article {
     id: string;
@@ -75,8 +77,15 @@ export default function ArticleDetailPage() {
             <h1 className={styles.title}>{article.title}</h1>
             <span className={styles.date}>{formattedDate}</span>
 
-            <div className={styles.content} style={{ whiteSpace: 'pre-wrap' }}>
-                {article.content}
+            <div className={styles.content}>
+                <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                        p: ({node, ...props}) => <p style={{ whiteSpace: 'pre-wrap', marginBottom: '1.5rem' }} {...props} />
+                    }}
+                >
+                    {article.content}
+                </ReactMarkdown>
             </div>
 
             {article.citations && article.citations.length > 0 && (

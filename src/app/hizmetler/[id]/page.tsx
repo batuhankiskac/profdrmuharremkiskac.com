@@ -6,6 +6,8 @@ import { db } from "@/firebase/config";
 import styles from "./page.module.css";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Service {
     id: string;
@@ -67,8 +69,15 @@ export default function ServiceDetailPage() {
 
             <h1 className={styles.title}>{service.title}</h1>
 
-            <div className={styles.content} style={{ whiteSpace: 'pre-wrap' }}>
-                {service.description}
+            <div className={styles.content}>
+                <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                        p: ({node, ...props}) => <p style={{ whiteSpace: 'pre-wrap', marginBottom: '1.5rem' }} {...props} />
+                    }}
+                >
+                    {service.description}
+                </ReactMarkdown>
             </div>
         </article>
     );
