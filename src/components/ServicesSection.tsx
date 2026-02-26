@@ -67,7 +67,8 @@ export default function ServicesSection({ limit, showButton }: ServicesSectionPr
 
             <div style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 400px))",
+                justifyContent: "center",
                 gap: "2rem",
                 width: "100%",
                 maxWidth: "1200px"
