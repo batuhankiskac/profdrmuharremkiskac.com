@@ -55,16 +55,17 @@
 @media (max-width: 768px) {
   .nav {
     position: fixed;
-    top: 72px;
-    /* Adjust based on header height */
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--color-bg, #fdfbf7);
-    /* Solid background to prevent text overlap */
+    height: 100vh;
+    background-color: #ffffff;
+    z-index: 90;
     flex-direction: column;
-    padding: 2rem;
+    padding: 6rem 2rem 2rem 2rem;
     gap: 2rem;
+    overflow-y: auto;
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
   }
