@@ -16,14 +16,25 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+// Initialize Firebase only if API key exists
+let app: any = null;
+let auth: any = null;
+let db: any = null;
+let storage: any = null;
+
+if (firebaseConfig.apiKey) {
+  try {
+    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
+  } catch (error) {
+    console.error("Firebase initialization error", error);
+  }
+}
 
 let analytics;
-if (typeof window !== "undefined") {
+if (typeof window !== "undefined" && app) {
   import("firebase/analytics").then(({ getAnalytics }) => {
     analytics = getAnalytics(app);
   });

@@ -49,6 +49,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
+  // Check if Firebase config is valid before attempting to fetch
+  if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+    console.warn('Firebase API Key missing (likely during build). Skipping dynamic sitemap generation.');
+    return sitemapData;
+  }
+
   try {
     // 1. Makaleleri çek ve ekle
     const articlesSnapshot = await getDocs(collection(db, 'articles'));
