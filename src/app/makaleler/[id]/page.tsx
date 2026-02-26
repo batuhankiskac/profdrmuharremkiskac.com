@@ -75,16 +75,8 @@ export default function ArticleDetailPage() {
             <h1 className={styles.title}>{article.title}</h1>
             <span className={styles.date}>{formattedDate}</span>
 
-            {article.image && (
-                <div className={styles.imageContainer}>
-                    <img src={article.image} alt={article.title} className={styles.image} />
-                </div>
-            )}
-
-            <div className={styles.content}>
-                {article.content.split("\n").map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                ))}
+            <div className={styles.content} style={{ whiteSpace: 'pre-wrap' }}>
+                {article.content}
             </div>
 
             {article.citations && article.citations.length > 0 && (

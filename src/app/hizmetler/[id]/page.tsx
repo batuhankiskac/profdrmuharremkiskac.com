@@ -67,16 +67,8 @@ export default function ServiceDetailPage() {
 
             <h1 className={styles.title}>{service.title}</h1>
 
-            {service.image && (
-                <div className={styles.imageContainer}>
-                    <img src={service.image} alt={service.title} className={styles.image} />
-                </div>
-            )}
-
-            <div className={styles.content}>
-                {service.description.split("\n").map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                ))}
+            <div className={styles.content} style={{ whiteSpace: 'pre-wrap' }}>
+                {service.description}
             </div>
         </article>
     );
