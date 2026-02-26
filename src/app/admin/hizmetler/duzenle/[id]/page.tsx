@@ -31,9 +31,9 @@ export default function EditServicePage({
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setTitle(data.title);
-          setDescription(data.description);
-          setCurrentImage(data.imageUrl);
+          setTitle(data.title || "");
+          setDescription(data.description || "");
+          setCurrentImage(data.imageUrl || "");
         } else {
           alert("Hizmet bulunamadı");
           router.push("/admin/hizmetler");
@@ -54,7 +54,7 @@ export default function EditServicePage({
     setLoading(true);
 
     try {
-      let imageUrl = currentImage;
+      let imageUrl = currentImage || null;
 
       if (image) {
         const storageRef = ref(storage, `services/${Date.now()}_${image.name}`);

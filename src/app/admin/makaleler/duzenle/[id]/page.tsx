@@ -32,9 +32,9 @@ export default function EditArticlePage({
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setTitle(data.title);
-          setSummary(data.summary);
-          setContent(data.content);
+          setTitle(data.title || "");
+          setSummary(data.summary || "");
+          setContent(data.content || "");
           setCitations(
             Array.isArray(data.citations) ? data.citations.join("\n") : ""
           );
