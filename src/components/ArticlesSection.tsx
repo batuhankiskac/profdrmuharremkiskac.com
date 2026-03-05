@@ -27,7 +27,7 @@ export default function ArticlesSection({ limit }: ArticlesSectionProps) {
         const fetchArticles = async () => {
             try {
                 // Ideally enforce ordering by createdAt desc
-                let q = collection(db, "articles");
+                const q = collection(db, "articles");
                 // For simplicity getting all then sorting client side if indexes not ready
 
                 const querySnapshot = await getDocs(q);

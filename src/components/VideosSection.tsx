@@ -24,7 +24,7 @@ export default function VideosSection({ limit }: VideosSectionProps) {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
-                let q = collection(db, "videos");
+                const q = collection(db, "videos");
                 const querySnapshot = await getDocs(q);
                 const fetchedVideos: Video[] = [];
                 querySnapshot.forEach((doc) => {
