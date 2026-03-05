@@ -3,6 +3,7 @@ import { Playfair_Display, Outfit } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthContextProvider } from "@/context/AuthContext";
+import Script from "next/script";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -29,6 +30,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr">
+      <head>
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=AW-10815764688"
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-10815764688');
+            `,
+          }}
+        />
+      </head>
       <body className={`${outfit.variable} ${playfair.variable}`}>
         <AuthContextProvider>
           <Header />

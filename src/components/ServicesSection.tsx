@@ -27,7 +27,7 @@ export default function ServicesSection({ limit, showButton }: ServicesSectionPr
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                let q = collection(db, "services");
+                const q = collection(db, "services");
                 // We can add ordering or limiting here if needed.
                 // For simplicity, fetching all and slicing in JS, or using simple limit.
                 // Assuming 'createdAt' field might not exist on old data, so just fetching collection.
