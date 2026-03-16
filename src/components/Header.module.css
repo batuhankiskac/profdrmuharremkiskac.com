@@ -53,6 +53,11 @@
 }
 
 @media (max-width: 768px) {
+  .header {
+    backdrop-filter: none;
+    background-color: rgba(253, 251, 247, 1);
+  }
+
   .nav {
     position: fixed;
     top: 0;
@@ -61,7 +66,7 @@
     bottom: 0;
     height: 100vh;
     background-color: #ffffff;
-    z-index: 90;
+    z-index: 110;
     flex-direction: column;
     padding: 6rem 2rem 2rem 2rem;
     gap: 2rem;
