@@ -48,3 +48,9 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.25;
 }
 
+.iconButtonHover {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.iconButtonHover:hover {
+  transform: scale(1.1);
+}
