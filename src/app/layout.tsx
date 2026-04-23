@@ -44,6 +44,9 @@ export default function RootLayout({
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', 'AW-10815764688');
+              gtag('config', 'AW-10815764688/n3JqCOfT_e8bENDxraUo', {
+                'phone_conversion_number': '05322193364'
+              });
             `,
           }}
         />
