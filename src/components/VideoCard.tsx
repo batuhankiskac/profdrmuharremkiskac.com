@@ -17,9 +17,13 @@ export default function VideoCard({
 }: VideoCardProps) {
     const [isPlaying, setIsPlaying] = useState(false);
 
-    // If "image" prop is passed, use it, otherwise fallback to standard YouTube thumb
-    const thumbnail =
-        image || `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
+    const [imgSrc, setImgSrc] = useState(
+        image || `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`
+    );
+
+    const handleImageError = () => {
+        setImgSrc(`https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`);
+    };
 
     const handlePlay = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -40,7 +44,7 @@ export default function VideoCard({
                 </div>
             ) : (
                 <div className={styles.imageContainer} onClick={handlePlay}>
-                    <Image src={thumbnail} alt={title} fill sizes="(max-width: 768px) 100vw, 400px" style={{ objectFit: "cover" }} className={styles.image} />
+                    <Image src={imgSrc} alt={title} fill sizes="(max-width: 768px) 100vw, 400px" style={{ objectFit: "cover" }} className={styles.image} onError={handleImageError} />
                     <div className={styles.playOverlay}>
                         <div className={styles.playButton}>▶</div>
                     </div>

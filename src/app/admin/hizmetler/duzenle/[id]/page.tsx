@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/firebase/config";
@@ -33,7 +34,7 @@ export default function EditServicePage({
           const data = docSnap.data();
           setTitle(data.title || "");
           setDescription(data.description || "");
-          setCurrentImage(data.imageUrl || "");
+          setCurrentImage(data.image || "");
         } else {
           alert("Hizmet bulunamadı");
           router.push("/admin/hizmetler");
@@ -65,7 +66,7 @@ export default function EditServicePage({
       await updateDoc(doc(db, "services", id), {
         title,
         description,
-        imageUrl,
+        image: imageUrl,
         updatedAt: new Date(),
       });
 
@@ -112,10 +113,12 @@ export default function EditServicePage({
           <label htmlFor="image">Resim (Değiştirmek için seçin)</label>
           {currentImage && (
             <div style={{ marginBottom: "10px" }}>
-              <img
+              <Image
                 src={currentImage}
                 alt="Current"
-                style={{ height: "100px", borderRadius: "8px" }}
+                width={150}
+                height={100}
+                style={{ borderRadius: "8px", objectFit: 'cover' }}
               />
             </div>
           )}

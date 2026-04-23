@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/firebase/config";
@@ -38,7 +39,7 @@ export default function EditArticlePage({
           setCitations(
             Array.isArray(data.citations) ? data.citations.join("\n") : ""
           );
-          setCurrentImage(data.imageUrl || "");
+          setCurrentImage(data.image || "");
         } else {
           alert("Makale bulunamadı");
           router.push("/admin/makaleler");
@@ -72,7 +73,7 @@ export default function EditArticlePage({
         summary,
         content,
         citations: citations.split("\n").filter((c) => c.trim() !== ""),
-        imageUrl,
+        image: imageUrl,
         updatedAt: new Date(),
       });
 
@@ -119,10 +120,12 @@ export default function EditArticlePage({
           <label htmlFor="image">Kapak Resmi</label>
           {currentImage && (
             <div style={{ marginBottom: "10px" }}>
-              <img
+              <Image
                 src={currentImage}
                 alt="Current"
-                style={{ height: "100px", borderRadius: "8px" }}
+                width={150}
+                height={100}
+                style={{ borderRadius: "8px", objectFit: 'cover' }}
               />
             </div>
           )}

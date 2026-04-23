@@ -10,7 +10,7 @@ interface Article {
   id: string;
   title: string;
   summary: string;
-  createdAt: any;
+  createdAt: { seconds: number; nanoseconds: number } | null;
 }
 
 export default function ArticlesPage() {

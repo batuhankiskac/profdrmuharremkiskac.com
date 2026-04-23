@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import VideoCard from "@/components/VideoCard";
+import SkeletonCard from "@/components/SkeletonCard";
 
 interface Video {
     id: string;
     title: string;
     youtubeId: string;
     image?: string;
-    createdAt?: any;
+    createdAt?: { seconds: number; nanoseconds: number } | null;
 }
 
 interface VideosSectionProps {
@@ -51,7 +52,19 @@ export default function VideosSection({ limit }: VideosSectionProps) {
     const displayedVideos = limit ? videos.slice(0, limit) : videos;
 
     if (loading) {
-        return <div style={{ padding: "5rem", textAlign: "center" }}>Yükleniyor...</div>;
+        return (
+            <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                gap: "2rem",
+                width: "100%",
+                maxWidth: "1200px",
+                margin: "0 auto",
+                padding: "2rem 0"
+            }}>
+                {[...Array(limit || 3)].map((_, i) => <SkeletonCard key={i} />)}
+            </div>
+        );
     }
 
     return (

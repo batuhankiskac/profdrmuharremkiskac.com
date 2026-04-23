@@ -67,16 +67,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     });
 
-    // 2. Videoları çek ve ekle
-    const videosSnapshot = await getDocs(collection(db, 'videos'));
-    videosSnapshot.forEach((doc) => {
-      sitemapData.push({
-        url: `${baseUrl}/videolar/${doc.id}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly',
-        priority: 0.7,
-      });
-    });
+
 
     // 3. Hizmetleri çek ve ekle
     const servicesSnapshot = await getDocs(collection(db, 'services'));

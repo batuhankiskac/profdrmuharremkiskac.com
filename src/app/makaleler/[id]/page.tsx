@@ -15,7 +15,7 @@ interface Article {
     summary: string;
     content: string;
     image?: string;
-    createdAt?: any;
+    createdAt?: { seconds: number; nanoseconds: number } | null;
     citations?: string[];
 }
 
@@ -93,7 +93,7 @@ export default function ArticleDetailPage() {
                     <h2 className={styles.citationsTitle}>Kaynakça</h2>
                     <ul className={styles.citationsList}>
                         {article.citations.map((citation, index) => {
-                            const urlRegex = /(https?:\/\/[^\s]+)/g;
+                            const urlRegex = /(https?:\/\/[^\s]+)/;
                             const parts = citation.split(urlRegex);
 
                             return (

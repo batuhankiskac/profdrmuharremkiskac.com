@@ -7,7 +7,7 @@ interface ArticleCardProps {
     title: string;
     summary: string;
     image?: string;
-    date?: any; // Firestore timestamp
+    date?: { seconds: number; nanoseconds: number } | null; // Firestore timestamp
 }
 
 export default function ArticleCard({ id, title, summary, image, date }: ArticleCardProps) {

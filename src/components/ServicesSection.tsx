@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, getDocs, orderBy, query, limit as firestoreLimit } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import ServiceCard from "@/components/ServiceCard";
+import SkeletonCard from "@/components/SkeletonCard";
 import Link from "next/link";
 import styles from "@/app/hizmetler/page.module.css";
 
@@ -52,7 +53,20 @@ export default function ServicesSection({ limit, showButton }: ServicesSectionPr
     const displayedServices = limit ? services.slice(0, limit) : services;
 
     if (loading) {
-        return <div style={{ padding: "5rem", textAlign: "center" }}>Yükleniyor...</div>;
+        return (
+            <section style={{ padding: "5rem 2rem", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 400px))",
+                    justifyContent: "center",
+                    gap: "2rem",
+                    width: "100%",
+                    maxWidth: "1200px"
+                }}>
+                    {[...Array(limit || 3)].map((_, i) => <SkeletonCard key={i} />)}
+                </div>
+            </section>
+        );
     }
 
     return (

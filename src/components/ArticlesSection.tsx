@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, getDocs, orderBy, query, limit as firestoreLimit } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import ArticleCard from "@/components/ArticleCard";
+import SkeletonCard from "@/components/SkeletonCard";
 import styles from "@/app/makaleler/page.module.css";
 
 interface Article {
@@ -12,7 +13,7 @@ interface Article {
     summary: string;
     content: string;
     image?: string;
-    createdAt?: any;
+    createdAt?: { seconds: number; nanoseconds: number } | null;
 }
 
 interface ArticlesSectionProps {
@@ -57,7 +58,20 @@ export default function ArticlesSection({ limit }: ArticlesSectionProps) {
     const displayedArticles = limit ? articles.slice(0, limit) : articles;
 
     if (loading) {
-        return <div style={{ padding: "5rem", textAlign: "center" }}>Yükleniyor...</div>;
+        return (
+            <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 400px))",
+                justifyContent: "center",
+                gap: "2rem",
+                width: "100%",
+                maxWidth: "1200px",
+                margin: "0 auto",
+                padding: "2rem 0"
+            }}>
+                {[...Array(limit || 3)].map((_, i) => <SkeletonCard key={i} />)}
+            </div>
+        );
     }
 
     // If we are in the main page (limit exists), we might want a grid.

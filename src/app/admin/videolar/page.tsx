@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import styles from "./page.module.css";
@@ -65,9 +66,12 @@ export default function VideosPage() {
           videos.map((video) => (
             <div key={video.id} className={styles.card}>
               <div className={styles.thumbnail}>
-                <img
+                <Image
                   src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
                   alt={video.title}
+                  width={320}
+                  height={180}
+                  style={{ objectFit: 'cover' }}
                 />
               </div>
               <div className={styles.content}>

@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
+import { getAuth, Auth } from "firebase/auth";
+import { getFirestore, Firestore } from "firebase/firestore";
+import { getStorage, FirebaseStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -17,10 +17,10 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase only if API key exists
-let app: any = null;
-let auth: any = null;
-let db: any = null;
-let storage: any = null;
+let app = null as unknown as FirebaseApp;
+let auth = null as unknown as Auth;
+let db = null as unknown as Firestore;
+let storage = null as unknown as FirebaseStorage;
 
 if (firebaseConfig.apiKey) {
   try {
