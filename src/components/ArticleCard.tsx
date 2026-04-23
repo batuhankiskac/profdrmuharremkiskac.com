@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./ArticleCard.module.css";
 
 interface ArticleCardProps {
@@ -18,7 +19,7 @@ export default function ArticleCard({ id, title, summary, image, date }: Article
             <Link href={`/makaleler/${id}`} className={styles.link}>
                 <div className={styles.imageContainer}>
                     {image ? (
-                        <img src={image} alt={title} className={styles.image} />
+                        <Image src={image} alt={title} fill sizes="(max-width: 768px) 100vw, 400px" style={{ objectFit: "cover" }} className={styles.image} />
                     ) : (
                         <div className={styles.placeholder}>
                             <span>Makale Görseli</span>

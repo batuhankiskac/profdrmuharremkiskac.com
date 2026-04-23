@@ -1,18 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
+import { AuthContextProvider, useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase/config";
 import styles from "./layout.module.css";
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -73,5 +69,17 @@ export default function AdminLayout({
       </aside>
       <main className={styles.main}>{children}</main>
     </div>
+  );
+}
+
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <AuthContextProvider>
+      <AdminLayoutContent>{children}</AdminLayoutContent>
+    </AuthContextProvider>
   );
 }

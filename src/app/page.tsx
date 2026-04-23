@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -7,7 +8,17 @@ export default function Home() {
       {/* Hero Section */}
       <section className={styles.hero}>
         {/* Blurred Background Layer */}
-        <div className={styles.heroBackground} />
+        <div className={styles.heroBackground}>
+          <Image
+            src="/images/home-hero.jpg"
+            alt="Hero Background"
+            fill
+            priority
+            quality={85}
+            style={{ objectFit: "cover", filter: "blur(4px)" }}
+            sizes="100vw"
+          />
+        </div>
 
         {/* Dark Overlay for Readability */}
         <div className={styles.heroOverlay} />

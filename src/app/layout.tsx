@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Playfair_Display, Outfit } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { AuthContextProvider } from "@/context/AuthContext";
 import Script from "next/script";
 import "./globals.css";
 
@@ -31,13 +30,17 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com" />
+        <link rel="dns-prefetch" href="https://img.youtube.com" />
         <Script
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           src="https://www.googletagmanager.com/gtag/js?id=AW-10815764688"
         />
         <Script
           id="gtag-init"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
@@ -52,11 +55,9 @@ export default function RootLayout({
         />
       </head>
       <body className={`${outfit.variable} ${playfair.variable}`}>
-        <AuthContextProvider>
-          <Header />
-          {children}
-          <Footer />
-        </AuthContextProvider>
+        <Header />
+        {children}
+        <Footer />
       </body>
     </html>
   );

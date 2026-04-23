@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Image from "next/image";
 import styles from "./VideoCard.module.css";
 
 interface VideoCardProps {
@@ -39,7 +40,7 @@ export default function VideoCard({
                 </div>
             ) : (
                 <div className={styles.imageContainer} onClick={handlePlay}>
-                    <img src={thumbnail} alt={title} className={styles.image} />
+                    <Image src={thumbnail} alt={title} fill sizes="(max-width: 768px) 100vw, 400px" style={{ objectFit: "cover" }} className={styles.image} />
                     <div className={styles.playOverlay}>
                         <div className={styles.playButton}>▶</div>
                     </div>

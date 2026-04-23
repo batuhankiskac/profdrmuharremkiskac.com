@@ -1,6 +1,7 @@
 import styles from "./page.module.css";
 import bioData from "@/data/bio.json";
 import { Metadata } from 'next';
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: 'Hakkında | Prof. Dr. Muharrem Kıskaç',
@@ -14,10 +15,14 @@ export default function AboutPage() {
 
       <div className={styles.content}>
         <div className={styles.imageContainer}>
-          <img
+          <Image
             src="/images/profile.jpg"
             alt="Prof. Dr. Muharrem Kıskaç"
             className={styles.profileImage}
+            width={300}
+            height={300}
+            quality={80}
+            style={{ objectFit: 'cover' }}
           />
         </div>
         <p style={{ marginBottom: "1.5rem" }}>{bioData.short_bio}</p>
