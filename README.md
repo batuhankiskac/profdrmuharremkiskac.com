@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# profdrmuharremkiskac.com
 
-## Getting Started
+Prof. Dr. Muharrem Kıskaç’ın Next.js tabanlı kurumsal sitesi ve içerik yönetim
+paneli. Public sayfalar Firebase Admin ile sunucuda render edilir; tarayıcıya
+yalnız admin girişinde gereken Firebase Auth kodu gönderilir.
 
-First, run the development server:
+## Gereksinimler
+
+- Node.js 22+
+- Firebase projesi, Firestore ve Storage
+- Firebase Authentication üzerinde e-posta/şifre sağlayıcısı
+- Admin kullanıcıda `admin: true` custom claim’i
+
+## Yerel kurulum
 
 ```bash
+npm ci
+cp env-example.txt .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`.env.local` içindeki Firebase client değerleri yalnız login ekranı içindir.
+`FIREBASE_CLIENT_EMAIL` ve `FIREBASE_PRIVATE_KEY` gibi Admin değerleri yalnız
+sunucuda tutulmalı, `NEXT_PUBLIC_` öneki almamalı ve repoya eklenmemelidir.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Yönetici hesabına Firebase Admin SDK ile `admin: true` custom claim’i verilmesi
+zorunludur; yalnız e-posta eşleşmesi yönetici yetkisi sağlamaz.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Veri ve güvenlik
 
-## Learn More
+- Public makale, hizmet ve video okumaları sunucudan yapılır.
+- Admin oturumu doğrulanmış Firebase ID token’dan üretilen `HttpOnly` cookie
+  kullanır.
+- Admin ekleme, güncelleme ve silme işlemleri server action olarak çalışır.
+- Yüklenen görseller maksimum 5 MB kabul edilir, 1600 px içine küçültülür ve
+  WebP olarak saklanır.
+- `firestore.rules` ve `storage.rules` client erişimini admin claim’iyle sınırlar.
 
-To learn more about Next.js, take a look at the following resources:
+Kuralları production’a almadan önce Firebase CLI ile doğru projeyi seçin:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+firebase deploy --only firestore:rules,storage
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Eski `image` alanlarını silmeden `imageUrl` alanına kopyalayan migration:
 
-## Deploy on Vercel
+```bash
+npm run migrate:images
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Migration doğrulandıktan sonra legacy alanların kaldırılması ayrı bir bakım
+adımıdır.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Kontroller
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+npm run test:e2e
+```
+
+Playwright testleri sistemde kurulu Google Chrome’u kullanır. Firebase Admin env
+değerleri yoksa public koleksiyonlar boş gösterilir ve admin login entegrasyonu
+yerine anonim ve sahte-cookie yönlendirme davranışı test edilir.
+`E2E_ADMIN_EMAIL` ile `E2E_ADMIN_PASSWORD` tanımlandığında login, hizmet
+ekleme-düzenleme-silme ve logout akışı da geçici bir kayıtla çalıştırılır.
+
+## Production notları
+
+- Hostinger ortamında bütün server-only env değerlerini tanımlayın.
+- hCDN bot challenge ayarının Lighthouse ve güvenilir izleme araçlarına `403`
+  döndürmediğini doğrulayın.
+- Google Ads ve telefon dönüşümü GTM konteyneri içinde tutulmalıdır. Site yalnız
+  kullanıcı analiz izni verdikten sonra GTM’yi yükler.

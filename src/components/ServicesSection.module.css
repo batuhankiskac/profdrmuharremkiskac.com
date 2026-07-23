@@ -1,0 +1,14 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.allLink {
+  margin-top: 3rem;
+  padding-bottom: 2px;
+  border-bottom: 2px solid var(--color-secondary);
+  color: var(--color-primary);
+  font-weight: 600;
+}

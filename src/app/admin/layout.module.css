@@ -77,8 +77,42 @@
   background-color: rgba(0, 0, 0, 0.4);
 }
 
+.signOutButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .main {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+}
+
+@media (max-width: 800px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    padding: 1.25rem;
+  }
+
+  .logo {
+    margin-bottom: 1rem;
+  }
+
+  .nav {
+    flex-flow: row wrap;
+  }
+
+  .userSection {
+    margin-top: 1rem;
+  }
+
+  .main {
+    padding: 1rem;
+  }
 }

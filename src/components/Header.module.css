@@ -73,12 +73,14 @@
     overflow-y: auto;
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .nav.open {
     transform: translateX(0);
-    display: flex;
-    /* Ensure it overrides display: none from potential previous logic */
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .hamburger {
@@ -89,7 +91,8 @@
     border: none;
     cursor: pointer;
     padding: 0.5rem;
-    z-index: 101;
+    position: relative;
+    z-index: 120;
   }
 
   .hamburger span {

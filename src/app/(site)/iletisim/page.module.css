@@ -1,0 +1,53 @@
+.container {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+}
+
+.heading {
+  margin-bottom: 2rem;
+  color: var(--color-primary);
+  font-size: 2.5rem;
+  text-align: center;
+}
+
+.card {
+  background: var(--color-surface);
+  padding: 3rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.map {
+  width: 100%;
+  height: 400px;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  border: 1px solid rgb(0 0 0 / 10%);
+  border-radius: var(--radius-md);
+}
+
+.map iframe {
+  border: 0;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
+}
+
+.value {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  font-weight: 500;
+  font-style: normal;
+}

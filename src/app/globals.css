@@ -48,9 +48,22 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.25;
 }
 
-.iconButtonHover {
-  transition: transform 0.2s ease, opacity 0.2s ease;
+:focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 3px;
 }
-.iconButtonHover:hover {
-  transform: scale(1.1);
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

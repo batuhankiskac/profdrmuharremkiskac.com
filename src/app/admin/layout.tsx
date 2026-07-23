@@ -1,56 +1,26 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { signOut } from "firebase/auth";
-import { auth } from "@/firebase/config";
+import { requireAdmin } from "@/lib/auth";
+import LogoutButton from "./LogoutButton";
 import styles from "./layout.module.css";
 
-export default function AdminLayout({
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Admin Paneli",
+  robots: { index: false, follow: false },
+};
+
+export default async function AdminLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/login");
-    }
-  }, [user, loading, router]);
-
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      // Clear the cookie
-      document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-      router.push("/login");
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        <p>Yükleniyor...</p>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // or a spinner while redirecting
-  }
+}: Readonly<{ children: React.ReactNode }>) {
+  const user = await requireAdmin();
 
   return (
     <div className={styles.container}>
       <aside className={styles.sidebar}>
         <div className={styles.logo}>Admin Panel</div>
-        <nav className={styles.nav}>
-
+        <nav className={styles.nav} aria-label="Admin menüsü">
           <Link href="/admin/hizmetler" className={styles.link}>
             Hizmetler
           </Link>
@@ -61,14 +31,9 @@ export default function AdminLayout({
             Videolar
           </Link>
         </nav>
-
         <div className={styles.userSection}>
-          <div className={styles.user}>
-            <span>{user?.email}</span>
-          </div>
-          <button onClick={handleSignOut} className={styles.signOutButton}>
-            Çıkış Yap
-          </button>
+          <div className={styles.user}>{user.email}</div>
+          <LogoutButton />
         </div>
       </aside>
       <main className={styles.main}>{children}</main>

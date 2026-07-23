@@ -1,37 +1,50 @@
+import Image from "next/image";
 import Link from "next/link";
+import type { Article } from "@/types/content";
 import styles from "./ArticleCard.module.css";
 
-interface ArticleCardProps {
-    id: string;
-    title: string;
-    summary: string;
-    image?: string;
-    date?: any; // Firestore timestamp
+function formatDate(value: string | null) {
+  return value
+    ? new Intl.DateTimeFormat("tr-TR", { dateStyle: "long" }).format(
+        new Date(value),
+      )
+    : "";
 }
 
-export default function ArticleCard({ id, title, summary, image, date }: ArticleCardProps) {
-    // Format date if available
-    const formattedDate = date ? new Date(date.seconds * 1000).toLocaleDateString("tr-TR") : "";
-
-    return (
-        <article className={styles.card}>
-            <Link href={`/makaleler/${id}`} className={styles.link}>
-                <div className={styles.imageContainer}>
-                    {image ? (
-                        <img src={image} alt={title} className={styles.image} />
-                    ) : (
-                        <div className={styles.placeholder}>
-                            <span>Makale Görseli</span>
-                        </div>
-                    )}
-                </div>
-                <div className={styles.content}>
-                    <span className={styles.date}>{formattedDate}</span>
-                    <h3 className={styles.title}>{title}</h3>
-                    <p className={styles.summary}>{summary}</p>
-                    <span className={styles.readMore}>Devamını Oku &rarr;</span>
-                </div>
-            </Link>
-        </article>
-    );
+export default function ArticleCard({ article }: { article: Article }) {
+  return (
+    <article className={styles.card}>
+      <Link
+        href={`/makaleler/${article.id}`}
+        className={styles.link}
+        aria-label={`${article.title} makalesini oku`}
+      >
+        <div className={styles.imageContainer}>
+          {article.imageUrl ? (
+            <Image
+              src={article.imageUrl}
+              alt=""
+              fill
+              className={styles.image}
+              sizes="(max-width: 700px) 100vw, 400px"
+            />
+          ) : (
+            <div className={styles.placeholder} aria-hidden="true">
+              Makale
+            </div>
+          )}
+        </div>
+        <div className={styles.content}>
+          {article.createdAt && (
+            <time className={styles.date} dateTime={article.createdAt}>
+              {formatDate(article.createdAt)}
+            </time>
+          )}
+          <h2 className={styles.title}>{article.title}</h2>
+          <p className={styles.summary}>{article.summary}</p>
+          <span className={styles.readMore}>Devamını Oku →</span>
+        </div>
+      </Link>
+    </article>
+  );
 }

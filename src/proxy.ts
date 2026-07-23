@@ -1,32 +1,17 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export function proxy(request: NextRequest) {
-    // Check for the auth token cookie
-    const authToken = request.cookies.get('auth_token')
+  // Bu yalnız erken yönlendirme optimizasyonudur; gerçek doğrulama admin
+  // layout'unda Firebase Admin ile yapılır.
+  const sessionCookie = request.cookies.get("admin_session");
+  if (!sessionCookie) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
-    // Check if the user is accessing the admin panel
-    const isAdminPage = request.nextUrl.pathname.startsWith('/admin')
-
-    // Check if the user is accessing the login page
-    const isLoginPage = request.nextUrl.pathname === '/login'
-
-    // If trying to access admin without a token, redirect to login
-    if (isAdminPage && !authToken) {
-        return NextResponse.redirect(new URL('/login', request.url))
-    }
-
-    // If trying to access login WITH a token, redirect to admin (optional but good for UX)
-    if (isLoginPage && authToken) {
-        return NextResponse.redirect(new URL('/admin/hizmetler', request.url))
-    }
-
-    return NextResponse.next()
+  return NextResponse.next();
 }
 
 export const config = {
-    matcher: [
-        '/admin/:path*',
-        '/login'
-    ],
-}
+  matcher: ["/admin/:path*"],
+};

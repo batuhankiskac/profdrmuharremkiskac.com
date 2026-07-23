@@ -1,0 +1,25 @@
+.container {
+  min-height: 55vh;
+  display: grid;
+  place-content: center;
+  gap: 1rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.message {
+  max-width: 38rem;
+  color: var(--color-text-light);
+}
+
+.retry {
+  justify-self: center;
+  padding: 0.85rem 1.5rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--color-surface);
+  background: var(--color-primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}

@@ -1,53 +1,50 @@
+"use client";
+
+import Image from "next/image";
 import { useState } from "react";
+import type { Video } from "@/types/content";
 import styles from "./VideoCard.module.css";
 
-interface VideoCardProps {
-    id: string;
-    title: string;
-    youtubeId: string;
-    image?: string;
-}
+export default function VideoCard({ video }: { video: Video }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const thumbnail =
+    video.imageUrl ??
+    `https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`;
 
-export default function VideoCard({
-    id,
-    title,
-    youtubeId,
-    image,
-}: VideoCardProps) {
-    const [isPlaying, setIsPlaying] = useState(false);
-
-    // If "image" prop is passed, use it, otherwise fallback to standard YouTube thumb
-    const thumbnail =
-        image || `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
-
-    const handlePlay = (e: React.MouseEvent) => {
-        e.preventDefault();
-        setIsPlaying(true);
-    };
-
-    return (
-        <div className={styles.card}>
-            {isPlaying ? (
-                <div className={styles.videoContainer}>
-                    <iframe
-                        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
-                        title={title}
-                        className={styles.iframe}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                    />
-                </div>
-            ) : (
-                <div className={styles.imageContainer} onClick={handlePlay}>
-                    <img src={thumbnail} alt={title} className={styles.image} />
-                    <div className={styles.playOverlay}>
-                        <div className={styles.playButton}>▶</div>
-                    </div>
-                </div>
-            )}
-            <div className={styles.content}>
-                <h3 className={styles.title}>{title}</h3>
-            </div>
+  return (
+    <article className={styles.card}>
+      {isPlaying ? (
+        <div className={styles.videoContainer}>
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&rel=0`}
+            title={video.title}
+            className={styles.iframe}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
         </div>
-    );
+      ) : (
+        <button
+          type="button"
+          className={styles.imageContainer}
+          onClick={() => setIsPlaying(true)}
+          aria-label={`${video.title} videosunu oynat`}
+        >
+          <Image
+            src={thumbnail}
+            alt=""
+            fill
+            className={styles.image}
+            sizes="(max-width: 700px) 100vw, 400px"
+          />
+          <span className={styles.playOverlay} aria-hidden="true">
+            <span className={styles.playButton}>▶</span>
+          </span>
+        </button>
+      )}
+      <div className={styles.content}>
+        <h2 className={styles.title}>{video.title}</h2>
+      </div>
+    </article>
+  );
 }

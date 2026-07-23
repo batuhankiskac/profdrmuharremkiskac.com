@@ -1,67 +1,27 @@
-"use client";
-
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase/config";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getAdminSession } from "@/lib/auth";
+import LoginForm from "./LoginForm";
 import styles from "./page.module.css";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const router = useRouter();
+export const dynamic = "force-dynamic";
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      // Get the ID token
-      const token = await userCredential.user.getIdToken();
+export const metadata: Metadata = {
+  title: "Admin Girişi",
+  robots: { index: false, follow: false },
+};
 
-      // Set the cookie
-      document.cookie = `auth_token=${token}; path=/; max-age=3600; SameSite=Strict; Secure`;
-
-      router.push("/admin/hizmetler");
-    } catch (err) {
-      setError("Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
-      console.error(err);
-    }
-  };
+export default async function LoginPage() {
+  if (await getAdminSession()) {
+    redirect("/admin/hizmetler");
+  }
 
   return (
-    <div className={styles.container}>
+    <main className={styles.container}>
       <div className={styles.card}>
         <h1 className={styles.title}>Admin Girişi</h1>
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.inputGroup}>
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className={styles.input}
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label htmlFor="password">Şifre</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className={styles.input}
-            />
-          </div>
-          {error && <p className={styles.error}>{error}</p>}
-          <button type="submit" className={styles.button}>
-            Giriş Yap
-          </button>
-        </form>
+        <LoginForm />
       </div>
-    </div>
+    </main>
   );
 }

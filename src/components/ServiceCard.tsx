@@ -1,22 +1,30 @@
+import Image from "next/image";
 import Link from "next/link";
+import type { Service } from "@/types/content";
 import styles from "./ServiceCard.module.css";
 
-export default function ServiceCard({ id, title, description, iconName, imageSrc }: { id: string, title: string, description: string, iconName?: string, imageSrc?: string }) {
+export default function ServiceCard({ service }: { service: Service }) {
+  const fallback = service.title.toLocaleLowerCase("tr-TR").includes("diyabet")
+    ? "/images/service-diabetes.webp"
+    : "/images/service-nutrition.webp";
+
   return (
-    <Link href={`/hizmetler/${id}`} className={styles.card} style={{ textDecoration: "none", color: "inherit" }}>
-      {imageSrc ? (
-        <div style={{ width: "100%", aspectRatio: "1 / 1", borderRadius: "var(--radius-sm)", overflow: "hidden", marginBottom: "1rem" }}>
-          {/* Using img for simplicity, in production next/image is better */}
-          <img src={imageSrc} alt={title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        </div>
-      ) : (
-        <div className={styles.icon}>
-          {/* Placeholder for icon */}
-          <span>+</span>
-        </div>
-      )}
-      <h3 className={styles.title}>{title}</h3>
-      <p className={styles.description}>{description.substring(0, 150)}...</p>
+    <Link
+      href={`/hizmetler/${service.id}`}
+      className={styles.card}
+      aria-label={`${service.title} hizmetini incele`}
+    >
+      <div className={styles.imageContainer}>
+        <Image
+          src={service.imageUrl ?? fallback}
+          alt=""
+          fill
+          className={styles.image}
+          sizes="(max-width: 700px) 100vw, 400px"
+        />
+      </div>
+      <h2 className={styles.title}>{service.title}</h2>
+      <p className={styles.description}>{service.description}</p>
     </Link>
   );
 }
