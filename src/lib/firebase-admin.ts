@@ -15,12 +15,18 @@ import { getStorage, type Storage } from "firebase-admin/storage";
 let warned = false;
 
 function readAdminConfig() {
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY_BASE64
+    ? Buffer.from(process.env.FIREBASE_PRIVATE_KEY_BASE64, "base64").toString(
+        "utf8",
+      )
+    : process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
+
   return {
     projectId:
       process.env.FIREBASE_PROJECT_ID ??
       process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    privateKey,
     storageBucket:
       process.env.FIREBASE_STORAGE_BUCKET ??
       process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
