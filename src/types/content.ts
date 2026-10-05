@@ -12,9 +12,10 @@ export interface Article extends ContentBase {
   citations: string[];
 }
 
+export type ArticleSummary = Omit<Article, "content" | "citations">;
+
 export interface Service extends ContentBase {
   description: string;
-  icon: string | null;
 }
 
 export interface Video extends ContentBase {

@@ -23,7 +23,7 @@ test("public içerik sayfaları yükleniyor metnine bağımlı değil", async ({
 }) => {
   for (const path of ["/makaleler", "/hizmetler", "/videolar"]) {
     await page.goto(path);
-    await expect(page.getByText("Yükleniyor...")).toHaveCount(0);
+    await expect(page.getByText("İçerik hazırlanıyor…")).toHaveCount(0);
     await expect(page.locator("main h1")).toBeVisible();
   }
 });
@@ -48,6 +48,22 @@ test("analiz tercihi saklanır", async ({ page }) => {
   await expect(banner).toHaveCount(0);
   await page.reload();
   await expect(banner).toHaveCount(0);
+  await page.getByRole("button", { name: "Çerez tercihleri" }).click();
+  await expect(banner).toBeVisible();
+});
+
+test("aktif sayfa bağlantısı işaretlenir", async ({ page, isMobile }) => {
+  await page.goto("/hizmetler");
+  if (isMobile) {
+    await page.getByRole("button", { name: "Menüyü aç" }).click();
+  }
+  const navigation = page.getByRole("navigation", { name: "Ana menü" });
+  await expect(
+    navigation.getByRole("link", { name: "Hizmetler", exact: true }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    navigation.getByRole("link", { name: "Ana Sayfa", exact: true }),
+  ).not.toHaveAttribute("aria-current", "page");
 });
 
 test("anonim admin isteği login sayfasına yönlenir", async ({ page }) => {

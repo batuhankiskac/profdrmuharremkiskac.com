@@ -18,16 +18,22 @@ export interface UploadedImage {
   imagePath: string;
 }
 
-export async function uploadImage(
-  file: File,
-  folder: "articles" | "services",
-): Promise<UploadedImage> {
+export function validateImageFile(file: File): string | null {
   if (!ALLOWED_TYPES.has(file.type)) {
-    throw new Error("Yalnız JPEG, PNG, WebP veya AVIF görseller yüklenebilir.");
+    return "Yalnız JPEG, PNG, WebP veya AVIF görseller yüklenebilir.";
   }
   if (file.size <= 0 || file.size > MAX_UPLOAD_BYTES) {
-    throw new Error("Görsel boyutu 5 MB veya daha küçük olmalıdır.");
+    return "Görsel boyutu 5 MB veya daha küçük olmalıdır.";
   }
+  return null;
+}
+
+export async function uploadImage(
+  file: File,
+  folder: string,
+): Promise<UploadedImage> {
+  const invalid = validateImageFile(file);
+  if (invalid) throw new Error(invalid);
 
   const storage = getAdminStorage();
   if (!storage) {

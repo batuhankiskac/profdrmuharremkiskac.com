@@ -1,12 +1,9 @@
 .card {
-  background: var(--color-surface);
+  composes: card from "../styles/card.module.css";
+  --card-radius: var(--radius-lg);
+  --card-lift: -8px;
   padding: 2.5rem;
-  /* More padding */
-  border-radius: var(--radius-lg);
-  /* Larger radius */
-  box-shadow: var(--shadow-sm);
-  transition: all 0.3s ease;
-  border: 1px solid rgba(0, 0, 0, 0.03);
+  border: 1px solid rgb(0 0 0 / 3%);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -15,40 +12,28 @@
 }
 
 .card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-lg);
-  border-color: rgba(74, 93, 78, 0.1);
+  border-color: rgb(var(--color-primary-rgb) / 10%);
 }
 
 .imageContainer {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1;
-  overflow: hidden;
+  composes: imageContainer from "../styles/card.module.css";
   border-radius: var(--radius-sm);
   background: var(--color-bg-alt);
 }
 
 .image {
-  object-fit: cover;
+  composes: image from "../styles/card.module.css";
 }
 
 .title {
+  composes: title from "../styles/card.module.css";
   font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  word-wrap: break-word;
-  /* Prevent long words from breaking layout */
 }
 
 .description {
+  composes: clamp from "../styles/card.module.css";
+  --lines: 4;
   color: var(--color-text-light);
   line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  /* Limit to 4 lines */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
   text-overflow: ellipsis;
-  word-wrap: break-word;
 }

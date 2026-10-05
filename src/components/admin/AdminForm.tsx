@@ -1,9 +1,13 @@
+import Image from "next/image";
+import type { FormState } from "@/app/admin/actions";
+import AdminActionForm from "./AdminActionForm";
 import styles from "./AdminForm.module.css";
-import SubmitButton from "./SubmitButton";
+
+export const IMAGE_ACCEPT = "image/jpeg,image/png,image/webp,image/avif";
 
 interface AdminFormProps {
   title: string;
-  action: (formData: FormData) => void | Promise<void>;
+  action: (state: FormState, formData: FormData) => Promise<FormState>;
   children: React.ReactNode;
   submitLabel: string;
 }
@@ -17,10 +21,9 @@ export function AdminForm({
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>{title}</h1>
-      <form action={action} className={styles.form}>
+      <AdminActionForm action={action} submitLabel={submitLabel}>
         {children}
-        <SubmitButton className={styles.button}>{submitLabel}</SubmitButton>
-      </form>
+      </AdminActionForm>
     </div>
   );
 }
@@ -44,6 +47,49 @@ export function AdminFormField({
       {hint && <p className={styles.hint}>{hint}</p>}
       {children}
     </div>
+  );
+}
+
+interface ImageFieldProps {
+  label: string;
+  currentImageUrl?: string | null;
+  currentImageAlt?: string;
+  isEdit: boolean;
+}
+
+export function AdminImageField({
+  label,
+  currentImageUrl,
+  currentImageAlt = "",
+  isEdit,
+}: ImageFieldProps) {
+  return (
+    <AdminFormField
+      label={label}
+      htmlFor="image"
+      hint={
+        isEdit
+          ? "Yeni dosya seçmezseniz mevcut görsel korunur."
+          : "JPEG, PNG, WebP veya AVIF; en fazla 5 MB. Görsel otomatik optimize edilir."
+      }
+    >
+      {currentImageUrl && (
+        <Image
+          src={currentImageUrl}
+          alt={currentImageAlt}
+          width={240}
+          height={160}
+          className={styles.preview}
+        />
+      )}
+      <input
+        type="file"
+        id="image"
+        name="image"
+        accept={IMAGE_ACCEPT}
+        className={styles.fileInput}
+      />
+    </AdminFormField>
   );
 }
 

@@ -1,55 +1,40 @@
 import type { MetadataRoute } from "next";
 import { getArticles, getServices } from "@/lib/content";
+import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 86_400;
 
-const baseUrl = "https://profdrmuharremkiskac.com";
+type ChangeFrequency = MetadataRoute.Sitemap[number]["changeFrequency"];
+
+const staticRoutes: [string, ChangeFrequency, number][] = [
+  ["", "weekly", 1],
+  ["/hakkinda", "monthly", 0.8],
+  ["/hizmetler", "weekly", 0.8],
+  ["/makaleler", "weekly", 0.8],
+  ["/videolar", "weekly", 0.7],
+  ["/iletisim", "yearly", 0.6],
+];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: baseUrl, changeFrequency: "weekly", priority: 1 },
-    {
-      url: `${baseUrl}/hakkinda`,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/hizmetler`,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/makaleler`,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/videolar`,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/iletisim`,
-      changeFrequency: "yearly",
-      priority: 0.6,
-    },
-  ];
-
   const [articles, services] = await Promise.all([
     getArticles(),
     getServices(),
   ]);
 
   return [
-    ...staticRoutes,
+    ...staticRoutes.map(([path, changeFrequency, priority]) => ({
+      url: `${SITE_URL}${path}`,
+      changeFrequency,
+      priority,
+    })),
     ...articles.map((article) => ({
-      url: `${baseUrl}/makaleler/${article.id}`,
+      url: `${SITE_URL}/makaleler/${article.id}`,
       lastModified: article.updatedAt ?? article.createdAt ?? undefined,
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
     ...services.map((service) => ({
-      url: `${baseUrl}/hizmetler/${service.id}`,
+      url: `${SITE_URL}/hizmetler/${service.id}`,
       lastModified: service.updatedAt ?? service.createdAt ?? undefined,
       changeFrequency: "monthly" as const,
       priority: 0.7,

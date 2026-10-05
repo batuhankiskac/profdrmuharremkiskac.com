@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { extractYoutubeId } from "@/lib/youtube";
+import {
+  extractYoutubeId,
+  videoThumbnail,
+  youtubeThumbnail,
+} from "@/lib/youtube";
 
 describe("extractYoutubeId", () => {
   it.each([
@@ -17,5 +21,32 @@ describe("extractYoutubeId", () => {
     "not-a-url",
   ])("%s adresini reddeder", (url) => {
     expect(extractYoutubeId(url)).toBeNull();
+  });
+});
+
+describe("videoThumbnail", () => {
+  const youtubeId = "dQw4w9WgXcQ";
+
+  it("görsel yoksa hqdefault kullanır", () => {
+    expect(videoThumbnail({ youtubeId, imageUrl: null })).toBe(
+      youtubeThumbnail(youtubeId),
+    );
+    expect(youtubeThumbnail(youtubeId)).toBe(
+      "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+    );
+  });
+
+  it("kayıtlı maxresdefault adresini yok sayar", () => {
+    expect(
+      videoThumbnail({
+        youtubeId,
+        imageUrl: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+      }),
+    ).toBe(youtubeThumbnail(youtubeId));
+  });
+
+  it("özel görsel adresini korur", () => {
+    const imageUrl = "https://firebasestorage.googleapis.com/v0/b/x/o/a.jpg";
+    expect(videoThumbnail({ youtubeId, imageUrl })).toBe(imageUrl);
   });
 });

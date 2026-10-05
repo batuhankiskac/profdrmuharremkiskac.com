@@ -16,11 +16,11 @@ export default function ContactActions({
         inverted ? styles.inverted : ""
       }`}
     >
-      <a className={styles.phoneText} href={`tel:+${contactData.whatsapp}`}>
+      <a className={styles.phoneText} href={`tel:${contactData.tel}`}>
         {contactData.phone}
       </a>
       <a
-        href={`tel:+${contactData.whatsapp}`}
+        href={`tel:${contactData.tel}`}
         aria-label="Telefonla ara"
         className={`${styles.iconButton} ${styles.call}`}
       >

@@ -3,7 +3,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 3rem;
-  background-color: rgba(253, 251, 247, 0.95);
+  background-color: rgb(var(--color-bg-rgb) / 95%);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-sm);
   position: sticky;
@@ -36,36 +36,32 @@
   color: var(--color-primary);
 }
 
-.ctaButton {
-  padding: 0.75rem 2rem;
-  background-color: var(--color-primary);
-  color: white;
-  border-radius: var(--radius-lg);
-  /* Rounded pills */
+.navLink[aria-current="page"] {
+  color: var(--color-primary);
   font-weight: 600;
-  transition: all 0.3s;
-  box-shadow: 0 4px 14px 0 rgba(74, 93, 78, 0.25);
+  text-decoration: underline;
+  text-decoration-color: var(--color-secondary);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.4em;
 }
 
-.ctaButton:hover {
-  background-color: #38463B;
-  transform: translateY(-1px);
+.ctaButton {
+  composes: button primary from "../styles/button.module.css";
+  --btn-shadow: 0 4px 14px 0 rgb(var(--color-primary-rgb) / 25%);
 }
 
 @media (max-width: 768px) {
   .header {
     backdrop-filter: none;
-    background-color: rgba(253, 251, 247, 1);
+    background-color: var(--color-bg);
   }
 
   .nav {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     height: 100vh;
-    background-color: #ffffff;
+    height: 100dvh;
+    background-color: var(--color-surface);
     z-index: 110;
     flex-direction: column;
     padding: 6rem 2rem 2rem 2rem;
@@ -99,7 +95,7 @@
     width: 24px;
     height: 2px;
     background-color: var(--color-primary);
-    transition: all 0.3s;
+    transition: transform 0.3s ease, opacity 0.3s ease;
   }
 
   /* Hamburger Animation when open */
@@ -113,6 +109,12 @@
 
   .hamburger.open span:nth-child(3) {
     transform: rotate(-45deg) translate(5px, -6px);
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 1rem 1.25rem;
   }
 }
 

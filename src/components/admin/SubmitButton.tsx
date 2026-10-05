@@ -7,6 +7,7 @@ interface SubmitButtonProps {
   pendingText?: string;
   className?: string;
   confirmMessage?: string;
+  pending?: boolean;
 }
 
 export default function SubmitButton({
@@ -14,8 +15,10 @@ export default function SubmitButton({
   pendingText = "Kaydediliyor...",
   className,
   confirmMessage,
+  pending: pendingOverride,
 }: SubmitButtonProps) {
-  const { pending } = useFormStatus();
+  const status = useFormStatus();
+  const pending = pendingOverride ?? status.pending;
 
   return (
     <button

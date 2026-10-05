@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  isAdminToken,
-  SESSION_COOKIE_NAME,
-  SESSION_MAX_AGE_SECONDS,
-} from "@/lib/auth";
+import { isAdminToken } from "@/lib/auth";
 import { getAdminAuth } from "@/lib/firebase-admin";
+import { SESSION_COOKIE_NAME, SESSION_MAX_AGE_SECONDS } from "@/lib/session";
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  path: "/",
+} as const;
 
 export async function POST(request: NextRequest) {
   const adminAuth = getAdminAuth();
@@ -26,17 +30,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Yetkisiz kullanıcı." }, { status: 403 });
     }
 
-    const expiresIn = SESSION_MAX_AGE_SECONDS * 1000;
     const sessionCookie = await adminAuth.createSessionCookie(body.idToken, {
-      expiresIn,
+      expiresIn: SESSION_MAX_AGE_SECONDS * 1000,
     });
     const response = NextResponse.json({ ok: true });
     response.cookies.set(SESSION_COOKIE_NAME, sessionCookie, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      ...cookieOptions,
       maxAge: SESSION_MAX_AGE_SECONDS,
-      path: "/",
     });
     return response;
   } catch {
@@ -49,12 +49,6 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE() {
   const response = NextResponse.json({ ok: true });
-  response.cookies.set(SESSION_COOKIE_NAME, "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 0,
-    path: "/",
-  });
+  response.cookies.set(SESSION_COOKIE_NAME, "", { ...cookieOptions, maxAge: 0 });
   return response;
 }

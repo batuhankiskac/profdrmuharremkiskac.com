@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { excerpt } from "@/lib/text";
 import type { Service } from "@/types/content";
 import styles from "./ServiceCard.module.css";
 
@@ -24,7 +25,7 @@ export default function ServiceCard({ service }: { service: Service }) {
         />
       </div>
       <h2 className={styles.title}>{service.title}</h2>
-      <p className={styles.description}>{service.description}</p>
+      <p className={styles.description}>{excerpt(service.description)}</p>
     </Link>
   );
 }

@@ -2,14 +2,13 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { videoThumbnail } from "@/lib/youtube";
 import type { Video } from "@/types/content";
 import styles from "./VideoCard.module.css";
 
 export default function VideoCard({ video }: { video: Video }) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const thumbnail =
-    video.imageUrl ??
-    `https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`;
+  const thumbnail = videoThumbnail(video);
 
   return (
     <article className={styles.card}>

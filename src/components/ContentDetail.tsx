@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { formatDate } from "@/lib/format";
 import styles from "./ContentDetail.module.css";
 
 interface ContentDetailProps {
@@ -15,14 +16,11 @@ interface ContentDetailProps {
   citations?: string[];
 }
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("tr-TR", { dateStyle: "long" }).format(
-    new Date(value),
-  );
-}
+// URL sonundaki noktalama işaretleri bağlantıya dahil edilmez.
+const URL_PATTERN = /(https?:\/\/[^\s]*[^\s.,;:!?)\]}'"])/g;
 
 function citationParts(value: string) {
-  return value.split(/(https?:\/\/[^\s]+)/g).filter(Boolean);
+  return value.split(URL_PATTERN).filter(Boolean);
 }
 
 export default function ContentDetail({
@@ -46,7 +44,7 @@ export default function ContentDetail({
             src={imageUrl}
             alt={imageAlt}
             fill
-            priority
+            preload
             sizes="(max-width: 850px) 100vw, 800px"
             className={styles.image}
           />

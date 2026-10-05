@@ -1,29 +1,65 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { OPEN_CONSENT_EVENT } from "@/lib/consent";
 import styles from "./AnalyticsConsent.module.css";
 
 type ConsentState = "accepted" | "rejected" | null;
 
 const STORAGE_KEY = "analytics-consent";
 
+// localStorage erişilemediğinde (ör. Safari gizli mod) tercih bellekte tutulur.
+let memoryConsent: ConsentState = null;
+const listeners = new Set<() => void>();
+
+function readConsent(): ConsentState {
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    if (saved === "accepted" || saved === "rejected") return saved;
+  } catch {}
+  return memoryConsent;
+}
+
+function writeConsent(value: Exclude<ConsentState, null>) {
+  memoryConsent = value;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, value);
+  } catch {}
+  listeners.forEach((listener) => listener());
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    listeners.delete(listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+
 export default function AnalyticsConsent() {
-  const [consent, setConsent] = useState<ConsentState>(null);
-  const [ready, setReady] = useState(false);
+  const consent = useSyncExternalStore<ConsentState | "unknown">(
+    subscribe,
+    readConsent,
+    () => "unknown",
+  );
+  const [showPreferences, setShowPreferences] = useState(false);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      const saved = window.localStorage.getItem(STORAGE_KEY);
-      setConsent(saved === "accepted" || saved === "rejected" ? saved : null);
-      setReady(true);
-    }, 0);
-    return () => window.clearTimeout(timer);
+    const open = () => setShowPreferences(true);
+    window.addEventListener(OPEN_CONSENT_EVENT, open);
+    return () => window.removeEventListener(OPEN_CONSENT_EVENT, open);
   }, []);
 
   const choose = (value: Exclude<ConsentState, null>) => {
-    window.localStorage.setItem(STORAGE_KEY, value);
-    setConsent(value);
+    const previous = consent;
+    writeConsent(value);
+    setShowPreferences(false);
+    // Yüklenmiş GTM'i durdurmanın tek yolu sayfayı yenilemektir.
+    if (previous === "accepted" && value === "rejected") {
+      window.location.reload();
+    }
   };
 
   return (
@@ -42,7 +78,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         />
       )}
 
-      {ready && consent === null && (
+      {consent !== "unknown" && (consent === null || showPreferences) && (
         <aside
           className={styles.banner}
           aria-label="Çerez ve analiz tercihi"

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit, Playfair_Display } from "next/font/google";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -15,7 +16,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://profdrmuharremkiskac.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Prof. Dr. Muharrem Kıskaç | İç Hastalıkları Uzmanı",
     template: "%s | Prof. Dr. Muharrem Kıskaç",

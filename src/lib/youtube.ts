@@ -14,3 +14,25 @@ export function extractYoutubeId(input: string): string | null {
     return null;
   }
 }
+
+export function youtubeThumbnail(youtubeId: string): string {
+  return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+}
+
+// Kayıtlı YouTube görselleri (ör. maxresdefault.jpg) birçok videoda 404
+// döndüğü için YouTube adresleri her zaman id'den türetilir.
+export function videoThumbnail(video: {
+  youtubeId: string;
+  imageUrl: string | null;
+}): string {
+  if (!video.imageUrl) return youtubeThumbnail(video.youtubeId);
+  try {
+    const host = new URL(video.imageUrl).hostname;
+    if (host === "img.youtube.com" || host === "i.ytimg.com") {
+      return youtubeThumbnail(video.youtubeId);
+    }
+  } catch {
+    return youtubeThumbnail(video.youtubeId);
+  }
+  return video.imageUrl;
+}

@@ -1,6 +1,14 @@
 {
   "address": "Zuhuratbaba, Haksever Sk. Paşa iş merkezi No:2 Daire:14, 34147 Bakırköy/İstanbul",
+  "addressParts": {
+    "streetAddress": "Zuhuratbaba, Haksever Sk. Paşa İş Merkezi No:2 Daire:14",
+    "addressLocality": "Bakırköy",
+    "addressRegion": "İstanbul",
+    "postalCode": "34147",
+    "addressCountry": "TR"
+  },
   "phone": "0 532 219 33 64",
+  "tel": "+905322193364",
   "whatsapp": "905322193364",
   "email": "iletisim@profdrmuharremkiskac.com",
   "social": {

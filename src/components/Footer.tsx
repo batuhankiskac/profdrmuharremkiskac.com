@@ -1,7 +1,14 @@
 import Link from "next/link";
+import ConsentPreferencesButton from "./ConsentPreferencesButton";
 import ContactActions from "./ContactActions";
 import contactData from "@/data/contact.json";
+import { contactLink, navigationLinks } from "@/data/navigation";
 import styles from "./Footer.module.css";
+
+const footerLinks = [
+  ...navigationLinks.filter((link) => link.href !== "/"),
+  contactLink,
+];
 
 export default function Footer() {
   return (
@@ -17,11 +24,12 @@ export default function Footer() {
         <div className={styles.column}>
           <h2>Hızlı Bağlantılar</h2>
           <nav className={styles.links} aria-label="Alt menü">
-            <Link href="/hakkinda">Hakkımda</Link>
-            <Link href="/hizmetler">Hizmetlerimiz</Link>
-            <Link href="/makaleler">Makaleler</Link>
-            <Link href="/videolar">Videolar</Link>
-            <Link href="/iletisim">İletişim</Link>
+            {footerLinks.map((link) => (
+              <Link key={link.href} href={link.href}>
+                {link.label}
+              </Link>
+            ))}
+            <ConsentPreferencesButton />
           </nav>
         </div>
         <div className={styles.column}>

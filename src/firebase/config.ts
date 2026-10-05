@@ -24,4 +24,3 @@ const app: FirebaseApp | null = isConfigured
   : null;
 
 export const auth: Auth | null = app ? getAuth(app) : null;
-export { app, isConfigured as isFirebaseClientConfigured };

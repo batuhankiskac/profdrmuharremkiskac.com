@@ -3,7 +3,12 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import type { DocumentData } from "firebase-admin/firestore";
 import { getAdminDb } from "./firebase-admin";
-import type { Article, Service, Video } from "@/types/content";
+import type {
+  Article,
+  ArticleSummary,
+  Service,
+  Video,
+} from "@/types/content";
 
 function text(value: unknown): string {
   return typeof value === "string" ? value : "";
@@ -35,18 +40,24 @@ function imageUrl(data: DocumentData): string | null {
   return optionalText(data.imageUrl) ?? optionalText(data.image);
 }
 
-function toArticle(id: string, data: DocumentData): Article {
+function toArticleSummary(id: string, data: DocumentData): ArticleSummary {
   return {
     id,
     title: text(data.title),
     summary: text(data.summary),
+    imageUrl: imageUrl(data),
+    createdAt: isoDate(data.createdAt),
+    updatedAt: isoDate(data.updatedAt),
+  };
+}
+
+function toArticle(id: string, data: DocumentData): Article {
+  return {
+    ...toArticleSummary(id, data),
     content: text(data.content),
     citations: Array.isArray(data.citations)
       ? data.citations.filter((item): item is string => typeof item === "string")
       : [],
-    imageUrl: imageUrl(data),
-    createdAt: isoDate(data.createdAt),
-    updatedAt: isoDate(data.updatedAt),
   };
 }
 
@@ -55,7 +66,6 @@ function toService(id: string, data: DocumentData): Service {
     id,
     title: text(data.title),
     description: text(data.description),
-    icon: optionalText(data.icon),
     imageUrl: imageUrl(data),
     createdAt: isoDate(data.createdAt),
     updatedAt: isoDate(data.updatedAt),
@@ -74,27 +84,38 @@ function toVideo(id: string, data: DocumentData): Video {
 }
 
 function newestFirst<T extends { createdAt: string | null }>(items: T[]): T[] {
-  return items.sort(
-    (a, b) =>
-      new Date(b.createdAt ?? 0).getTime() -
-      new Date(a.createdAt ?? 0).getTime(),
+  return items.sort((a, b) =>
+    (b.createdAt ?? "").localeCompare(a.createdAt ?? ""),
   );
 }
 
 async function readCollection<T>(
   collectionName: string,
   normalize: (id: string, data: DocumentData) => T,
+  fields?: string[],
 ): Promise<T[]> {
   const db = getAdminDb();
   if (!db) return [];
-  const snapshot = await db.collection(collectionName).get();
+  const collection = db.collection(collectionName);
+  const query = fields ? collection.select(...fields) : collection;
+  const snapshot = await query.get();
   return snapshot.docs.map((document) =>
     normalize(document.id, document.data()),
   );
 }
 
 export const getArticles = unstable_cache(
-  async () => newestFirst(await readCollection("articles", toArticle)),
+  async () =>
+    newestFirst(
+      await readCollection("articles", toArticleSummary, [
+        "title",
+        "summary",
+        "imageUrl",
+        "image",
+        "createdAt",
+        "updatedAt",
+      ]),
+    ),
   ["articles"],
   { revalidate: 3600, tags: ["articles"] },
 );
@@ -111,8 +132,8 @@ export const getVideos = unstable_cache(
   { revalidate: 3600, tags: ["videos"] },
 );
 
-export async function getArticle(id: string): Promise<Article | null> {
-  return unstable_cache(
+const getArticleById = (id: string) =>
+  unstable_cache(
     async () => {
       const db = getAdminDb();
       if (!db) return null;
@@ -120,19 +141,18 @@ export async function getArticle(id: string): Promise<Article | null> {
       return document.exists ? toArticle(document.id, document.data()!) : null;
     },
     ["article", id],
-    { revalidate: 3600, tags: ["articles", `article:${id}`] },
+    { revalidate: 3600, tags: ["articles"] },
   )();
+
+// Yalnız listede bulunan id'ler sorgulanır; rastgele id'ler önbellek kaydı
+// oluşturmaz ve "/" içeren id'ler doc() çağrısına ulaşmaz.
+export async function getArticle(id: string): Promise<Article | null> {
+  const articles = await getArticles();
+  if (!articles.some((article) => article.id === id)) return null;
+  return getArticleById(id);
 }
 
 export async function getService(id: string): Promise<Service | null> {
-  return unstable_cache(
-    async () => {
-      const db = getAdminDb();
-      if (!db) return null;
-      const document = await db.collection("services").doc(id).get();
-      return document.exists ? toService(document.id, document.data()!) : null;
-    },
-    ["service", id],
-    { revalidate: 3600, tags: ["services", `service:${id}`] },
-  )();
+  const services = await getServices();
+  return services.find((service) => service.id === id) ?? null;
 }

@@ -12,7 +12,6 @@
 }
 
 .title {
-  color: var(--color-primary);
   font-size: clamp(1.75rem, 4vw, 2.5rem);
 }
 
@@ -32,7 +31,7 @@
 
 .addButton {
   background: var(--color-primary);
-  color: white;
+  color: var(--color-surface);
 }
 
 .list {

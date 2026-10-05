@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AnalyticsConsent from "@/components/AnalyticsConsent";
 import contactData from "@/data/contact.json";
+import { SITE_URL } from "@/lib/site";
 
 // Hostinger CDN (hcdn) `Vary: rsc` başlığını yok sayıyor; statik sayfaların
 // RSC yükü (text/x-component) normal ziyaretçilere HTML yerine sunulabiliyor.
@@ -13,17 +14,12 @@ const physicianSchema = {
   "@context": "https://schema.org",
   "@type": ["Physician", "MedicalBusiness"],
   name: "Prof. Dr. Muharrem Kıskaç",
-  url: "https://profdrmuharremkiskac.com",
-  image: "https://profdrmuharremkiskac.com/images/profile.jpg",
-  telephone: contactData.phone,
+  url: SITE_URL,
+  image: `${SITE_URL}/images/profile.jpg`,
+  telephone: contactData.tel,
   address: {
     "@type": "PostalAddress",
-    streetAddress:
-      "Zuhuratbaba, Haksever Sk. Paşa İş Merkezi No:2 Daire:14",
-    addressLocality: "Bakırköy",
-    addressRegion: "İstanbul",
-    postalCode: "34147",
-    addressCountry: "TR",
+    ...contactData.addressParts,
   },
   medicalSpecialty: ["InternalMedicine", "Endocrine"],
   sameAs: [contactData.social.instagram, contactData.social.youtube],

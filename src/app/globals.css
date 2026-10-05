@@ -6,6 +6,13 @@
   --color-bg-alt: #F1EFE9; /* Muted stone beige */
   --color-text: #2A312B; /* Deep Forest Green/Black */
   --color-text-light: #5C635E;
+  --color-primary-dark: #38463B;
+  --color-danger: #b42318;
+  --color-border: rgb(0 0 0 / 10%);
+  --color-primary-rgb: 74 93 78;
+  --color-bg-rgb: 253 251 247;
+  --color-primary-border: rgb(var(--color-primary-rgb) / 20%);
+  --shadow-button: 0 4px 14px 0 rgb(0 0 0 / 25%);
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -22,14 +29,13 @@
   margin: 0;
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+html {
   scroll-behavior: smooth;
 }
 
 body {
+  max-width: 100%;
+  overflow-x: clip;
   color: var(--color-text);
   background: var(--color-bg);
   font-family: var(--font-outfit), sans-serif;
@@ -40,6 +46,13 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
 }
 
 h1, h2, h3, h4, h5, h6 {

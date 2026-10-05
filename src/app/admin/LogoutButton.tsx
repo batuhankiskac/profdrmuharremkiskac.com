@@ -10,9 +10,16 @@ export default function LogoutButton() {
 
   const logout = async () => {
     setSubmitting(true);
-    await fetch("/api/session", { method: "DELETE" });
-    router.replace("/login");
-    router.refresh();
+    try {
+      const response = await fetch("/api/session", { method: "DELETE" });
+      if (!response.ok) return;
+      router.replace("/login");
+      router.refresh();
+    } catch {
+      // Ağ hatasında kullanıcı tekrar deneyebilir.
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (

@@ -13,13 +13,9 @@
 }
 
 .retry {
+  composes: button primary from "../../styles/button.module.css";
+  --btn-py: 0.85rem;
+  --btn-px: 1.5rem;
+  --btn-radius: var(--radius-md);
   justify-self: center;
-  padding: 0.85rem 1.5rem;
-  border: 0;
-  border-radius: var(--radius-md);
-  color: var(--color-surface);
-  background: var(--color-primary);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
 }

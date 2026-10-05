@@ -1,15 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { contactLink, isActivePath, navigationLinks } from "@/data/navigation";
 import styles from "./Header.module.css";
 
 export default function Header() {
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuPathname, setMenuPathname] = useState(pathname);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
+  // Sayfa değiştiğinde menü kapanır (render sırasında durum ayarlama).
+  if (menuPathname !== pathname) {
+    setMenuPathname(pathname);
+    setIsMenuOpen(false);
+  }
+
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen((open) => !open);
   };
 
   const closeMenu = () => {
@@ -42,7 +52,8 @@ export default function Header() {
 
       <button
         ref={buttonRef}
-        className={`${styles.hamburger} ${isMenuOpen ? styles.open : ''}`}
+        type="button"
+        className={`${styles.hamburger} ${isMenuOpen ? styles.open : ""}`}
         onClick={toggleMenu}
         aria-label={isMenuOpen ? "Menüyü kapat" : "Menüyü aç"}
         aria-expanded={isMenuOpen}
@@ -56,15 +67,30 @@ export default function Header() {
       <nav
         id="primary-navigation"
         aria-label="Ana menü"
-        className={`${styles.nav} ${isMenuOpen ? styles.open : ''}`}
+        className={`${styles.nav} ${isMenuOpen ? styles.open : ""}`}
       >
-        <Link href="/" className={styles.navLink} onClick={closeMenu}>Ana Sayfa</Link>
-        <Link href="/hakkinda" className={styles.navLink} onClick={closeMenu}>Hakkında</Link>
-        <Link href="/hizmetler" className={styles.navLink} onClick={closeMenu}>Hizmetler</Link>
-        <Link href="/makaleler" className={styles.navLink} onClick={closeMenu}>Makaleler</Link>
-        <Link href="/videolar" className={styles.navLink} onClick={closeMenu}>Videolar</Link>
+        {navigationLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={styles.navLink}
+            aria-current={isActivePath(pathname, link.href) ? "page" : undefined}
+            onClick={closeMenu}
+          >
+            {link.label}
+          </Link>
+        ))}
 
-        <Link href="/iletisim" className={styles.ctaButton} onClick={closeMenu}>Randevu Al</Link>
+        <Link
+          href={contactLink.href}
+          className={styles.ctaButton}
+          aria-current={
+            isActivePath(pathname, contactLink.href) ? "page" : undefined
+          }
+          onClick={closeMenu}
+        >
+          Randevu Al
+        </Link>
       </nav>
     </header>
   );

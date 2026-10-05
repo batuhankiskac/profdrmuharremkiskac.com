@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ContentDetail from "@/components/ContentDetail";
 import { getService } from "@/lib/content";
+import { excerpt } from "@/lib/text";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -12,7 +13,7 @@ export async function generateMetadata({
   const service = await getService(id);
   if (!service) return {};
 
-  const description = service.description.replace(/[#*_`]/g, "").slice(0, 160);
+  const description = excerpt(service.description);
   return {
     title: service.title,
     description,

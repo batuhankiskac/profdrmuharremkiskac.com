@@ -5,20 +5,51 @@ import { redirect } from "next/navigation";
 import { updateTag } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { getAdminDb } from "@/lib/firebase-admin";
-import { deleteImage, uploadImage } from "@/lib/uploads";
+import {
+  deleteImage,
+  uploadImage,
+  validateImageFile,
+  type UploadedImage,
+} from "@/lib/uploads";
 import { extractYoutubeId } from "@/lib/youtube";
+
+export type FormState = { error?: string };
+
+type Collection = "services" | "articles" | "videos";
+
+// Kullanıcıya gösterilmesi güvenli hata mesajları.
+class FormError extends Error {}
+
+const FIELD_LABELS: Record<string, string> = {
+  title: "Başlık",
+  description: "Açıklama",
+  summary: "Özet",
+  content: "İçerik",
+  url: "YouTube URL'si",
+};
+
+const NOT_FOUND: Record<Collection, string> = {
+  services: "Hizmet bulunamadı.",
+  articles: "Makale bulunamadı.",
+  videos: "Video bulunamadı.",
+};
 
 function requiredText(formData: FormData, name: string, maxLength: number): string {
   const value = formData.get(name);
   if (typeof value !== "string" || !value.trim()) {
-    throw new Error(`${name} alanı zorunludur.`);
+    throw new FormError(`${FIELD_LABELS[name] ?? name} alanı zorunludur.`);
   }
   return value.trim().slice(0, maxLength);
 }
 
-function optionalText(formData: FormData, name: string, maxLength: number): string {
+function optionalLines(formData: FormData, name: string, maxLength: number): string[] {
   const value = formData.get(name);
-  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+  if (typeof value !== "string") return [];
+  return value
+    .slice(0, maxLength)
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
 }
 
 function selectedFile(formData: FormData): File | null {
@@ -28,7 +59,7 @@ function selectedFile(formData: FormData): File | null {
 
 function database() {
   const db = getAdminDb();
-  if (!db) throw new Error("Firebase Admin veritabanı yapılandırması eksik.");
+  if (!db) throw new FormError("Firebase Admin veritabanı yapılandırması eksik.");
   return db;
 }
 
@@ -44,146 +75,138 @@ function currentImage(data: DocumentData) {
   };
 }
 
-function refreshContent(tag: "articles" | "services" | "videos") {
-  updateTag(tag);
+function errorState(error: unknown): FormState {
+  if (error instanceof FormError) return { error: error.message };
+  console.error("Admin işlemi başarısız:", error);
+  return { error: "İşlem tamamlanamadı. Lütfen tekrar deneyin." };
 }
 
-export async function createService(formData: FormData) {
-  await requireAdmin();
-  const db = database();
-  const image = selectedFile(formData);
-  const uploaded = image ? await uploadImage(image, "services") : null;
+const serviceFields = (formData: FormData) => ({
+  title: requiredText(formData, "title", 160),
+  description: requiredText(formData, "description", 20_000),
+});
 
-  await db.collection("services").add({
-    title: requiredText(formData, "title", 160),
-    description: requiredText(formData, "description", 20_000),
-    imageUrl: uploaded?.imageUrl ?? null,
-    imagePath: uploaded?.imagePath ?? null,
-    createdAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp(),
-  });
-  refreshContent("services");
-  redirect("/admin/hizmetler");
+const articleFields = (formData: FormData) => ({
+  title: requiredText(formData, "title", 200),
+  summary: requiredText(formData, "summary", 600),
+  content: requiredText(formData, "content", 100_000),
+  citations: optionalLines(formData, "citations", 20_000),
+});
+
+const videoFields = (formData: FormData) => {
+  const title = requiredText(formData, "title", 200);
+  const youtubeId = extractYoutubeId(requiredText(formData, "url", 500));
+  if (!youtubeId) throw new FormError("Geçerli bir YouTube URL'si girin.");
+  return { title, youtubeId };
+};
+
+async function saveContent(
+  collection: Collection,
+  id: string | null,
+  formData: FormData,
+  readFields: (formData: FormData) => DocumentData,
+  redirectTo: string,
+): Promise<FormState> {
+  try {
+    // Tüm alanlar, görsel yüklenmeden önce doğrulanır.
+    const fields = readFields(formData);
+    const image = selectedFile(formData);
+    const invalidImage = image && validateImageFile(image);
+    if (invalidImage) throw new FormError(invalidImage);
+
+    const db = database();
+    const reference = id
+      ? db.collection(collection).doc(id)
+      : db.collection(collection).doc();
+    let previous: ReturnType<typeof currentImage> | null = null;
+    if (id) {
+      const snapshot = await reference.get();
+      if (!snapshot.exists) throw new FormError(NOT_FOUND[collection]);
+      previous = currentImage(snapshot.data()!);
+    }
+
+    const uploaded: UploadedImage | null = image
+      ? await uploadImage(image, collection)
+      : null;
+    try {
+      if (previous) {
+        await reference.update({
+          ...fields,
+          imageUrl: uploaded?.imageUrl ?? previous.imageUrl,
+          imagePath: uploaded?.imagePath ?? previous.imagePath,
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+      } else {
+        await reference.set({
+          ...fields,
+          imageUrl: uploaded?.imageUrl ?? null,
+          imagePath: uploaded?.imagePath ?? null,
+          createdAt: FieldValue.serverTimestamp(),
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (error) {
+      if (uploaded) await deleteImage(uploaded.imageUrl, uploaded.imagePath);
+      throw error;
+    }
+    if (uploaded && previous) {
+      await deleteImage(previous.imageUrl, previous.imagePath);
+    }
+  } catch (error) {
+    return errorState(error);
+  }
+
+  updateTag(collection);
+  redirect(redirectTo);
 }
 
-export async function updateService(id: string, formData: FormData) {
-  await requireAdmin();
-  const db = database();
-  const reference = db.collection("services").doc(id);
+async function deleteContent(collection: Collection, id: string) {
+  const reference = database().collection(collection).doc(id);
   const snapshot = await reference.get();
-  if (!snapshot.exists) throw new Error("Hizmet bulunamadı.");
+  if (snapshot.exists) {
+    const previous = currentImage(snapshot.data()!);
+    await reference.delete();
+    await deleteImage(previous.imageUrl, previous.imagePath);
+  }
+  updateTag(collection);
+}
 
-  const previous = currentImage(snapshot.data()!);
-  const image = selectedFile(formData);
-  const uploaded = image ? await uploadImage(image, "services") : null;
-  await reference.update({
-    title: requiredText(formData, "title", 160),
-    description: requiredText(formData, "description", 20_000),
-    imageUrl: uploaded?.imageUrl ?? previous.imageUrl,
-    imagePath: uploaded?.imagePath ?? previous.imagePath,
-    updatedAt: FieldValue.serverTimestamp(),
-  });
-  if (uploaded) await deleteImage(previous.imageUrl, previous.imagePath);
-  refreshContent("services");
-  redirect("/admin/hizmetler");
+export async function createService(_state: FormState, formData: FormData) {
+  await requireAdmin();
+  return saveContent("services", null, formData, serviceFields, "/admin/hizmetler");
+}
+
+export async function updateService(id: string, _state: FormState, formData: FormData) {
+  await requireAdmin();
+  return saveContent("services", id, formData, serviceFields, "/admin/hizmetler");
 }
 
 export async function deleteService(id: string) {
   await requireAdmin();
-  const db = database();
-  const reference = db.collection("services").doc(id);
-  const snapshot = await reference.get();
-  if (snapshot.exists) {
-    const previous = currentImage(snapshot.data()!);
-    await reference.delete();
-    await deleteImage(previous.imageUrl, previous.imagePath);
-  }
-  refreshContent("services");
+  await deleteContent("services", id);
 }
 
-export async function createArticle(formData: FormData) {
+export async function createArticle(_state: FormState, formData: FormData) {
   await requireAdmin();
-  const db = database();
-  const image = selectedFile(formData);
-  const uploaded = image ? await uploadImage(image, "articles") : null;
-
-  await db.collection("articles").add({
-    title: requiredText(formData, "title", 200),
-    summary: requiredText(formData, "summary", 600),
-    content: requiredText(formData, "content", 100_000),
-    citations: optionalText(formData, "citations", 20_000)
-      .split("\n")
-      .map((citation) => citation.trim())
-      .filter(Boolean),
-    imageUrl: uploaded?.imageUrl ?? null,
-    imagePath: uploaded?.imagePath ?? null,
-    createdAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp(),
-  });
-  refreshContent("articles");
-  redirect("/admin/makaleler");
+  return saveContent("articles", null, formData, articleFields, "/admin/makaleler");
 }
 
-export async function updateArticle(id: string, formData: FormData) {
+export async function updateArticle(id: string, _state: FormState, formData: FormData) {
   await requireAdmin();
-  const db = database();
-  const reference = db.collection("articles").doc(id);
-  const snapshot = await reference.get();
-  if (!snapshot.exists) throw new Error("Makale bulunamadı.");
-
-  const previous = currentImage(snapshot.data()!);
-  const image = selectedFile(formData);
-  const uploaded = image ? await uploadImage(image, "articles") : null;
-  await reference.update({
-    title: requiredText(formData, "title", 200),
-    summary: requiredText(formData, "summary", 600),
-    content: requiredText(formData, "content", 100_000),
-    citations: optionalText(formData, "citations", 20_000)
-      .split("\n")
-      .map((citation) => citation.trim())
-      .filter(Boolean),
-    imageUrl: uploaded?.imageUrl ?? previous.imageUrl,
-    imagePath: uploaded?.imagePath ?? previous.imagePath,
-    updatedAt: FieldValue.serverTimestamp(),
-  });
-  if (uploaded) await deleteImage(previous.imageUrl, previous.imagePath);
-  refreshContent("articles");
-  redirect("/admin/makaleler");
+  return saveContent("articles", id, formData, articleFields, "/admin/makaleler");
 }
 
 export async function deleteArticle(id: string) {
   await requireAdmin();
-  const db = database();
-  const reference = db.collection("articles").doc(id);
-  const snapshot = await reference.get();
-  if (snapshot.exists) {
-    const previous = currentImage(snapshot.data()!);
-    await reference.delete();
-    await deleteImage(previous.imageUrl, previous.imagePath);
-  }
-  refreshContent("articles");
+  await deleteContent("articles", id);
 }
 
-export async function createVideo(formData: FormData) {
+export async function createVideo(_state: FormState, formData: FormData) {
   await requireAdmin();
-  const db = database();
-  const url = requiredText(formData, "url", 500);
-  const youtubeId = extractYoutubeId(url);
-  if (!youtubeId) throw new Error("Geçerli bir YouTube URL'si girin.");
-
-  await db.collection("videos").add({
-    title: requiredText(formData, "title", 200),
-    youtubeId,
-    imageUrl: `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`,
-    createdAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp(),
-  });
-  refreshContent("videos");
-  redirect("/admin/videolar");
+  return saveContent("videos", null, formData, videoFields, "/admin/videolar");
 }
 
 export async function deleteVideo(id: string) {
   await requireAdmin();
-  await database().collection("videos").doc(id).delete();
-  refreshContent("videos");
+  await deleteContent("videos", id);
 }

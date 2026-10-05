@@ -4,8 +4,10 @@
   bottom: 1rem;
   z-index: 300;
   width: min(420px, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
   padding: 1.25rem;
-  border: 1px solid rgb(74 93 78 / 20%);
+  border: 1px solid var(--color-primary-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
   box-shadow: var(--shadow-lg);
@@ -26,21 +28,28 @@
 .primary,
 .secondary {
   min-height: 44px;
-  padding: 0.65rem 1rem;
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
+  --btn-py: 0.65rem;
+  --btn-px: 1rem;
+  --btn-radius: var(--radius-sm);
 }
 
 .primary {
-  border: 1px solid var(--color-primary);
-  color: white;
-  background: var(--color-primary);
+  composes: button primary from "../styles/button.module.css";
 }
 
 .secondary {
-  border: 1px solid var(--color-primary);
+  composes: button from "../styles/button.module.css";
+  border-color: var(--color-primary);
   color: var(--color-primary);
   background: transparent;
+}
+
+.secondary:hover {
+  background: rgb(var(--color-primary-rgb) / 8%);
+}
+
+.primary:focus-visible,
+.secondary:focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 2px;
 }

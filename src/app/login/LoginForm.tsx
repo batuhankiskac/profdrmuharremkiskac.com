@@ -1,10 +1,38 @@
 "use client";
 
+import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { auth } from "@/firebase/config";
 import styles from "./page.module.css";
+
+function authErrorMessage(error: unknown): string {
+  const code = error instanceof FirebaseError ? error.code : "";
+  switch (code) {
+    case "auth/invalid-credential":
+    case "auth/wrong-password":
+    case "auth/user-not-found":
+    case "auth/invalid-email":
+      return "E-posta veya şifre hatalı.";
+    case "auth/too-many-requests":
+      return "Çok fazla başarısız deneme yapıldı. Lütfen biraz sonra tekrar deneyin.";
+    case "auth/network-request-failed":
+      return "Bağlantı hatası. İnternet bağlantınızı kontrol edip tekrar deneyin.";
+    default:
+      return "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.";
+  }
+}
+
+async function sessionError(response: Response): Promise<string> {
+  try {
+    const result = (await response.json()) as { error?: unknown };
+    if (typeof result.error === "string" && result.error) return result.error;
+  } catch {
+    // JSON olmayan yanıtlar için genel mesaj gösterilir.
+  }
+  return "Oturum oluşturulamadı. Lütfen tekrar deneyin.";
+}
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -31,22 +59,18 @@ export default function LoginForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),
       });
-      await signOut(auth);
 
       if (!response.ok) {
-        const result = (await response.json()) as { error?: string };
-        throw new Error(result.error ?? "Giriş başarısız.");
+        setError(await sessionError(response));
+        return;
       }
 
       router.replace("/admin/hizmetler");
       router.refresh();
     } catch (loginError) {
-      setError(
-        loginError instanceof Error
-          ? loginError.message
-          : "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.",
-      );
+      setError(authErrorMessage(loginError));
     } finally {
+      await signOut(auth).catch(() => undefined);
       setSubmitting(false);
     }
   };

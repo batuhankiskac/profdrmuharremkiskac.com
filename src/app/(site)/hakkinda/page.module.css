@@ -1,14 +1,13 @@
 .container {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 0 2rem;
+  composes: container from "../../../styles/page.module.css";
+  --page-max: 800px;
 }
 
 .title {
-  font-size: 2.5rem;
+  composes: heading from "../../../styles/page.module.css";
+  --heading-size: 2.5rem;
+  --heading-align: left;
   font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 2rem;
   border-bottom: 3px solid var(--color-secondary);
   display: inline-block;
   padding-bottom: 0.5rem;
@@ -38,14 +37,9 @@
 }
 
 @media (max-width: 768px) {
-  .container {
-    margin: 2rem auto;
-    padding: 0 1.5rem;
-  }
-
   .title {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
+    --heading-size: 2rem;
+    --heading-mb: 1.5rem;
   }
 
   .imageContainer {

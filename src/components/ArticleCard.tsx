@@ -1,17 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Article } from "@/types/content";
+import { formatDate } from "@/lib/format";
+import type { ArticleSummary } from "@/types/content";
 import styles from "./ArticleCard.module.css";
 
-function formatDate(value: string | null) {
-  return value
-    ? new Intl.DateTimeFormat("tr-TR", { dateStyle: "long" }).format(
-        new Date(value),
-      )
-    : "";
-}
-
-export default function ArticleCard({ article }: { article: Article }) {
+export default function ArticleCard({ article }: { article: ArticleSummary }) {
   return (
     <article className={styles.card}>
       <Link

@@ -16,7 +16,7 @@ export default async function VideosAdminPage() {
         title: video.title,
         imageUrl:
           video.imageUrl ??
-          `https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`,
+          `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`,
       }))}
     />
   );

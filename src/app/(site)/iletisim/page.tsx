@@ -17,7 +17,9 @@ export default function ContactPage() {
         <div className={styles.map}>
           <iframe
             title="Prof. Dr. Muharrem Kıskaç muayenehanesi konumu"
-            src="https://www.google.com/maps?q=Zuhuratbaba,%20Haksever%20Sk.%20Pa%C5%9Fa%20i%C5%9F%20merkezi%20No:2%20Daire:14,%20Bak%C4%B1rk%C3%B6y/%C4%B0stanbul&output=embed"
+            src={`https://www.google.com/maps?q=${encodeURIComponent(
+              contactData.address,
+            )}&output=embed`}
             width="100%"
             height="100%"
             allowFullScreen

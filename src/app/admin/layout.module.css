@@ -14,6 +14,7 @@
   position: sticky;
   top: 0;
   height: 100vh;
+  overflow-y: auto;
 }
 
 .logo {
@@ -80,6 +81,33 @@
 .signOutButton:disabled {
   cursor: wait;
   opacity: 0.65;
+}
+
+.errorBox {
+  width: min(640px, 100%);
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.errorBox p {
+  margin: 1rem 0 1.5rem;
+  color: var(--color-text-light);
+}
+
+.retryButton {
+  min-height: 44px;
+  padding: 0.7rem 1.25rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .main {

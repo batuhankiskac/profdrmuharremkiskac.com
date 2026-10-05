@@ -1,12 +1,8 @@
 .container {
-  max-width: 1200px;
-  margin: 4rem auto;
-  padding: 0 2rem;
+  composes: container from "../../../styles/page.module.css";
+  --page-max: 1200px;
 }
 
 .heading {
-  margin-bottom: 2rem;
-  color: var(--color-primary);
-  font-size: 2rem;
-  text-align: center;
+  composes: heading from "../../../styles/page.module.css";
 }

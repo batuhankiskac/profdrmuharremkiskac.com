@@ -1,7 +1,6 @@
 .container {
-  max-width: 1200px;
-  margin: 4rem auto;
-  padding: 0 2rem;
+  composes: container from "../../../styles/page.module.css";
+  --page-max: 1200px;
 }
 
 .header {
@@ -10,9 +9,9 @@
 }
 
 .title {
-  font-size: 2.5rem;
-  color: var(--color-primary);
-  margin-bottom: 1rem;
+  composes: heading from "../../../styles/page.module.css";
+  --heading-size: 2.5rem;
+  --heading-mb: 1rem;
 }
 
 .subtitle {

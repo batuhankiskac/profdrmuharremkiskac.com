@@ -4,9 +4,7 @@ import type { DecodedIdToken } from "firebase-admin/auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAdminAuth } from "./firebase-admin";
-
-export const SESSION_COOKIE_NAME = "admin_session";
-export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 5;
+import { SESSION_COOKIE_NAME } from "./session";
 
 export function isAdminToken(token: DecodedIdToken): boolean {
   return token.admin === true;
