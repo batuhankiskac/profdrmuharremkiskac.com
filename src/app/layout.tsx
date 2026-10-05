@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit, Playfair_Display } from "next/font/google";
+import { SITE_NAME } from "@/lib/metadata";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -15,32 +16,24 @@ const outfit = Outfit({
   display: "swap",
 });
 
+// Yalnız tüm sayfalar için geçerli varsayılanlar; sayfaya özel başlık, url ve
+// canonical her sayfada pageMetadata() ile tanımlanır.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: "Prof. Dr. Muharrem Kıskaç | İç Hastalıkları Uzmanı",
-    template: "%s | Prof. Dr. Muharrem Kıskaç",
+    template: `%s | ${SITE_NAME}`,
   },
   description:
     "Prof. Dr. Muharrem Kıskaç resmi web sitesi. İç hastalıkları, diyabet ve fonksiyonel tıp uzmanı.",
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     type: "website",
     locale: "tr_TR",
-    siteName: "Prof. Dr. Muharrem Kıskaç",
-    title: "Prof. Dr. Muharrem Kıskaç | İç Hastalıkları Uzmanı",
-    description:
-      "İç hastalıkları, diyabet ve fonksiyonel tıp alanında bilimsel ve bütüncül yaklaşım.",
-    url: "/",
+    siteName: SITE_NAME,
     images: [{ url: "/og.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Prof. Dr. Muharrem Kıskaç | İç Hastalıkları Uzmanı",
-    description:
-      "İç hastalıkları, diyabet ve fonksiyonel tıp alanında bilimsel ve bütüncül yaklaşım.",
     images: ["/og.png"],
   },
   robots: {

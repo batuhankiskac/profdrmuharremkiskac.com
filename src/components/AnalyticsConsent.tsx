@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { OPEN_CONSENT_EVENT } from "@/lib/consent";
 import styles from "./AnalyticsConsent.module.css";
 
@@ -45,17 +45,52 @@ export default function AnalyticsConsent() {
     () => "unknown",
   );
   const [showPreferences, setShowPreferences] = useState(false);
+  const firstButtonRef = useRef<HTMLButtonElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const open = () => setShowPreferences(true);
+    const open = () => {
+      // Tercih seçildikten sonra odak, paneli açan öğeye geri döner.
+      returnFocusRef.current =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
+      setShowPreferences(true);
+      // Panel zaten görünürse odak hemen taşınır.
+      firstButtonRef.current?.focus();
+    };
     window.addEventListener(OPEN_CONSENT_EVENT, open);
     return () => window.removeEventListener(OPEN_CONSENT_EVENT, open);
+  }, []);
+
+  // "Çerez tercihleri" ile açılan panelde odak ilk butona taşınır.
+  useEffect(() => {
+    if (showPreferences) firstButtonRef.current?.focus();
+  }, [showPreferences]);
+
+  // Başka sekmede onay geri çekilirse yüklenmiş GTM'i durdurmak için yenilenir.
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (
+        event.key === STORAGE_KEY &&
+        event.oldValue === "accepted" &&
+        event.newValue === "rejected"
+      ) {
+        window.location.reload();
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const choose = (value: Exclude<ConsentState, null>) => {
     const previous = consent;
     writeConsent(value);
     setShowPreferences(false);
+    if (returnFocusRef.current?.isConnected) {
+      returnFocusRef.current.focus();
+    }
+    returnFocusRef.current = null;
     // Yüklenmiş GTM'i durdurmanın tek yolu sayfayı yenilemektir.
     if (previous === "accepted" && value === "rejected") {
       window.location.reload();
@@ -82,14 +117,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <aside
           className={styles.banner}
           aria-label="Çerez ve analiz tercihi"
-          aria-live="polite"
+          aria-describedby="analytics-consent-description"
         >
-          <p>
+          <p id="analytics-consent-description">
             Site deneyimini ve reklam dönüşümlerini ölçmek için isteğe bağlı
             analiz çerezleri kullanıyoruz.
           </p>
           <div className={styles.actions}>
             <button
+              ref={firstButtonRef}
               type="button"
               className={styles.secondary}
               onClick={() => choose("rejected")}

@@ -5,52 +5,25 @@ import { redirect } from "next/navigation";
 import { updateTag } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { getAdminDb } from "@/lib/firebase-admin";
+import { deleteImage, uploadImage, type UploadedImage } from "@/lib/uploads";
 import {
-  deleteImage,
-  uploadImage,
+  assertDocumentId,
+  FormError,
+  optionalLines,
+  requiredText,
   validateImageFile,
-  type UploadedImage,
-} from "@/lib/uploads";
+} from "@/lib/validation";
 import { extractYoutubeId } from "@/lib/youtube";
 
 export type FormState = { error?: string };
 
 type Collection = "services" | "articles" | "videos";
 
-// Kullanıcıya gösterilmesi güvenli hata mesajları.
-class FormError extends Error {}
-
-const FIELD_LABELS: Record<string, string> = {
-  title: "Başlık",
-  description: "Açıklama",
-  summary: "Özet",
-  content: "İçerik",
-  url: "YouTube URL'si",
-};
-
 const NOT_FOUND: Record<Collection, string> = {
   services: "Hizmet bulunamadı.",
   articles: "Makale bulunamadı.",
   videos: "Video bulunamadı.",
 };
-
-function requiredText(formData: FormData, name: string, maxLength: number): string {
-  const value = formData.get(name);
-  if (typeof value !== "string" || !value.trim()) {
-    throw new FormError(`${FIELD_LABELS[name] ?? name} alanı zorunludur.`);
-  }
-  return value.trim().slice(0, maxLength);
-}
-
-function optionalLines(formData: FormData, name: string, maxLength: number): string[] {
-  const value = formData.get(name);
-  if (typeof value !== "string") return [];
-  return value
-    .slice(0, maxLength)
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-}
 
 function selectedFile(formData: FormData): File | null {
   const value = formData.get("image");
@@ -114,30 +87,33 @@ async function saveContent(
     const invalidImage = image && validateImageFile(image);
     if (invalidImage) throw new FormError(invalidImage);
 
+    const docId = id === null ? null : assertDocumentId(id);
     const db = database();
-    const reference = id
-      ? db.collection(collection).doc(id)
-      : db.collection(collection).doc();
-    let previous: ReturnType<typeof currentImage> | null = null;
-    if (id) {
-      const snapshot = await reference.get();
-      if (!snapshot.exists) throw new FormError(NOT_FOUND[collection]);
-      previous = currentImage(snapshot.data()!);
-    }
+    const collectionRef = db.collection(collection);
 
     const uploaded: UploadedImage | null = image
       ? await uploadImage(image, collection)
       : null;
+    let replaced: ReturnType<typeof currentImage> | null = null;
     try {
-      if (previous) {
-        await reference.update({
-          ...fields,
-          imageUrl: uploaded?.imageUrl ?? previous.imageUrl,
-          imagePath: uploaded?.imagePath ?? previous.imagePath,
-          updatedAt: FieldValue.serverTimestamp(),
+      if (docId) {
+        const reference = collectionRef.doc(docId);
+        // Okuma ve güncelleme tek işlemde yapılır; eşzamanlı düzenlemelerde
+        // gerçekten değiştirilen önceki görsel silinir.
+        replaced = await db.runTransaction(async (transaction) => {
+          const snapshot = await transaction.get(reference);
+          if (!snapshot.exists) throw new FormError(NOT_FOUND[collection]);
+          const previous = currentImage(snapshot.data()!);
+          transaction.update(reference, {
+            ...fields,
+            imageUrl: uploaded?.imageUrl ?? previous.imageUrl,
+            imagePath: uploaded?.imagePath ?? previous.imagePath,
+            updatedAt: FieldValue.serverTimestamp(),
+          });
+          return previous;
         });
       } else {
-        await reference.set({
+        await collectionRef.doc().set({
           ...fields,
           imageUrl: uploaded?.imageUrl ?? null,
           imagePath: uploaded?.imagePath ?? null,
@@ -149,8 +125,8 @@ async function saveContent(
       if (uploaded) await deleteImage(uploaded.imageUrl, uploaded.imagePath);
       throw error;
     }
-    if (uploaded && previous) {
-      await deleteImage(previous.imageUrl, previous.imagePath);
+    if (uploaded && replaced) {
+      await deleteImage(replaced.imageUrl, replaced.imagePath);
     }
   } catch (error) {
     return errorState(error);
@@ -161,13 +137,16 @@ async function saveContent(
 }
 
 async function deleteContent(collection: Collection, id: string) {
-  const reference = database().collection(collection).doc(id);
-  const snapshot = await reference.get();
-  if (snapshot.exists) {
-    const previous = currentImage(snapshot.data()!);
-    await reference.delete();
-    await deleteImage(previous.imageUrl, previous.imagePath);
-  }
+  const docId = assertDocumentId(id);
+  const db = database();
+  const reference = db.collection(collection).doc(docId);
+  const previous = await db.runTransaction(async (transaction) => {
+    const snapshot = await transaction.get(reference);
+    if (!snapshot.exists) return null;
+    transaction.delete(reference);
+    return currentImage(snapshot.data()!);
+  });
+  if (previous) await deleteImage(previous.imageUrl, previous.imagePath);
   updateTag(collection);
 }
 

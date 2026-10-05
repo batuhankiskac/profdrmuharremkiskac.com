@@ -93,3 +93,22 @@
   margin: 0;
   line-height: 1.4;
 }
+
+/* .card clips overflow, so the play button's outset ring would be hidden;
+   draw the focus ring on the card itself instead. */
+@supports selector(:has(*)) {
+  .card:has(.imageContainer:focus-visible) {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 3px;
+  }
+
+  .imageContainer:focus-visible {
+    outline: none;
+  }
+}
+
+@supports not selector(:has(*)) {
+  .imageContainer:focus-visible {
+    outline-offset: -3px;
+  }
+}

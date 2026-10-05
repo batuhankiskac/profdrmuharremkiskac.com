@@ -21,7 +21,9 @@ const physicianSchema = {
     "@type": "PostalAddress",
     ...contactData.addressParts,
   },
-  medicalSpecialty: ["InternalMedicine", "Endocrine"],
+  // Yalnız schema.org MedicalSpecialty listesindeki değerler geçerlidir;
+  // "InternalMedicine" bu listede yok.
+  medicalSpecialty: ["Endocrine", "PrimaryCare"],
   sameAs: [contactData.social.instagram, contactData.social.youtube],
 };
 

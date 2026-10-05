@@ -1,6 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/metadata";
 import styles from "./page.module.css";
+
+export const metadata = pageMetadata({
+  title: "Prof. Dr. Muharrem Kıskaç | İç Hastalıkları Uzmanı",
+  description:
+    "İç hastalıkları, diyabet ve fonksiyonel tıp alanında bilimsel ve bütüncül yaklaşım.",
+  path: "/",
+});
 
 export default function Home() {
   return (

@@ -1,20 +1,27 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { videoThumbnail } from "@/lib/youtube";
 import type { Video } from "@/types/content";
 import styles from "./VideoCard.module.css";
 
 export default function VideoCard({ video }: { video: Video }) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const thumbnail = videoThumbnail(video);
+
+  // Oynat butonu kaldırıldığında klavye odağı kaybolmasın diye iframe'e taşınır.
+  useEffect(() => {
+    if (isPlaying) iframeRef.current?.focus();
+  }, [isPlaying]);
 
   return (
     <article className={styles.card}>
       {isPlaying ? (
         <div className={styles.videoContainer}>
           <iframe
+            ref={iframeRef}
             src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&rel=0`}
             title={video.title}
             className={styles.iframe}

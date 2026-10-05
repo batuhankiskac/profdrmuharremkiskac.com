@@ -21,6 +21,38 @@ describe("stripMarkdown", () => {
       "Kapak görseli metin",
     );
   });
+
+  it.each([
+    ["snake_case_word değişkeni", "snake_case_word değişkeni"],
+    ["dosya_adi_v2.pdf indir", "dosya_adi_v2.pdf indir"],
+    ["https://example.com/yol_adi_v2 adresi", "https://example.com/yol_adi_v2 adresi"],
+    ["2*3*4 = 24", "2*3*4 = 24"],
+    ["şeker_oranı_yüksek ölçüm", "şeker_oranı_yüksek ölçüm"],
+  ])("kelime içindeki _ ve * işaretlerini korur: %s", (input, expected) => {
+    expect(stripMarkdown(input)).toBe(expected);
+  });
+
+  it("Türkçe karakterli vurguları kaldırır", () => {
+    expect(stripMarkdown("**Çağrı** ve _ılık_ içecekler, __Şükrü__ *öğün*")).toBe(
+      "Çağrı ve ılık içecekler, Şükrü öğün",
+    );
+  });
+
+  it("vurgu içindeki kelime içi alt çizgiyi korur", () => {
+    expect(stripMarkdown("_snake_case_ örneği")).toBe("snake_case örneği");
+  });
+
+  it("otomatik bağlantıları adres olarak korur", () => {
+    expect(stripMarkdown("Kaynak: <https://example.com/a_b> sayfası")).toBe(
+      "Kaynak: https://example.com/a_b sayfası",
+    );
+  });
+
+  it("yalnızca gerçek HTML etiketlerini kaldırır", () => {
+    expect(stripMarkdown("5 < 7 ve > 3 iken <strong>önemli</strong><br/>son")).toBe(
+      "5 < 7 ve > 3 iken önemli son",
+    );
+  });
 });
 
 describe("excerpt", () => {

@@ -10,6 +10,14 @@ const footerLinks = [
   contactLink,
 ];
 
+// Yıl, sunucunun saat diliminden bağımsız olarak İstanbul'a göre hesaplanır.
+function currentYear() {
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    timeZone: "Europe/Istanbul",
+  }).format(new Date());
+}
+
 export default function Footer() {
   return (
     <footer className={styles.footer}>
@@ -56,7 +64,7 @@ export default function Footer() {
         </div>
       </div>
       <div className={styles.copyright}>
-        © {new Date().getFullYear()} Prof. Dr. Muharrem Kıskaç. Tüm hakları
+        © {currentYear()} Prof. Dr. Muharrem Kıskaç. Tüm hakları
         saklıdır.
       </div>
     </footer>

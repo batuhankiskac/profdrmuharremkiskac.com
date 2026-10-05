@@ -1,13 +1,14 @@
 import Image from "next/image";
-import type { Metadata } from "next";
 import bioData from "@/data/bio.json";
+import { pageMetadata } from "@/lib/metadata";
+import { excerpt } from "@/lib/text";
 import styles from "./page.module.css";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Hakkında",
-  description: bioData.short_bio,
-  alternates: { canonical: "/hakkinda" },
-};
+  description: excerpt(bioData.short_bio),
+  path: "/hakkinda",
+});
 
 export default function AboutPage() {
   return (

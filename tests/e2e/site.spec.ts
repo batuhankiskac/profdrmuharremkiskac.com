@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 test("ana sayfa ve temel navigasyon erişilebilir", async ({
   page,
@@ -112,7 +112,24 @@ const adminCredentialsAvailable = Boolean(
   process.env.E2E_ADMIN_EMAIL && process.env.E2E_ADMIN_PASSWORD,
 );
 
-test("admin login, hizmet CRUD ve logout akışı", async ({ page }) => {
+// Test yarıda kalsa bile oluşturulan geçici hizmetler arayüzden silinir.
+async function deleteServicesMatching(page: Page, title: string) {
+  await page.goto("/admin/hizmetler");
+  if (!/\/admin\/hizmetler$/.test(page.url())) return;
+  const items = page.getByRole("article").filter({ hasText: title });
+  for (let attempt = 0; attempt < 5 && (await items.count()) > 0; attempt++) {
+    const remaining = await items.count();
+    page.once("dialog", (dialog) => dialog.accept());
+    await items.first().getByRole("button", { name: "Sil" }).click();
+    await expect(items).toHaveCount(remaining - 1);
+  }
+}
+
+test("admin login, hizmet CRUD ve logout akışı", async ({ page }, testInfo) => {
+  test.skip(
+    testInfo.project.name !== "desktop",
+    "Paylaşılan veriyi değiştirdiği için yalnız desktop projesinde çalışır.",
+  );
   test.skip(
     !adminCredentialsAvailable,
     "Firebase admin E2E bilgileri tanımlı değil.",
@@ -127,28 +144,37 @@ test("admin login, hizmet CRUD ve logout akışı", async ({ page }) => {
   await page.getByRole("button", { name: "Giriş Yap" }).click();
   await expect(page).toHaveURL(/\/admin\/hizmetler$/);
 
-  await page.getByRole("link", { name: "Yeni Hizmet Ekle" }).click();
-  await page.getByLabel("Başlık").fill(uniqueTitle);
-  await page
-    .getByLabel("Açıklama (Markdown)")
-    .fill("Playwright tarafından oluşturulan geçici hizmet.");
-  await page.getByRole("button", { name: "Kaydet" }).click();
-  await expect(page.getByRole("heading", { name: uniqueTitle })).toBeVisible();
+  try {
+    await page.getByRole("link", { name: "Yeni Hizmet Ekle" }).click();
+    await page.getByLabel("Başlık").fill(uniqueTitle);
+    await page
+      .getByLabel("Açıklama (Markdown)")
+      .fill("Playwright tarafından oluşturulan geçici hizmet.");
+    await page.getByRole("button", { name: "Kaydet" }).click();
+    await expect(page.getByRole("heading", { name: uniqueTitle })).toBeVisible();
 
-  const createdItem = page.getByRole("article").filter({ hasText: uniqueTitle });
-  await createdItem.getByRole("link", { name: "Düzenle" }).click();
-  await page.getByLabel("Başlık").fill(updatedTitle);
-  await page.getByRole("button", { name: "Güncelle" }).click();
-  await expect(page.getByRole("heading", { name: updatedTitle })).toBeVisible();
+    const createdItem = page
+      .getByRole("article")
+      .filter({ hasText: uniqueTitle });
+    await createdItem.getByRole("link", { name: "Düzenle" }).click();
+    await page.getByLabel("Başlık").fill(updatedTitle);
+    await page.getByRole("button", { name: "Güncelle" }).click();
+    await expect(
+      page.getByRole("heading", { name: updatedTitle }),
+    ).toBeVisible();
 
-  const updatedItem = page
-    .getByRole("article")
-    .filter({ hasText: updatedTitle });
-  page.once("dialog", (dialog) => dialog.accept());
-  await updatedItem.getByRole("button", { name: "Sil" }).click();
-  await expect(
-    page.getByRole("heading", { name: updatedTitle }),
-  ).toHaveCount(0);
+    const updatedItem = page
+      .getByRole("article")
+      .filter({ hasText: updatedTitle });
+    page.once("dialog", (dialog) => dialog.accept());
+    await updatedItem.getByRole("button", { name: "Sil" }).click();
+    await expect(
+      page.getByRole("heading", { name: updatedTitle }),
+    ).toHaveCount(0);
+  } finally {
+    // Güncellenmiş başlık da benzersiz öneki içerir.
+    await deleteServicesMatching(page, uniqueTitle);
+  }
 
   await page.getByRole("button", { name: "Çıkış Yap" }).click();
   await expect(page).toHaveURL(/\/login$/);

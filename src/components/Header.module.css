@@ -50,7 +50,7 @@
   --btn-shadow: 0 4px 14px 0 rgb(var(--color-primary-rgb) / 25%);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .header {
     backdrop-filter: none;
     background-color: var(--color-bg);
@@ -118,7 +118,7 @@
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1025px) {
   .hamburger {
     display: none;
   }

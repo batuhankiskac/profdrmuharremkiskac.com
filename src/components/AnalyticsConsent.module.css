@@ -2,7 +2,7 @@
   position: fixed;
   right: 1rem;
   bottom: 1rem;
-  z-index: 300;
+  z-index: 90; /* below the header stack (100) so the open mobile menu covers it */
   width: min(420px, calc(100vw - 2rem));
   max-height: calc(100dvh - 2rem);
   overflow-y: auto;
@@ -39,7 +39,7 @@
 
 .secondary {
   composes: button from "../styles/button.module.css";
-  border-color: var(--color-primary);
+  --btn-border-color: var(--color-primary);
   color: var(--color-primary);
   background: transparent;
 }

@@ -11,15 +11,12 @@ import {
 import { getAuth, type Auth } from "firebase-admin/auth";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
 import { getStorage, type Storage } from "firebase-admin/storage";
+import { parsePrivateKey } from "./validation";
 
 let warned = false;
 
 function readAdminConfig() {
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY_BASE64
-    ? Buffer.from(process.env.FIREBASE_PRIVATE_KEY_BASE64, "base64").toString(
-        "utf8",
-      )
-    : process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
+  const privateKey = parsePrivateKey(process.env);
 
   return {
     projectId:

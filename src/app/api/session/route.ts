@@ -10,6 +10,9 @@ const cookieOptions = {
   path: "/",
 } as const;
 
+// Firebase önerisi: yalnız son 5 dakikada giriş yapılmışsa oturum oluşturulur.
+const MAX_AUTH_AGE_SECONDS = 5 * 60;
+
 export async function POST(request: NextRequest) {
   const adminAuth = getAdminAuth();
   if (!adminAuth) {
@@ -29,6 +32,12 @@ export async function POST(request: NextRequest) {
     if (!isAdminToken(decoded)) {
       return NextResponse.json({ error: "Yetkisiz kullanıcı." }, { status: 403 });
     }
+    if (Date.now() / 1000 - decoded.auth_time > MAX_AUTH_AGE_SECONDS) {
+      return NextResponse.json(
+        { error: "Lütfen yeniden giriş yapın." },
+        { status: 401 },
+      );
+    }
 
     const sessionCookie = await adminAuth.createSessionCookie(body.idToken, {
       expiresIn: SESSION_MAX_AGE_SECONDS * 1000,
@@ -47,7 +56,19 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
+  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+  const adminAuth = sessionCookie ? getAdminAuth() : null;
+  if (sessionCookie && adminAuth) {
+    try {
+      // Çıkışta tüm yenileme token'ları iptal edilir; çalınan cookie geçersizleşir.
+      const decoded = await adminAuth.verifySessionCookie(sessionCookie);
+      await adminAuth.revokeRefreshTokens(decoded.sub);
+    } catch {
+      // Geçersiz/eskimiş cookie olsa da cookie temizlenir.
+    }
+  }
+
   const response = NextResponse.json({ ok: true });
   response.cookies.set(SESSION_COOKIE_NAME, "", { ...cookieOptions, maxAge: 0 });
   return response;

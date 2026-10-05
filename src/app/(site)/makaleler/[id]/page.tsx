@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ContentDetail from "@/components/ContentDetail";
 import { getArticle } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -10,24 +11,21 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const article = await getArticle(id);
-  if (!article) return {};
+  if (!article) notFound();
 
-  return {
+  return pageMetadata({
     title: article.title,
     description: article.summary,
-    alternates: { canonical: `/makaleler/${id}` },
-    openGraph: {
-      type: "article",
-      title: article.title,
-      description: article.summary,
-      url: `/makaleler/${id}`,
-      publishedTime: article.createdAt ?? undefined,
-      modifiedTime: article.updatedAt ?? undefined,
-      images: article.imageUrl ? [{ url: article.imageUrl }] : undefined,
-    },
-  };
+    path: `/makaleler/${id}`,
+    image: article.imageUrl,
+    type: "article",
+    publishedTime: article.createdAt,
+    modifiedTime: article.updatedAt,
+  });
 }
 
+// Bu rotayı saran bir loading.tsx/Suspense yoktur; notFound() yanıt akışı
+// başlamadan çalışır ve gerçek 404 durum kodu döner.
 export default async function ArticleDetailPage({ params }: PageProps) {
   const { id } = await params;
   const article = await getArticle(id);

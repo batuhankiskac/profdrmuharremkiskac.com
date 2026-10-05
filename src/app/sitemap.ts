@@ -2,7 +2,10 @@ import type { MetadataRoute } from "next";
 import { getArticles, getServices } from "@/lib/content";
 import { SITE_URL } from "@/lib/site";
 
-export const revalidate = 86_400;
+// Build anında prerender edilmez: build ortamında Firebase bilgileri yoksa
+// site haritası makale ve hizmetler olmadan donmasın. Veri unstable_cache
+// (300 sn) üzerinden geldiği için istek başına Firestore okuması yapılmaz.
+export const dynamic = "force-dynamic";
 
 type ChangeFrequency = MetadataRoute.Sitemap[number]["changeFrequency"];
 

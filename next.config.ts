@@ -25,9 +25,9 @@ const securityHeaders = [
         process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
       } https://www.googletagmanager.com`,
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://img.youtube.com https://i.ytimg.com https://www.google.com https://www.google.com.tr https://www.googleadservices.com https://googleads.g.doubleclick.net",
+      "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://img.youtube.com https://i.ytimg.com https://www.google.com https://www.google.com.tr https://www.googleadservices.com https://googleads.g.doubleclick.net https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.google.com https://*.google.com.tr https://*.googleapis.com https://*.doubleclick.net https://*.googleadservices.com",
+      "connect-src 'self' https://*.google.com https://*.google.com.tr https://*.googleapis.com https://*.doubleclick.net https://*.googleadservices.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
       "frame-src https://www.google.com https://www.youtube-nocookie.com",
       "upgrade-insecure-requests",
     ].join("; "),
@@ -37,6 +37,10 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   experimental: {
     inlineCss: true,
+    serverActions: {
+      // Görseller 5 MB'a kadar yüklenebilir; multipart ek yükü için pay bırakılır.
+      bodySizeLimit: "6mb",
+    },
   },
   images: {
     formats: ["image/avif", "image/webp"],

@@ -4,28 +4,56 @@ import { randomUUID } from "node:crypto";
 import path from "node:path";
 import sharp from "sharp";
 import { getAdminStorage } from "./firebase-admin";
+import {
+  FormError,
+  IMAGE_TYPE_MESSAGE,
+  parseDownloadUrl,
+  validateImageFile,
+} from "./validation";
 
-const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
-const ALLOWED_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/avif",
-]);
+const MAX_INPUT_PIXELS = 40_000_000;
+// AVIF dosyaları sharp tarafından "heif" olarak raporlanır.
+const ALLOWED_FORMATS = new Set(["jpeg", "png", "webp", "heif"]);
+const UNREADABLE_IMAGE_MESSAGE =
+  "Görsel okunamadı. Lütfen farklı bir dosya deneyin.";
 
 export interface UploadedImage {
   imageUrl: string;
   imagePath: string;
 }
 
-export function validateImageFile(file: File): string | null {
-  if (!ALLOWED_TYPES.has(file.type)) {
-    return "Yalnız JPEG, PNG, WebP veya AVIF görseller yüklenebilir.";
+export { validateImageFile };
+
+async function processImage(source: Buffer): Promise<Buffer> {
+  const image = sharp(source, { limitInputPixels: MAX_INPUT_PIXELS });
+  const metadata = await image.metadata().catch(() => {
+    throw new FormError(UNREADABLE_IMAGE_MESSAGE);
+  });
+  if (!metadata.format || !ALLOWED_FORMATS.has(metadata.format)) {
+    throw new FormError(IMAGE_TYPE_MESSAGE);
   }
-  if (file.size <= 0 || file.size > MAX_UPLOAD_BYTES) {
-    return "Görsel boyutu 5 MB veya daha küçük olmalıdır.";
+  if (
+    metadata.width &&
+    metadata.height &&
+    metadata.width * metadata.height > MAX_INPUT_PIXELS
+  ) {
+    throw new FormError("Görsel çözünürlüğü çok yüksek.");
   }
-  return null;
+
+  try {
+    return await image
+      .rotate()
+      .resize({
+        width: 1600,
+        height: 1600,
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .webp({ quality: 80 })
+      .toBuffer();
+  } catch {
+    throw new FormError(UNREADABLE_IMAGE_MESSAGE);
+  }
 }
 
 export async function uploadImage(
@@ -33,7 +61,7 @@ export async function uploadImage(
   folder: string,
 ): Promise<UploadedImage> {
   const invalid = validateImageFile(file);
-  if (invalid) throw new Error(invalid);
+  if (invalid) throw new FormError(invalid);
 
   const storage = getAdminStorage();
   if (!storage) {
@@ -41,16 +69,7 @@ export async function uploadImage(
   }
 
   const source = Buffer.from(await file.arrayBuffer());
-  const processed = await sharp(source)
-    .rotate()
-    .resize({
-      width: 1600,
-      height: 1600,
-      fit: "inside",
-      withoutEnlargement: true,
-    })
-    .webp({ quality: 80 })
-    .toBuffer();
+  const processed = await processImage(source);
 
   const safeBaseName =
     path
@@ -78,31 +97,24 @@ export async function uploadImage(
   return { imageUrl, imagePath };
 }
 
-function pathFromDownloadUrl(imageUrl: string): string | null {
-  try {
-    const url = new URL(imageUrl);
-    if (url.hostname === "firebasestorage.googleapis.com") {
-      const match = url.pathname.match(/\/o\/(.+)$/);
-      return match ? decodeURIComponent(match[1]) : null;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
 export async function deleteImage(
   imageUrl: string | null,
   imagePath?: string | null,
 ): Promise<void> {
-  const targetPath = imagePath || (imageUrl ? pathFromDownloadUrl(imageUrl) : null);
-  if (!targetPath) return;
-
   const storage = getAdminStorage();
   if (!storage) return;
+  const bucket = storage.bucket();
+
+  let targetPath = imagePath || null;
+  if (!targetPath && imageUrl) {
+    // Yalnız projenin kendi bucket'ındaki dosyalar silinir.
+    const ref = parseDownloadUrl(imageUrl);
+    if (ref && ref.bucket === bucket.name) targetPath = ref.path;
+  }
+  if (!targetPath) return;
 
   try {
-    await storage.bucket().file(targetPath).delete({ ignoreNotFound: true });
+    await bucket.file(targetPath).delete({ ignoreNotFound: true });
   } catch (error) {
     console.error("Eski görsel silinemedi:", error);
   }

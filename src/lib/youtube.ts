@@ -1,13 +1,15 @@
 export function extractYoutubeId(input: string): string | null {
   try {
     const url = new URL(input);
-    const host = url.hostname.replace(/^www\./, "");
+    const host = url.hostname.toLowerCase();
+    // notyoutube.com gibi benzer alan adları reddedilir; m., music. vb. kabul edilir.
+    const isYoutube = host === "youtube.com" || host.endsWith(".youtube.com");
     const id =
-      host === "youtu.be"
+      host === "youtu.be" || host === "www.youtu.be"
         ? url.pathname.slice(1).split("/")[0]
-        : host.endsWith("youtube.com")
+        : isYoutube
           ? url.searchParams.get("v") ||
-            url.pathname.match(/^\/(?:embed|shorts)\/([^/]+)/)?.[1]
+            url.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/)?.[1]
           : null;
     return id && /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : null;
   } catch {

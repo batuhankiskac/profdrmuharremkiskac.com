@@ -5,10 +5,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAdminAuth } from "./firebase-admin";
 import { SESSION_COOKIE_NAME } from "./session";
+import { isAdminToken } from "./validation";
 
-export function isAdminToken(token: DecodedIdToken): boolean {
-  return token.admin === true;
-}
+export { isAdminToken };
 
 export async function getAdminSession(): Promise<DecodedIdToken | null> {
   const adminAuth = getAdminAuth();

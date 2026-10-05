@@ -73,3 +73,22 @@
   color: var(--color-primary);
   margin-top: auto;
 }
+
+/* .card clips overflow, so an outset ring on the full-card link would be
+   hidden; draw the focus ring on the card itself instead. */
+@supports selector(:has(*)) {
+  .card:has(.link:focus-visible) {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 3px;
+  }
+
+  .link:focus-visible {
+    outline: none;
+  }
+}
+
+@supports not selector(:has(*)) {
+  .link:focus-visible {
+    outline-offset: -3px;
+  }
+}

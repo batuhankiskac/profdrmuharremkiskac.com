@@ -1,6 +1,7 @@
 .container {
   display: flex;
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--color-bg-alt);
 }
 
@@ -14,7 +15,12 @@
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh;
   overflow-y: auto;
+}
+
+.sidebar :focus-visible {
+  outline-color: var(--color-surface);
 }
 
 .logo {

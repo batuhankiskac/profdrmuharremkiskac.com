@@ -9,6 +9,7 @@
   --color-primary-dark: #38463B;
   --color-danger: #b42318;
   --color-border: rgb(0 0 0 / 10%);
+  --color-input-border: #8a918b; /* ≥3:1 on white for form controls */
   --color-primary-rgb: 74 93 78;
   --color-bg-rgb: 253 251 247;
   --color-primary-border: rgb(var(--color-primary-rgb) / 20%);

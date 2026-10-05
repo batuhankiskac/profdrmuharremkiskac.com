@@ -26,6 +26,8 @@ export default function Header() {
     setIsMenuOpen(false);
   };
 
+  const headerRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
     if (!isMenuOpen) return;
 
@@ -36,16 +38,41 @@ export default function Header() {
       }
     };
 
+    // Masaüstü genişliğe geçilirse menü kapanır; kaydırma kilidi takılı kalmaz.
+    const desktopQuery = window.matchMedia("(min-width: 1025px)");
+    const handleViewportChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setIsMenuOpen(false);
+    };
+
+    // Menü açıkken odak header içinde kalsın diye kardeş öğeler etkisizleştirilir.
+    const inertSiblings: HTMLElement[] = [];
+    const header = headerRef.current;
+    for (const sibling of Array.from(header?.parentElement?.children ?? [])) {
+      if (
+        sibling !== header &&
+        sibling instanceof HTMLElement &&
+        !sibling.inert
+      ) {
+        sibling.inert = true;
+        inertSiblings.push(sibling);
+      }
+    }
+
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
+    desktopQuery.addEventListener("change", handleViewportChange);
     return () => {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
+      desktopQuery.removeEventListener("change", handleViewportChange);
+      inertSiblings.forEach((sibling) => {
+        sibling.inert = false;
+      });
     };
   }, [isMenuOpen]);
 
   return (
-    <header className={styles.header}>
+    <header ref={headerRef} className={styles.header}>
       <Link href="/" className={styles.logo} onClick={closeMenu}>
         Prof. Dr. Muharrem Kıskaç
       </Link>
