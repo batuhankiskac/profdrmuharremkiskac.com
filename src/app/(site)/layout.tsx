@@ -3,6 +3,12 @@ import Footer from "@/components/Footer";
 import AnalyticsConsent from "@/components/AnalyticsConsent";
 import contactData from "@/data/contact.json";
 
+// Hostinger CDN (hcdn) `Vary: rsc` başlığını yok sayıyor; statik sayfaların
+// RSC yükü (text/x-component) normal ziyaretçilere HTML yerine sunulabiliyor.
+// Dinamik render `Cache-Control: private, no-store` gönderir ve CDN bu
+// sayfaları önbelleğe almaz. Firestore verisi unstable_cache ile önbellekte kalır.
+export const dynamic = "force-dynamic";
+
 const physicianSchema = {
   "@context": "https://schema.org",
   "@type": ["Physician", "MedicalBusiness"],
