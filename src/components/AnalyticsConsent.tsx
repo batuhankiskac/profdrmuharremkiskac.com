@@ -8,6 +8,64 @@ import styles from "./AnalyticsConsent.module.css";
 type ConsentState = "accepted" | "rejected" | null;
 
 const STORAGE_KEY = "analytics-consent";
+const GTM_ID = "GTM-5DGZ7QV3";
+
+const CONSENT_TYPES = [
+  "ad_storage",
+  "ad_user_data",
+  "ad_personalization",
+  "analytics_storage",
+] as const;
+
+function consentPayload(value: "granted" | "denied") {
+  return Object.fromEntries(CONSENT_TYPES.map((type) => [type, value]));
+}
+
+// Consent Mode v2: GTM her ziyarette yüklenir fakat onay verilene kadar
+// çerez yazmaz; Google Ads reddeden ziyaretçiler için dönüşümü modelleyebilir.
+// Varsayılan "denied" gtm.js olayından önce dataLayer'a girmelidir.
+const GTM_BOOTSTRAP = `window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',${JSON.stringify({ ...consentPayload("denied"), wait_for_update: 500 })});
+gtag('set','ads_data_redaction',true);
+gtag('set','url_passthrough',true);
+try{if(localStorage.getItem('${STORAGE_KEY}')==='accepted'){gtag('consent','update',${JSON.stringify(consentPayload("granted"))});}}catch(e){}
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${GTM_ID}');`;
+
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+  }
+}
+
+// gtag komutları dizi değil arguments nesnesi olarak beklenir.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function gtag(..._args: unknown[]) {
+  window.dataLayer = window.dataLayer || [];
+  // eslint-disable-next-line prefer-rest-params
+  window.dataLayer.push(arguments);
+}
+
+function updateConsent(value: Exclude<ConsentState, null>) {
+  gtag(
+    "consent",
+    "update",
+    consentPayload(value === "accepted" ? "granted" : "denied"),
+  );
+}
+
+// Telefon ve WhatsApp bağlantıları (makale içindekiler dahil) GTM'de
+// dönüşüm etiketi tetiklemek için tek bir olayla bildirilir.
+function contactMethod(link: HTMLAnchorElement) {
+  const href = link.getAttribute("href") ?? "";
+  if (href.startsWith("tel:")) return "phone";
+  if (/^https:\/\/(wa\.me|api\.whatsapp\.com)\//.test(href)) return "whatsapp";
+  return null;
+}
 
 // localStorage erişilemediğinde (ör. Safari gizli mod) tercih bellekte tutulur.
 let memoryConsent: ConsentState = null;
@@ -68,50 +126,57 @@ export default function AnalyticsConsent() {
     if (showPreferences) firstButtonRef.current?.focus();
   }, [showPreferences]);
 
-  // Başka sekmede onay geri çekilirse yüklenmiş GTM'i durdurmak için yenilenir.
+  // Başka sekmede verilen tercih bu sekmedeki GTM'e de iletilir.
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
       if (
         event.key === STORAGE_KEY &&
-        event.oldValue === "accepted" &&
-        event.newValue === "rejected"
+        (event.newValue === "accepted" || event.newValue === "rejected")
       ) {
-        window.location.reload();
+        updateConsent(event.newValue);
       }
     };
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      const link =
+        event.target instanceof Element
+          ? event.target.closest<HTMLAnchorElement>("a[href]")
+          : null;
+      const method = link && contactMethod(link);
+      if (!method) return;
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: "contact_click",
+        contact_method: method,
+        page_path: window.location.pathname,
+      });
+    };
+    document.addEventListener("click", handleClick, { capture: true });
+    return () =>
+      document.removeEventListener("click", handleClick, { capture: true });
+  }, []);
+
   const choose = (value: Exclude<ConsentState, null>) => {
-    const previous = consent;
     writeConsent(value);
+    updateConsent(value);
     setShowPreferences(false);
     if (returnFocusRef.current?.isConnected) {
       returnFocusRef.current.focus();
     }
     returnFocusRef.current = null;
-    // Yüklenmiş GTM'i durdurmanın tek yolu sayfayı yenilemektir.
-    if (previous === "accepted" && value === "rejected") {
-      window.location.reload();
-    }
   };
 
   return (
     <>
-      {consent === "accepted" && (
-        <Script
-          id="gtm-script"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-5DGZ7QV3');`,
-          }}
-        />
-      )}
+      <Script
+        id="gtm-script"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: GTM_BOOTSTRAP }}
+      />
 
       {consent !== "unknown" && (consent === null || showPreferences) && (
         <aside

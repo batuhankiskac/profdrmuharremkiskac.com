@@ -23,12 +23,12 @@ const securityHeaders = [
       "object-src 'none'",
       `script-src 'self' 'unsafe-inline'${
         process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
-      } https://www.googletagmanager.com`,
+      } https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com`,
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://img.youtube.com https://i.ytimg.com https://www.google.com https://www.google.com.tr https://www.googleadservices.com https://googleads.g.doubleclick.net https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
+      "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://img.youtube.com https://i.ytimg.com https://www.google.com https://www.google.com.tr https://www.googleadservices.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.google.com https://*.google.com.tr https://*.googleapis.com https://*.doubleclick.net https://*.googleadservices.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
-      "frame-src https://www.google.com https://www.youtube-nocookie.com",
+      "connect-src 'self' https://*.google.com https://*.google.com.tr https://*.googleapis.com https://*.doubleclick.net https://*.googleadservices.com https://pagead2.googlesyndication.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
+      "frame-src https://www.google.com https://www.youtube-nocookie.com https://td.doubleclick.net",
       "upgrade-insecure-requests",
     ].join("; "),
   },

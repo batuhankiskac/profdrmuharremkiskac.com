@@ -52,6 +52,45 @@ test("analiz tercihi saklanır", async ({ page }) => {
   await expect(banner).toBeVisible();
 });
 
+test("consent varsayılanı reddedilmiş başlar ve iletişim tıklaması bildirilir", async ({
+  page,
+}) => {
+  await page.goto("/iletisim");
+  await page.waitForFunction(() =>
+    (window.dataLayer ?? []).some(
+      (entry) => (entry as { event?: string }).event === "gtm.js",
+    ),
+  );
+  const consentDefault = await page.evaluate(() => {
+    const entry = (window.dataLayer ?? []).find(
+      (item) =>
+        typeof item === "object" &&
+        item !== null &&
+        (item as ArrayLike<unknown>)[0] === "consent" &&
+        (item as ArrayLike<unknown>)[1] === "default",
+    ) as ArrayLike<unknown> | undefined;
+    return entry?.[2];
+  });
+  expect(consentDefault).toMatchObject({ ad_storage: "denied" });
+
+  // Bağlantının açılmasını engelleyip yalnız olayı doğrula.
+  await page.evaluate(() =>
+    document.addEventListener("click", (event) => event.preventDefault()),
+  );
+  await page
+    .getByRole("main")
+    .getByRole("link", { name: "WhatsApp üzerinden yaz" })
+    .click();
+  const events = await page.evaluate(() =>
+    (window.dataLayer ?? []).filter(
+      (entry) => (entry as { event?: string }).event === "contact_click",
+    ),
+  );
+  expect(events).toContainEqual(
+    expect.objectContaining({ contact_method: "whatsapp" }),
+  );
+});
+
 test("aktif sayfa bağlantısı işaretlenir", async ({ page, isMobile }) => {
   await page.goto("/hizmetler");
   if (isMobile) {
