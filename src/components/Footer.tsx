@@ -2,12 +2,13 @@ import Link from "next/link";
 import ConsentPreferencesButton from "./ConsentPreferencesButton";
 import ContactActions from "./ContactActions";
 import contactData from "@/data/contact.json";
-import { contactLink, navigationLinks } from "@/data/navigation";
+import { contactLink, navigationLinks, privacyLink } from "@/data/navigation";
 import styles from "./Footer.module.css";
 
 const footerLinks = [
   ...navigationLinks.filter((link) => link.href !== "/"),
   contactLink,
+  privacyLink,
 ];
 
 // Yıl, sunucunun saat diliminden bağımsız olarak İstanbul'a göre hesaplanır.
@@ -45,15 +46,19 @@ export default function Footer() {
           <div className={styles.links}>
             <a href="https://doktorhacamat.com" target="_blank" rel="noopener noreferrer">
               Doktor Hacamat
+              <span className="sr-only"> (yeni sekmede açılır)</span>
             </a>
             <a href="https://siboklinik.com" target="_blank" rel="noopener noreferrer">
               Sibo Klinik
+              <span className="sr-only"> (yeni sekmede açılır)</span>
             </a>
             <a href={contactData.social.instagram} target="_blank" rel="noopener noreferrer">
               Instagram
+              <span className="sr-only"> (yeni sekmede açılır)</span>
             </a>
             <a href={contactData.social.youtube} target="_blank" rel="noopener noreferrer">
               YouTube
+              <span className="sr-only"> (yeni sekmede açılır)</span>
             </a>
           </div>
         </div>

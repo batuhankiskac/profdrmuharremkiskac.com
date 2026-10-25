@@ -29,7 +29,7 @@ async function VideoList() {
 
 export default function VideosPage() {
   return (
-    <main className={styles.container}>
+    <main id="main-content" className={styles.container}>
       <h1 className={styles.heading}>Videolar</h1>
       <Suspense fallback={<LoadingState />}>
         <VideoList />

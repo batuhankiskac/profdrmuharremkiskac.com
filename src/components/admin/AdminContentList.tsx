@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import SubmitButton from "./SubmitButton";
+import type { FormState } from "@/app/admin/actions";
+import DeleteContentForm from "./DeleteContentForm";
 import styles from "./AdminContentList.module.css";
 
 export interface AdminListItem {
@@ -17,7 +18,7 @@ interface AdminContentListProps {
   addLabel: string;
   emptyText: string;
   items: AdminListItem[];
-  deleteAction: (id: string) => Promise<void>;
+  deleteAction: (id: string) => Promise<FormState>;
 }
 
 export default function AdminContentList({
@@ -63,15 +64,7 @@ export default function AdminContentList({
                     Düzenle
                   </Link>
                 )}
-                <form action={deleteAction.bind(null, item.id)}>
-                  <SubmitButton
-                    className={styles.deleteButton}
-                    pendingText="Siliniyor..."
-                    confirmMessage="Bu içeriği kalıcı olarak silmek istediğinize emin misiniz?"
-                  >
-                    Sil
-                  </SubmitButton>
-                </form>
+                <DeleteContentForm id={item.id} deleteAction={deleteAction} />
               </div>
             </article>
           ))}

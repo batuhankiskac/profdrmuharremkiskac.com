@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getArticles, getServices } from "@/lib/content";
 import { SITE_URL } from "@/lib/site";
+import type { ArticleSummary, Service } from "@/types/content";
 
 // Build anında prerender edilmez: build ortamında Firebase bilgileri yoksa
 // site haritası makale ve hizmetler olmadan donmasın. Veri unstable_cache
@@ -16,12 +17,24 @@ const staticRoutes: [string, ChangeFrequency, number][] = [
   ["/makaleler", "weekly", 0.8],
   ["/videolar", "weekly", 0.7],
   ["/iletisim", "yearly", 0.6],
+  ["/gizlilik", "yearly", 0.3],
 ];
+
+// Okuma hatası site haritasını 500'e çevirmesin: hata kaydedilir ve o koleksiyon
+// boş kabul edilerek statik rotalar döndürülür.
+async function readOrEmpty<T>(label: string, read: () => Promise<T[]>): Promise<T[]> {
+  try {
+    return await read();
+  } catch (error) {
+    console.error(`Site haritası için ${label} okunamadı:`, error);
+    return [];
+  }
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [articles, services] = await Promise.all([
-    getArticles(),
-    getServices(),
+    readOrEmpty<ArticleSummary>("makaleler", getArticles),
+    readOrEmpty<Service>("hizmetler", getServices),
   ]);
 
   return [

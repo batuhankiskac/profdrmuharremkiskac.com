@@ -9,7 +9,7 @@ test("ana sayfa ve temel navigasyon erişilebilir", async ({
     page.getByRole("heading", { level: 1, name: /Sağlıklı Bir Yaşam İçin/ }),
   ).toBeVisible();
   if (isMobile) {
-    await page.getByRole("button", { name: "Menüyü aç" }).click();
+    await page.getByRole("button", { name: "Menü", exact: true }).click();
   }
   const navigation = page.getByRole("navigation", { name: "Ana menü" });
   await expect(navigation).toBeVisible();
@@ -41,7 +41,7 @@ test("mobil menü Escape ile kapanır", async ({ page, isMobile }) => {
 test("analiz tercihi saklanır", async ({ page }) => {
   await page.goto("/");
   const banner = page.getByRole("complementary", {
-    name: "Çerez ve analiz tercihi",
+    name: "Çerez tercihleri",
   });
   await expect(banner).toBeVisible();
   await page.getByRole("button", { name: "Reddet" }).click();
@@ -49,18 +49,62 @@ test("analiz tercihi saklanır", async ({ page }) => {
   await page.reload();
   await expect(banner).toHaveCount(0);
   await page.getByRole("button", { name: "Çerez tercihleri" }).click();
-  await expect(banner).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Çerez tercihleri" })).toBeVisible();
 });
 
-test("consent varsayılanı reddedilmiş başlar ve iletişim tıklaması bildirilir", async ({
+test("çerez paneli Escape ile kapanır ve odağı geri verir", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.evaluate(() => localStorage.setItem("analytics-consent", "rejected"));
+  await page.reload();
+  const trigger = page.getByRole("button", { name: "Çerez tercihleri" });
+  await trigger.click();
+  const dialog = page.getByRole("dialog", { name: "Çerez tercihleri" });
+  await expect(dialog).toHaveAttribute("aria-modal", "true");
+  await expect(dialog.getByRole("button", { name: "Kapat" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
+test("içeriğe atla bağlantısı ana içeriğe odaklanır", async ({ page }) => {
+  await page.goto("/hizmetler");
+  await page.keyboard.press("Tab");
+  const skipLink = page.getByRole("link", { name: "İçeriğe atla" });
+  await expect(skipLink).toBeFocused();
+  await expect(skipLink).toHaveAttribute("href", "#main-content");
+});
+
+test("gizlilik sayfası KVKK metnini ve veri sorumlusunu gösterir", async ({
+  page,
+}) => {
+  await page.goto("/gizlilik");
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "Gizlilik ve Çerez Politikası / KVKK Aydınlatma Metni",
+    }),
+  ).toBeVisible();
+  await expect(page.getByText("Bu metin bir şablondur.")).toBeVisible();
+});
+
+test("consent varsayılanı reddedilmiş başlar; GTM kabul edilene kadar yüklenmez", async ({
   page,
 }) => {
   await page.goto("/iletisim");
   await page.waitForFunction(() =>
     (window.dataLayer ?? []).some(
-      (entry) => (entry as { event?: string }).event === "gtm.js",
+      (entry) =>
+        typeof entry === "object" &&
+        entry !== null &&
+        (entry as ArrayLike<unknown>)[0] === "consent" &&
+        (entry as ArrayLike<unknown>)[1] === "default",
     ),
   );
+  await expect(
+    page.locator('script[src*="googletagmanager.com/gtm.js"]'),
+  ).toHaveCount(0);
   const consentDefault = await page.evaluate(() => {
     const entry = (window.dataLayer ?? []).find(
       (item) =>
@@ -91,10 +135,21 @@ test("consent varsayılanı reddedilmiş başlar ve iletişim tıklaması bildir
   );
 });
 
+test("kabul edilene kadar GTM betiği eklenmez, kabulden sonra eklenir", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const gtmScript = page.locator('script[src*="googletagmanager.com/gtm.js"]');
+  await expect(page.getByRole("button", { name: "Kabul Et" })).toBeVisible();
+  await expect(gtmScript).toHaveCount(0);
+  await page.getByRole("button", { name: "Kabul Et" }).click();
+  await expect(gtmScript).toHaveCount(1);
+});
+
 test("aktif sayfa bağlantısı işaretlenir", async ({ page, isMobile }) => {
   await page.goto("/hizmetler");
   if (isMobile) {
-    await page.getByRole("button", { name: "Menüyü aç" }).click();
+    await page.getByRole("button", { name: "Menü", exact: true }).click();
   }
   const navigation = page.getByRole("navigation", { name: "Ana menü" });
   await expect(

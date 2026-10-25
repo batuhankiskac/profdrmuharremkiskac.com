@@ -34,6 +34,15 @@ const securityHeaders = [
   },
 ];
 
+// Storage indirme bağlantıları yalnız projenin kendi bucket'ını kullanır.
+// Bucket build anında bilinmiyorsa geniş (eski) desen korunur.
+const storageBucket =
+  process.env.FIREBASE_STORAGE_BUCKET ??
+  process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+const firebaseStoragePathname = storageBucket
+  ? `/v0/b/${storageBucket}/o/**`
+  : "/v0/b/**";
+
 const nextConfig: NextConfig = {
   experimental: {
     inlineCss: true,
@@ -46,7 +55,11 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     qualities: [60, 75],
     remotePatterns: [
-      { protocol: "https", hostname: "firebasestorage.googleapis.com" },
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com",
+        pathname: firebaseStoragePathname,
+      },
       { protocol: "https", hostname: "img.youtube.com" },
       { protocol: "https", hostname: "i.ytimg.com" },
     ],

@@ -35,6 +35,11 @@ interface FieldProps {
   children: React.ReactNode;
 }
 
+// Yardım metninin id'si; kontrolün aria-describedby değeri olarak kullanılır.
+export function hintId(htmlFor: string) {
+  return `${htmlFor}-hint`;
+}
+
 export function AdminFormField({
   label,
   htmlFor,
@@ -44,7 +49,11 @@ export function AdminFormField({
   return (
     <div className={styles.group}>
       <label htmlFor={htmlFor}>{label}</label>
-      {hint && <p className={styles.hint}>{hint}</p>}
+      {hint && (
+        <p id={hintId(htmlFor)} className={styles.hint}>
+          {hint}
+        </p>
+      )}
       {children}
     </div>
   );
@@ -87,6 +96,7 @@ export function AdminImageField({
         id="image"
         name="image"
         accept={IMAGE_ACCEPT}
+        aria-describedby={hintId("image")}
         className={styles.fileInput}
       />
     </AdminFormField>

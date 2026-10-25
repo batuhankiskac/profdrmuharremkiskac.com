@@ -1,5 +1,10 @@
 import type { Article } from "@/types/content";
-import { AdminFormField, AdminImageField, adminFormStyles } from "./AdminForm";
+import {
+  AdminFormField,
+  AdminImageField,
+  adminFormStyles,
+  hintId,
+} from "./AdminForm";
 
 export default function ArticleFields({ article }: { article?: Article }) {
   return (
@@ -27,6 +32,7 @@ export default function ArticleFields({ article }: { article?: Article }) {
           defaultValue={article?.summary}
           maxLength={600}
           required
+          aria-describedby={hintId("summary")}
           className={adminFormStyles.textarea}
         />
       </AdminFormField>
@@ -56,6 +62,7 @@ export default function ArticleFields({ article }: { article?: Article }) {
           name="citations"
           rows={6}
           defaultValue={article?.citations.join("\n")}
+          aria-describedby={hintId("citations")}
           className={adminFormStyles.textarea}
         />
       </AdminFormField>

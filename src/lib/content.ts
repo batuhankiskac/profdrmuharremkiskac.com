@@ -71,17 +71,18 @@ async function orFallback<T>(read: () => Promise<T>, fallback: T): Promise<T> {
   }
 }
 
+// normalize null dönerse belge listeye alınmaz (ör. geçersiz YouTube kimliği).
 async function readCollection<T>(
   collectionName: string,
-  normalize: (id: string, data: RawDocument) => T,
+  normalize: (id: string, data: RawDocument) => T | null,
   fields?: string[],
 ): Promise<T[]> {
   const collection = requireDb().collection(collectionName);
   const query = fields ? collection.select(...fields) : collection;
   const snapshot = await withTimeout(query.get(), collectionName);
-  return snapshot.docs.map((document) =>
-    normalize(document.id, document.data()),
-  );
+  return snapshot.docs
+    .map((document) => normalize(document.id, document.data()))
+    .filter((item): item is T => item !== null);
 }
 
 const cachedArticles = unstable_cache(

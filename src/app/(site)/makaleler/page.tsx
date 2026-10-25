@@ -31,7 +31,7 @@ async function ArticleList() {
 
 export default function ArticlesPage() {
   return (
-    <main className={styles.container}>
+    <main id="main-content" className={styles.container}>
       <h1 className={styles.heading}>Makaleler</h1>
       <Suspense fallback={<LoadingState />}>
         <ArticleList />

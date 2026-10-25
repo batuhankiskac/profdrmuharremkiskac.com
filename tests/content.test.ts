@@ -105,9 +105,29 @@ describe("normalizer'lar", () => {
     expect(
       toService("s1", { title: "Diyabet", description: "Metin" }),
     ).toMatchObject({ id: "s1", title: "Diyabet", description: "Metin" });
-    expect(toVideo("v1", { youtubeId: "abc", imageUrl: "/t.jpg" })).toMatchObject(
-      { id: "v1", youtubeId: "abc", imageUrl: "/t.jpg" },
-    );
+    expect(
+      toVideo("v1", { youtubeId: "dQw4w9WgXcQ", imageUrl: "/t.jpg" }),
+    ).toMatchObject({
+      id: "v1",
+      youtubeId: "dQw4w9WgXcQ",
+      imageUrl: "/t.jpg",
+    });
+  });
+
+  it("geçersiz YouTube kimliği olan videoyu null yapar", () => {
+    const invalid = [
+      "",
+      "abc",
+      "dQw4w9WgXc",
+      "dQw4w9WgXcQQ",
+      "dQw4w9Wg/cQ",
+      '"><script>',
+      42,
+      undefined,
+    ];
+    for (const youtubeId of invalid) {
+      expect(toVideo("v2", { title: "x", youtubeId })).toBeNull();
+    }
   });
 });
 

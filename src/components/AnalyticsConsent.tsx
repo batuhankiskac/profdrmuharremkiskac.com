@@ -1,40 +1,27 @@
 "use client";
 
-import Script from "next/script";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { OPEN_CONSENT_EVENT } from "@/lib/consent";
+import Link from "next/link";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import {
+  CONSENT_STORAGE_KEY,
+  consentPayload,
+  OPEN_CONSENT_EVENT,
+} from "@/lib/consent";
 import styles from "./AnalyticsConsent.module.css";
 
 type ConsentState = "accepted" | "rejected" | null;
 
-const STORAGE_KEY = "analytics-consent";
+// GTM yalnız kabul edildikten sonra yüklenir (bkz. loadGtm).
+const STORAGE_KEY = CONSENT_STORAGE_KEY;
 const GTM_ID = "GTM-5DGZ7QV3";
-
-const CONSENT_TYPES = [
-  "ad_storage",
-  "ad_user_data",
-  "ad_personalization",
-  "analytics_storage",
-] as const;
-
-function consentPayload(value: "granted" | "denied") {
-  return Object.fromEntries(CONSENT_TYPES.map((type) => [type, value]));
-}
-
-// Consent Mode v2: GTM her ziyarette yüklenir fakat onay verilene kadar
-// çerez yazmaz; Google Ads reddeden ziyaretçiler için dönüşümü modelleyebilir.
-// Varsayılan "denied" gtm.js olayından önce dataLayer'a girmelidir.
-const GTM_BOOTSTRAP = `window.dataLayer=window.dataLayer||[];
-function gtag(){dataLayer.push(arguments);}
-gtag('consent','default',${JSON.stringify({ ...consentPayload("denied"), wait_for_update: 500 })});
-gtag('set','ads_data_redaction',true);
-gtag('set','url_passthrough',true);
-try{if(localStorage.getItem('${STORAGE_KEY}')==='accepted'){gtag('consent','update',${JSON.stringify(consentPayload("granted"))});}}catch(e){}
-(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${GTM_ID}');`;
+const TITLE_ID = "analytics-consent-title";
+const DESCRIPTION_ID = "analytics-consent-description";
 
 declare global {
   interface Window {
@@ -56,6 +43,20 @@ function updateConsent(value: Exclude<ConsentState, null>) {
     "update",
     consentPayload(value === "accepted" ? "granted" : "denied"),
   );
+}
+
+// GTM konteyneri en fazla bir kez ve yalnız kabul edildikten sonra yüklenir.
+// Consent update olayı, gtm.js'ten önce dataLayer'a yazılmış olmalıdır.
+let gtmRequested = false;
+function loadGtm() {
+  if (gtmRequested) return;
+  gtmRequested = true;
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+  document.head.appendChild(script);
 }
 
 // Telefon ve WhatsApp bağlantıları (makale içindekiler dahil) GTM'de
@@ -102,29 +103,75 @@ export default function AnalyticsConsent() {
     readConsent,
     () => "unknown",
   );
+  // true: alt bilgideki "Çerez tercihleri" ile açılmış modal panel.
+  // false: ilk ziyarette görünen, odak almayan banner.
   const [showPreferences, setShowPreferences] = useState(false);
-  const firstButtonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
+
+  // Paneli kapatır ve odağı paneli açan öğeye geri verir.
+  const closePanel = useCallback(() => {
+    setShowPreferences(false);
+    const target = returnFocusRef.current;
+    returnFocusRef.current = null;
+    if (target?.isConnected) target.focus();
+  }, []);
 
   useEffect(() => {
     const open = () => {
-      // Tercih seçildikten sonra odak, paneli açan öğeye geri döner.
-      returnFocusRef.current =
-        document.activeElement instanceof HTMLElement
-          ? document.activeElement
-          : null;
+      // Panel zaten açıksa odak geri dönüş öğesi değiştirilmez.
+      if (panelRef.current) return;
+      const active = document.activeElement;
+      returnFocusRef.current = active instanceof HTMLElement ? active : null;
       setShowPreferences(true);
-      // Panel zaten görünürse odak hemen taşınır.
-      firstButtonRef.current?.focus();
     };
     window.addEventListener(OPEN_CONSENT_EVENT, open);
     return () => window.removeEventListener(OPEN_CONSENT_EVENT, open);
   }, []);
 
-  // "Çerez tercihleri" ile açılan panelde odak ilk butona taşınır.
+  // Panel açılınca odak içindeki ilk düğmeye (Kapat) taşınır.
   useEffect(() => {
-    if (showPreferences) firstButtonRef.current?.focus();
+    if (showPreferences) {
+      panelRef.current?.querySelector<HTMLElement>("button")?.focus();
+    }
   }, [showPreferences]);
+
+  // Modal panelde Escape ile kapanır ve Tab odağı panel içinde döngüye girer.
+  useEffect(() => {
+    if (!showPreferences) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const panel = panelRef.current;
+      if (!panel) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closePanel();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const focusable = Array.from(
+        panel.querySelectorAll<HTMLElement>("button:not(:disabled), a[href]"),
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!first || !last) return;
+      const active = document.activeElement;
+      const outside = !panel.contains(active);
+      if (event.shiftKey && (active === first || outside)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (active === last || outside)) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showPreferences, closePanel]);
+
+  // Kabul edilmiş tercih (bu sayfada veya başka sekmede) GTM'i yükler.
+  useEffect(() => {
+    if (consent === "accepted") loadGtm();
+  }, [consent]);
 
   // Başka sekmede verilen tercih bu sekmedeki GTM'e de iletilir.
   useEffect(() => {
@@ -161,52 +208,74 @@ export default function AnalyticsConsent() {
   }, []);
 
   const choose = (value: Exclude<ConsentState, null>) => {
-    writeConsent(value);
     updateConsent(value);
-    setShowPreferences(false);
-    if (returnFocusRef.current?.isConnected) {
-      returnFocusRef.current.focus();
-    }
-    returnFocusRef.current = null;
+    writeConsent(value);
+    closePanel();
   };
+
+  const isDialog = showPreferences;
+  const visible = consent !== "unknown" && (consent === null || isDialog);
+
+  const body = (
+    <>
+      <div className={styles.header}>
+        <h2 id={TITLE_ID} className={styles.title}>
+          Çerez tercihleri
+        </h2>
+        {isDialog && (
+          <button type="button" className={styles.close} onClick={closePanel}>
+            Kapat
+          </button>
+        )}
+      </div>
+      <p id={DESCRIPTION_ID}>
+        Site deneyimini ve reklam dönüşümlerini ölçmek için isteğe bağlı analiz
+        çerezleri kullanıyoruz. Ayrıntılar ve haklarınız için{" "}
+        <Link href="/gizlilik">Gizlilik ve Çerez Politikası</Link> sayfasını
+        inceleyebilirsiniz.
+      </p>
+      <div className={styles.actions}>
+        <button
+          type="button"
+          className={styles.secondary}
+          onClick={() => choose("rejected")}
+        >
+          Reddet
+        </button>
+        <button
+          type="button"
+          className={styles.primary}
+          onClick={() => choose("accepted")}
+        >
+          Kabul Et
+        </button>
+      </div>
+    </>
+  );
 
   return (
     <>
-      <Script
-        id="gtm-script"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{ __html: GTM_BOOTSTRAP }}
-      />
-
-      {consent !== "unknown" && (consent === null || showPreferences) && (
-        <aside
-          className={styles.banner}
-          aria-label="Çerez ve analiz tercihi"
-          aria-describedby="analytics-consent-description"
-        >
-          <p id="analytics-consent-description">
-            Site deneyimini ve reklam dönüşümlerini ölçmek için isteğe bağlı
-            analiz çerezleri kullanıyoruz.
-          </p>
-          <div className={styles.actions}>
-            <button
-              ref={firstButtonRef}
-              type="button"
-              className={styles.secondary}
-              onClick={() => choose("rejected")}
-            >
-              Reddet
-            </button>
-            <button
-              type="button"
-              className={styles.primary}
-              onClick={() => choose("accepted")}
-            >
-              Kabul Et
-            </button>
+      {visible &&
+        (isDialog ? (
+          <div
+            ref={panelRef}
+            className={styles.banner}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={TITLE_ID}
+            aria-describedby={DESCRIPTION_ID}
+          >
+            {body}
           </div>
-        </aside>
-      )}
+        ) : (
+          <aside
+            className={styles.banner}
+            aria-labelledby={TITLE_ID}
+            aria-describedby={DESCRIPTION_ID}
+          >
+            {body}
+          </aside>
+        ))}
     </>
   );
 }

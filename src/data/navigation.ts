@@ -16,6 +16,12 @@ export const contactLink: NavigationLink = {
   label: "İletişim",
 };
 
+// Yalnız alt bilgide gösterilir; ana menüye eklenmez.
+export const privacyLink: NavigationLink = {
+  href: "/gizlilik",
+  label: "Gizlilik ve Çerez Politikası",
+};
+
 export function isActivePath(pathname: string, href: string): boolean {
   return href === "/"
     ? pathname === "/"

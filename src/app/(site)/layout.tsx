@@ -2,7 +2,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AnalyticsConsent from "@/components/AnalyticsConsent";
 import contactData from "@/data/contact.json";
+import { CONSENT_DEFAULT_SCRIPT } from "@/lib/consent";
 import { SITE_URL } from "@/lib/site";
+import styles from "./layout.module.css";
 
 // Hostinger CDN (hcdn) `Vary: rsc` başlığını yok sayıyor; statik sayfaların
 // RSC yükü (text/x-component) normal ziyaretçilere HTML yerine sunulabiliyor.
@@ -32,6 +34,12 @@ export default function SiteLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <>
+      {/* Consent Mode varsayılanları etkileşimden önce, sunucu HTML'iyle gelir. */}
+      <script dangerouslySetInnerHTML={{ __html: CONSENT_DEFAULT_SCRIPT }} />
+      {/* Klavye kullanıcıları menüyü geçip doğrudan sayfa içeriğine gidebilir. */}
+      <a href="#main-content" className={styles.skipLink}>
+        İçeriğe atla
+      </a>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(physicianSchema) }}

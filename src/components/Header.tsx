@@ -82,7 +82,7 @@ export default function Header() {
         type="button"
         className={`${styles.hamburger} ${isMenuOpen ? styles.open : ""}`}
         onClick={toggleMenu}
-        aria-label={isMenuOpen ? "Menüyü kapat" : "Menüyü aç"}
+        aria-label="Menü"
         aria-expanded={isMenuOpen}
         aria-controls="primary-navigation"
       >

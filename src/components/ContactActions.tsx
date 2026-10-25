@@ -38,7 +38,7 @@ export default function ContactActions({
         href={`https://wa.me/${contactData.whatsapp}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="WhatsApp üzerinden yaz"
+        aria-label="WhatsApp üzerinden yaz (yeni sekmede açılır)"
         className={`${styles.iconButton} ${styles.whatsapp}`}
       >
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

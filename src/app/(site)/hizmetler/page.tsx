@@ -35,12 +35,12 @@ async function ServiceList() {
 // engeller.
 export default function ServicesPage() {
   return (
-    <main className={styles.container}>
+    <main id="main-content" className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>Hizmetlerimiz</h1>
         <p className={styles.subtitle}>
-          Modern tıp ve bütüncül yaklaşımlarla sağlığınız için en iyi çözümleri
-          sunuyoruz.
+          Modern tıp ve bütüncül yaklaşımlarla sağlığınız için kişiye özel
+          hizmetler sunuyoruz.
         </p>
       </div>
 

@@ -15,7 +15,7 @@ export default function SiteError({
   }, [error]);
 
   return (
-    <main className={styles.container}>
+    <main id="main-content" className={styles.container}>
       <h1>İçerik şu anda yüklenemiyor</h1>
       <p className={styles.message}>
         Geçici bir bağlantı sorunu oluştu. Biraz sonra yeniden deneyebilirsiniz.

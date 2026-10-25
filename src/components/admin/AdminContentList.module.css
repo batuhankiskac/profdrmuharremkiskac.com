@@ -86,10 +86,23 @@
   color: var(--color-primary);
 }
 
+.deleteForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .deleteButton {
   border: 0;
   background: var(--color-danger);
   color: white;
+}
+
+.deleteError {
+  max-width: 16rem;
+  color: var(--color-danger);
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .empty {

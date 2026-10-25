@@ -31,6 +31,15 @@ zorunludur; yalnız e-posta eşleşmesi yönetici yetkisi sağlamaz.
 - Public makale, hizmet ve video okumaları sunucudan yapılır.
 - Admin oturumu doğrulanmış Firebase ID token’dan üretilen `HttpOnly` cookie
   kullanır.
+- `/gizlilik` sayfası (Gizlilik ve Çerez Politikası / KVKK Aydınlatma Metni)
+  veri sorumlusunu `src/data/bio.json` ve `src/data/contact.json` dosyalarından
+  alır. Metin bir şablondur; yayımlanmadan önce avukat incelemesi gerekir.
+  Sayfa alt bilgiden ve `sitemap.xml` üzerinden erişilebilir.
+- Consent Mode v2 varsayılanları (`denied`) sunucu HTML’inde dataLayer’a yazılır.
+  GTM (`gtm.js`) yalnız ziyaretçi analiz iznini kabul ettikten sonra, aynı
+  sayfada veya kayıtlı tercihle sonraki ziyarette eklenir; reddedilen veya
+  henüz seçilmemiş tercihte Google Tag Manager betiği hiç istenmez.
+  Tercih alt bilgideki “Çerez tercihleri” düğmesiyle değiştirilebilir.
 - Admin ekleme, güncelleme ve silme işlemleri server action olarak çalışır.
 - Yüklenen görseller maksimum 5 MB kabul edilir, 1600 px içine küçültülür ve
   WebP olarak saklanır.

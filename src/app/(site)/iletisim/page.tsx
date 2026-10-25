@@ -17,7 +17,7 @@ const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeU
 
 export default function ContactPage() {
   return (
-    <main className={styles.container}>
+    <main id="main-content" className={styles.container}>
       <h1 className={styles.heading}>İletişim</h1>
       <div className={styles.card}>
         <div className={styles.map}>
@@ -32,6 +32,7 @@ export default function ContactPage() {
           <p>
             <a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer">
               Google Haritalar&apos;da aç
+              <span className="sr-only"> (yeni sekmede açılır)</span>
             </a>
           </p>
         </section>

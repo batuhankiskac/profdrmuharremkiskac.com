@@ -12,7 +12,7 @@ export const metadata = pageMetadata({
 
 export default function AboutPage() {
   return (
-    <main className={styles.container}>
+    <main id="main-content" className={styles.container}>
       <h1 className={styles.title}>Hakkında</h1>
       <div className={styles.content}>
         <div className={styles.imageContainer}>

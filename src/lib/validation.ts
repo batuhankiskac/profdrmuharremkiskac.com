@@ -29,6 +29,7 @@ const FIELD_LABELS: Record<string, string> = {
   summary: "Özet",
   content: "İçerik",
   url: "YouTube URL'si",
+  citations: "Kaynakça",
 };
 
 export function isValidDocumentId(id: unknown): id is string {
@@ -40,6 +41,19 @@ export function assertDocumentId(id: unknown): string {
   return id;
 }
 
+function fieldLabel(name: string): string {
+  return FIELD_LABELS[name] ?? name;
+}
+
+// Sınır aşıldığında veri sessizce kesilmez; kullanıcıya düzeltmesi için hata döner.
+function assertWithinLimit(name: string, value: string, maxLength: number) {
+  if (value.length > maxLength) {
+    throw new FormError(
+      `${fieldLabel(name)} alanı en fazla ${maxLength} karakter olabilir.`,
+    );
+  }
+}
+
 export function requiredText(
   formData: FormData,
   name: string,
@@ -47,11 +61,27 @@ export function requiredText(
 ): string {
   const value = formData.get(name);
   if (typeof value !== "string" || !value.trim()) {
-    throw new FormError(`${FIELD_LABELS[name] ?? name} alanı zorunludur.`);
+    throw new FormError(`${fieldLabel(name)} alanı zorunludur.`);
   }
-  return value.trim().slice(0, maxLength);
+  const trimmed = value.trim();
+  assertWithinLimit(name, trimmed, maxLength);
+  return trimmed;
 }
 
+export function optionalText(
+  formData: FormData,
+  name: string,
+  maxLength: number,
+): string | null {
+  const value = formData.get(name);
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  assertWithinLimit(name, trimmed, maxLength);
+  return trimmed;
+}
+
+// Önce satırlara ayrılır, sonra temizlenmiş satırların toplam uzunluğu sınanır.
 export function optionalLines(
   formData: FormData,
   name: string,
@@ -59,11 +89,12 @@ export function optionalLines(
 ): string[] {
   const value = formData.get(name);
   if (typeof value !== "string") return [];
-  return value
-    .slice(0, maxLength)
+  const lines = value
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean);
+  assertWithinLimit(name, lines.join("\n"), maxLength);
+  return lines;
 }
 
 export function validateImageFile(file: Pick<File, "type" | "size">): string | null {

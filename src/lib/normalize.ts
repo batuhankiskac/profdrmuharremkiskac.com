@@ -88,11 +88,18 @@ export function toService(id: string, data: RawDocument): Service {
   };
 }
 
-export function toVideo(id: string, data: RawDocument): Video {
+// YouTube video kimlikleri tam olarak 11 karakterdir; bu desene uymayan
+// kayıt iframe'e girmeden atlanır.
+const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
+
+// Geçersiz YouTube kimliği olan video kaydı null döner ve listelenmez.
+export function toVideo(id: string, data: RawDocument): Video | null {
+  const youtubeId = text(data.youtubeId);
+  if (!YOUTUBE_ID_PATTERN.test(youtubeId)) return null;
   return {
     id,
     title: text(data.title),
-    youtubeId: text(data.youtubeId),
+    youtubeId,
     imageUrl: imageUrl(data),
     createdAt: isoDate(data.createdAt),
     updatedAt: isoDate(data.updatedAt),

@@ -4,6 +4,7 @@ import {
   FormError,
   isValidDocumentId,
   optionalLines,
+  optionalText,
   parsePrivateKey,
   requiredText,
 } from "@/lib/validation";
@@ -15,11 +16,23 @@ function form(entries: Record<string, string>) {
 }
 
 describe("requiredText", () => {
-  it("boşlukları kırpar ve uzunluğu sınırlar", () => {
+  it("boşlukları kırpar", () => {
     expect(requiredText(form({ title: "  Merhaba  " }), "title", 160)).toBe(
       "Merhaba",
     );
-    expect(requiredText(form({ title: "abcdef" }), "title", 3)).toBe("abc");
+  });
+
+  it("sınıra eşit uzunlukta değeri kabul eder", () => {
+    expect(requiredText(form({ title: "abc" }), "title", 3)).toBe("abc");
+  });
+
+  it("sınırı aşan değeri kesmeden Türkçe FormError ile reddeder", () => {
+    expect(() => requiredText(form({ title: "abcdef" }), "title", 3)).toThrow(
+      FormError,
+    );
+    expect(() => requiredText(form({ title: "abcdef" }), "title", 3)).toThrow(
+      "Başlık alanı en fazla 3 karakter olabilir.",
+    );
   });
 
   it("eksik veya boş alanda Türkçe FormError fırlatır", () => {
@@ -50,11 +63,36 @@ describe("optionalLines", () => {
     expect(optionalLines(form({}), "citations", 100)).toEqual([]);
   });
 
-  it("uzunluk sınırını bölmeden önce uygular", () => {
-    expect(optionalLines(form({ citations: "abc\ndef" }), "citations", 5)).toEqual([
-      "abc",
-      "d",
-    ]);
+  it("önce satırlara ayırır; boş satırlar sınıra dahil edilmez", () => {
+    expect(
+      optionalLines(form({ citations: "abc\n\n  \ndef" }), "citations", 7),
+    ).toEqual(["abc", "def"]);
+  });
+
+  it("toplam uzunluk sınırı aşılırsa veriyi kesmeden Türkçe FormError fırlatır", () => {
+    expect(() =>
+      optionalLines(form({ citations: "abc\ndef" }), "citations", 5),
+    ).toThrow(FormError);
+    expect(() =>
+      optionalLines(form({ citations: "abc\ndef" }), "citations", 5),
+    ).toThrow("Kaynakça alanı en fazla 5 karakter olabilir.");
+  });
+});
+
+describe("optionalText", () => {
+  it("alan yoksa veya boşsa null döner", () => {
+    expect(optionalText(form({}), "note", 10)).toBeNull();
+    expect(optionalText(form({ note: "   " }), "note", 10)).toBeNull();
+  });
+
+  it("değeri kırpar ve sınır içindeyse döndürür", () => {
+    expect(optionalText(form({ note: " not " }), "note", 10)).toBe("not");
+  });
+
+  it("sınırı aşan değeri Türkçe FormError ile reddeder", () => {
+    expect(() => optionalText(form({ note: "abcdef" }), "note", 3)).toThrow(
+      "note alanı en fazla 3 karakter olabilir.",
+    );
   });
 });
 

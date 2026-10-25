@@ -99,6 +99,14 @@
   color: white;
 }
 
+.content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 1.5rem;
+  border-radius: var(--radius-md);
+}
+
 .content table {
   display: block;
   width: 100%;

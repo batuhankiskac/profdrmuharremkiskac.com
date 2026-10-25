@@ -12,7 +12,7 @@ export const metadata = pageMetadata({
 
 export default function Home() {
   return (
-    <main className={styles.main}>
+    <main id="main-content" className={styles.main}>
       <section className={styles.hero}>
         <Image
           src="/images/home-hero.avif"
@@ -32,7 +32,8 @@ export default function Home() {
           </h1>
           <p className={styles.heroText}>
             İç hastalıkları, diyabet ve fonksiyonel tıp alanında bilimsel ve
-            kişiye özel çözümlerle sağlığınızı en üst seviyeye taşıyın.
+            kişiye özel yaklaşımlarla sağlığınızı korumanıza destek olmayı
+            hedefliyoruz.
           </p>
           <div className={styles.buttonGroup}>
             <Link href="/hakkinda" className={styles.primaryButton}>

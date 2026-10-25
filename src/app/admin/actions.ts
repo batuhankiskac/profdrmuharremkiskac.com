@@ -136,18 +136,27 @@ async function saveContent(
   redirect(redirectTo);
 }
 
-async function deleteContent(collection: Collection, id: string) {
-  const docId = assertDocumentId(id);
-  const db = database();
-  const reference = db.collection(collection).doc(docId);
-  const previous = await db.runTransaction(async (transaction) => {
-    const snapshot = await transaction.get(reference);
-    if (!snapshot.exists) return null;
-    transaction.delete(reference);
-    return currentImage(snapshot.data()!);
-  });
-  if (previous) await deleteImage(previous.imageUrl, previous.imagePath);
-  updateTag(collection);
+// Silme hataları da kaydetme işlemleriyle aynı biçimde (Türkçe mesajlı FormState)
+// döner; admin arayüzü bunu gösterebilir.
+async function deleteContent(collection: Collection, id: string): Promise<FormState> {
+  try {
+    const docId = assertDocumentId(id);
+    const db = database();
+    const reference = db.collection(collection).doc(docId);
+    const previous = await db.runTransaction(async (transaction) => {
+      const snapshot = await transaction.get(reference);
+      if (!snapshot.exists) return null;
+      transaction.delete(reference);
+      return currentImage(snapshot.data()!);
+    });
+    // Belge silindikten sonra etiket hemen güncellenir; görsel silme hatası
+    // belgenin silinmiş olduğu gerçeğini değiştirmez.
+    updateTag(collection);
+    if (previous) await deleteImage(previous.imageUrl, previous.imagePath);
+    return {};
+  } catch (error) {
+    return errorState(error);
+  }
 }
 
 export async function createService(_state: FormState, formData: FormData) {
@@ -160,9 +169,9 @@ export async function updateService(id: string, _state: FormState, formData: For
   return saveContent("services", id, formData, serviceFields, "/admin/hizmetler");
 }
 
-export async function deleteService(id: string) {
+export async function deleteService(id: string): Promise<FormState> {
   await requireAdmin();
-  await deleteContent("services", id);
+  return deleteContent("services", id);
 }
 
 export async function createArticle(_state: FormState, formData: FormData) {
@@ -175,9 +184,9 @@ export async function updateArticle(id: string, _state: FormState, formData: For
   return saveContent("articles", id, formData, articleFields, "/admin/makaleler");
 }
 
-export async function deleteArticle(id: string) {
+export async function deleteArticle(id: string): Promise<FormState> {
   await requireAdmin();
-  await deleteContent("articles", id);
+  return deleteContent("articles", id);
 }
 
 export async function createVideo(_state: FormState, formData: FormData) {
@@ -185,7 +194,7 @@ export async function createVideo(_state: FormState, formData: FormData) {
   return saveContent("videos", null, formData, videoFields, "/admin/videolar");
 }
 
-export async function deleteVideo(id: string) {
+export async function deleteVideo(id: string): Promise<FormState> {
   await requireAdmin();
-  await deleteContent("videos", id);
+  return deleteContent("videos", id);
 }

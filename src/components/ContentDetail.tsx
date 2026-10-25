@@ -21,6 +21,24 @@ const URL_PATTERN = /(https?:\/\/[^\s]*[^\s.,;:!?)\]}'"])/g;
 
 const EXTERNAL_LINK = /^https?:\/\//i;
 
+// Markdown görselleri yalnız Firebase Storage barındırmasından kabul edilir.
+const ALLOWED_IMAGE_HOSTS = new Set([
+  "firebasestorage.googleapis.com",
+  "storage.googleapis.com",
+]);
+
+function allowedImageSrc(src: string | undefined): string | null {
+  if (!src) return null;
+  try {
+    const url = new URL(src);
+    return url.protocol === "https:" && ALLOWED_IMAGE_HOSTS.has(url.hostname)
+      ? src
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 function citationParts(value: string) {
   return value.split(URL_PATTERN).filter(Boolean);
 }
@@ -36,7 +54,7 @@ export default function ContentDetail({
   citations = [],
 }: ContentDetailProps) {
   return (
-    <main className={styles.container}>
+    <main id="main-content" className={styles.container}>
       <article>
         <Link href={backHref} className={styles.backLink}>
           ← {backLabel}
@@ -80,7 +98,27 @@ export default function ContentDetail({
                     {...props}
                   >
                     {children}
+                    {external && (
+                      <span className="sr-only"> (yeni sekmede açılır)</span>
+                    )}
                   </a>
+                );
+              },
+              // Görseller tembel yüklenir ve yalnız izinli Storage adreslerinden
+              // gösterilir; diğer kaynaklar hiç render edilmez.
+              img: ({ node, src, alt }) => {
+                void node;
+                const safeSrc =
+                  typeof src === "string" ? allowedImageSrc(src) : null;
+                if (!safeSrc) return null;
+                return (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={safeSrc}
+                    alt={alt ?? ""}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 );
               },
             }}
@@ -112,6 +150,7 @@ export default function ContentDetail({
                         rel="noopener noreferrer"
                       >
                         {part}
+                        <span className="sr-only"> (yeni sekmede açılır)</span>
                       </a>
                     ) : (
                       <span key={`${part}-${partIndex}`}>{part}</span>
