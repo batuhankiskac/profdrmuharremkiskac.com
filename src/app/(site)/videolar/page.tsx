@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 
 export const metadata = pageMetadata({
   title: "Videolar",
-  description: "Sağlıklı yaşam rehberi videoları.",
+  description: "Prof. Dr. Muharrem Kıskaç'ın iç hastalıkları, diyabet ve sağlıklı yaşam üzerine videoları.",
   path: "/videolar",
 });
 

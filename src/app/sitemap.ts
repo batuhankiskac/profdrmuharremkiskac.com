@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getArticles, getServices } from "@/lib/content";
+import { getArticles, getServices, getVideos } from "@/lib/content";
 import { SITE_URL } from "@/lib/site";
 import type { ArticleSummary, Service } from "@/types/content";
 
@@ -17,7 +17,6 @@ const staticRoutes: [string, ChangeFrequency, number][] = [
   ["/hakkinda", "monthly", 0.8],
   ["/hizmetler", "weekly", 0.8],
   ["/makaleler", "weekly", 0.8],
-  ["/videolar", "weekly", 0.7],
   ["/iletisim", "yearly", 0.6],
   ["/gizlilik", "yearly", 0.3],
 ];
@@ -38,6 +37,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     readOrEmpty<ArticleSummary>("makaleler", getArticles),
     readOrEmpty<Service>("hizmetler", getServices),
   ]);
+  // Video sayfası boşken haritaya eklenmez: boş sayfa dizine girmesin.
+  const videos = await readOrEmpty("videolar", getVideos);
 
   return [
     ...staticRoutes.map(([path, changeFrequency, priority]) => ({
@@ -45,6 +46,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency,
       priority,
     })),
+    ...(videos.length > 0
+      ? [{ url: `${SITE_URL}/videolar`, changeFrequency: "weekly" as const, priority: 0.7 }]
+      : []),
     ...articles.map((article) => ({
       url: `${SITE_URL}/makaleler/${article.id}`,
       lastModified: article.updatedAt ?? article.createdAt ?? undefined,

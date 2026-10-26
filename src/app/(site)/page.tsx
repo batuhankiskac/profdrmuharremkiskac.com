@@ -100,8 +100,6 @@ export default async function Home() {
         aria-labelledby="home-about-title"
       >
         <div className={styles.aboutGrid}>
-          {/* "mask" yerine "scale": MotionObserver'ın clip-path tabanlı başlangıç
-              karesi IntersectionObserver'ı tetiklemez, görsel gizli kalırdı. */}
           <div className={styles.aboutMedia} data-reveal="scale">
             <Image
               src="/images/home-hero.avif"
