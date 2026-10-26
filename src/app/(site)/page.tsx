@@ -79,7 +79,6 @@ export default async function Home() {
                 src="/images/profile.jpg"
                 alt={bioData.name}
                 fill
-                unoptimized
                 preload
                 fetchPriority="high"
                 sizes="(max-width: 899px) 100vw, 40vw"
