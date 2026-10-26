@@ -6,11 +6,12 @@ import { CONSENT_DEFAULT_SCRIPT } from "@/lib/consent";
 import { SITE_URL } from "@/lib/site";
 import styles from "./layout.module.css";
 
-// Hostinger CDN (hcdn) `Vary: rsc` başlığını yok sayıyor; statik sayfaların
-// RSC yükü (text/x-component) normal ziyaretçilere HTML yerine sunulabiliyor.
-// Dinamik render `Cache-Control: private, no-store` gönderir ve CDN bu
-// sayfaları önbelleğe almaz. Firestore verisi unstable_cache ile önbellekte kalır.
-export const dynamic = "force-dynamic";
+// Genel sayfalar ISR ile önceden üretilir ve en fazla 300 sn'de bir yenilenir.
+// Admin'de yapılan değişiklikler updateTag ile geçersiz kılınır (bkz.
+// src/lib/content.ts). Hostinger CDN `Vary: rsc` başlığını yok saydığı için
+// RSC yanıtları next.config.ts içinde önbelleğe alınmaz; HTML yanıtları CDN'de
+// s-maxage süresince tutulabilir.
+export const revalidate = 300;
 
 const physicianSchema = {
   "@context": "https://schema.org",

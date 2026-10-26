@@ -16,13 +16,8 @@
 }
 
 .imageContainer {
-  composes: imageContainer from "../styles/card.module.css";
   border-radius: var(--radius-sm);
   background: var(--color-bg-alt);
-}
-
-.image {
-  composes: image from "../styles/card.module.css";
 }
 
 .title {

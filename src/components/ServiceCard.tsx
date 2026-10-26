@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { excerpt } from "@/lib/text";
 import type { Service } from "@/types/content";
+import CardMedia from "./CardMedia";
 import styles from "./ServiceCard.module.css";
 
 export default function ServiceCard({ service }: { service: Service }) {
@@ -15,15 +15,10 @@ export default function ServiceCard({ service }: { service: Service }) {
       className={styles.card}
       aria-label={`${service.title} hizmetini incele`}
     >
-      <div className={styles.imageContainer}>
-        <Image
-          src={service.imageUrl ?? fallback}
-          alt=""
-          fill
-          className={styles.image}
-          sizes="(max-width: 700px) 100vw, 400px"
-        />
-      </div>
+      <CardMedia
+        className={styles.imageContainer}
+        src={service.imageUrl ?? fallback}
+      />
       <h2 className={styles.title}>{service.title}</h2>
       <p className={styles.description}>{excerpt(service.description)}</p>
     </Link>

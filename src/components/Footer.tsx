@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ConsentPreferencesButton from "./ConsentPreferencesButton";
 import ContactActions from "./ContactActions";
+import ExternalLink from "./ExternalLink";
 import contactData from "@/data/contact.json";
 import { contactLink, navigationLinks, privacyLink } from "@/data/navigation";
 import styles from "./Footer.module.css";
@@ -9,6 +10,13 @@ const footerLinks = [
   ...navigationLinks.filter((link) => link.href !== "/"),
   contactLink,
   privacyLink,
+];
+
+const externalLinks = [
+  { href: "https://doktorhacamat.com", label: "Doktor Hacamat" },
+  { href: "https://siboklinik.com", label: "Sibo Klinik" },
+  { href: contactData.social.instagram, label: "Instagram" },
+  { href: contactData.social.youtube, label: "YouTube" },
 ];
 
 // Yıl, sunucunun saat diliminden bağımsız olarak İstanbul'a göre hesaplanır.
@@ -34,7 +42,7 @@ export default function Footer() {
           <h2>Hızlı Bağlantılar</h2>
           <nav className={styles.links} aria-label="Alt menü">
             {footerLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
+              <Link key={link.href} href={link.href} prefetch={false}>
                 {link.label}
               </Link>
             ))}
@@ -44,22 +52,11 @@ export default function Footer() {
         <div className={styles.column}>
           <h2>Bağlantılar</h2>
           <div className={styles.links}>
-            <a href="https://doktorhacamat.com" target="_blank" rel="noopener noreferrer">
-              Doktor Hacamat
-              <span className="sr-only"> (yeni sekmede açılır)</span>
-            </a>
-            <a href="https://siboklinik.com" target="_blank" rel="noopener noreferrer">
-              Sibo Klinik
-              <span className="sr-only"> (yeni sekmede açılır)</span>
-            </a>
-            <a href={contactData.social.instagram} target="_blank" rel="noopener noreferrer">
-              Instagram
-              <span className="sr-only"> (yeni sekmede açılır)</span>
-            </a>
-            <a href={contactData.social.youtube} target="_blank" rel="noopener noreferrer">
-              YouTube
-              <span className="sr-only"> (yeni sekmede açılır)</span>
-            </a>
+            {externalLinks.map((link) => (
+              <ExternalLink key={link.label} href={link.href}>
+                {link.label}
+              </ExternalLink>
+            ))}
           </div>
         </div>
         <div className={styles.column}>

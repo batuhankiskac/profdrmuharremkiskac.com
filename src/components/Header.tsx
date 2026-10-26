@@ -2,14 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { contactLink, isActivePath, navigationLinks } from "@/data/navigation";
 import styles from "./Header.module.css";
+
+// Masaüstü genişlik. Header.module.css içindeki 1024px mobil kuralıyla birlikte değişmeli.
+const DESKTOP_MEDIA_QUERY = "(min-width: 1025px)";
 
 export default function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuPathname, setMenuPathname] = useState(pathname);
+  const headerRef = useRef<HTMLElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Sayfa değiştiğinde menü kapanır (render sırasında durum ayarlama).
@@ -22,26 +26,24 @@ export default function Header() {
     setIsMenuOpen((open) => !open);
   };
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
-  };
-
-  const headerRef = useRef<HTMLElement>(null);
+  }, []);
 
   useEffect(() => {
     if (!isMenuOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsMenuOpen(false);
+        closeMenu();
         buttonRef.current?.focus();
       }
     };
 
     // Masaüstü genişliğe geçilirse menü kapanır; kaydırma kilidi takılı kalmaz.
-    const desktopQuery = window.matchMedia("(min-width: 1025px)");
+    const desktopQuery = window.matchMedia(DESKTOP_MEDIA_QUERY);
     const handleViewportChange = (event: MediaQueryListEvent) => {
-      if (event.matches) setIsMenuOpen(false);
+      if (event.matches) closeMenu();
     };
 
     // Menü açıkken odak header içinde kalsın diye kardeş öğeler etkisizleştirilir.
@@ -69,11 +71,16 @@ export default function Header() {
         sibling.inert = false;
       });
     };
-  }, [isMenuOpen]);
+  }, [isMenuOpen, closeMenu]);
 
   return (
     <header ref={headerRef} className={styles.header}>
-      <Link href="/" className={styles.logo} onClick={closeMenu}>
+      <Link
+        href="/"
+        className={styles.logo}
+        prefetch={false}
+        onClick={closeMenu}
+      >
         Prof. Dr. Muharrem Kıskaç
       </Link>
 
@@ -111,6 +118,7 @@ export default function Header() {
         <Link
           href={contactLink.href}
           className={styles.ctaButton}
+          prefetch={false}
           aria-current={
             isActivePath(pathname, contactLink.href) ? "page" : undefined
           }

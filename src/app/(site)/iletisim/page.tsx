@@ -1,4 +1,5 @@
 import ContactActions from "@/components/ContactActions";
+import ExternalLink from "@/components/ExternalLink";
 import MapEmbed from "@/components/MapEmbed";
 import contactData from "@/data/contact.json";
 import { pageMetadata } from "@/lib/metadata";
@@ -30,10 +31,9 @@ export default function ContactPage() {
           <h2 className={styles.label}>Adres</h2>
           <address className={styles.value}>{contactData.address}</address>
           <p>
-            <a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer">
+            <ExternalLink href={mapsSearchUrl}>
               Google Haritalar&apos;da aç
-              <span className="sr-only"> (yeni sekmede açılır)</span>
-            </a>
+            </ExternalLink>
           </p>
         </section>
         <section className={styles.section}>

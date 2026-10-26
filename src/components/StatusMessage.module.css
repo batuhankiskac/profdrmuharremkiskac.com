@@ -12,8 +12,8 @@
   color: var(--color-text-light);
 }
 
-.home {
-  composes: button primary from "../../styles/button.module.css";
+.action {
+  composes: button primary from "../styles/button.module.css";
   --btn-py: 0.85rem;
   --btn-px: 1.5rem;
   --btn-radius: var(--radius-md);

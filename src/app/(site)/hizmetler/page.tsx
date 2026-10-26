@@ -1,7 +1,6 @@
 import { Suspense } from "react";
-import ContentGrid from "@/components/ContentGrid";
-import EmptyState from "@/components/EmptyState";
 import LoadingState from "@/components/LoadingState";
+import PublicContentList from "@/components/PublicContentList";
 import ServiceCard from "@/components/ServiceCard";
 import { getServices } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
@@ -13,22 +12,6 @@ export const metadata = pageMetadata({
     "Diyabet, Hipertansiyon, Metabolik Sendrom ve Fonksiyonel Tıp hizmetlerimiz.",
   path: "/hizmetler",
 });
-
-async function ServiceList() {
-  const services = await getServices();
-
-  return (
-    <ContentGrid>
-      {services.length > 0 ? (
-        services.map((service) => (
-          <ServiceCard key={service.id} service={service} />
-        ))
-      ) : (
-        <EmptyState>Hizmetlerimiz yakında eklenecektir.</EmptyState>
-      )}
-    </ContentGrid>
-  );
-}
 
 // Yükleme göstergesi segment yerine sayfa içinde tutulur; segment düzeyindeki
 // loading.tsx alt rotaları da sarar ve detay sayfalarında 404 durum kodunu
@@ -46,7 +29,11 @@ export default function ServicesPage() {
 
       <section aria-label="Hizmet listesi">
         <Suspense fallback={<LoadingState />}>
-          <ServiceList />
+          <PublicContentList
+            load={getServices}
+            emptyText="Hizmetlerimiz yakında eklenecektir."
+            renderItem={(service) => <ServiceCard service={service} />}
+          />
         </Suspense>
       </section>
     </main>
