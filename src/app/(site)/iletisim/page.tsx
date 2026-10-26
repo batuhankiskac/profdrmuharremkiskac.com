@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import ContactActions from "@/components/ContactActions";
 import ExternalLink from "@/components/ExternalLink";
 import MapEmbed from "@/components/MapEmbed";
@@ -22,14 +23,20 @@ export default function ContactPage() {
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.header}>
-        <p className={styles.eyebrow}>İletişim</p>
-        <h1 className={styles.title}>İletişim</h1>
-        <p className={styles.lead}>{description}</p>
+        <p className={styles.eyebrow} data-enter style={{ "--i": 0 } as CSSProperties}>
+          İletişim
+        </p>
+        <h1 className={styles.title} data-enter style={{ "--i": 1 } as CSSProperties}>
+          İletişim
+        </h1>
+        <p className={styles.lead} data-enter style={{ "--i": 2 } as CSSProperties}>
+          {description}
+        </p>
       </header>
 
       <div className={styles.layout}>
         <div className={styles.info}>
-          <section className={styles.row}>
+          <section className={styles.row} data-reveal style={{ "--i": 0 } as CSSProperties}>
             <h2 className={styles.label}>Telefon</h2>
             <a className={styles.phone} href={`tel:${contactData.tel}`}>
               {contactData.phone}
@@ -37,7 +44,7 @@ export default function ContactPage() {
             <ContactActions />
           </section>
 
-          <section className={styles.row}>
+          <section className={styles.row} data-reveal style={{ "--i": 1 } as CSSProperties}>
             <h2 className={styles.label}>Adres</h2>
             <address className={styles.address}>{contactData.address}</address>
             <p>
@@ -47,7 +54,7 @@ export default function ContactPage() {
             </p>
           </section>
 
-          <section className={styles.row}>
+          <section className={styles.row} data-reveal style={{ "--i": 2 } as CSSProperties}>
             <h2 className={styles.label}>Sosyal Medya</h2>
             <ul className={styles.social}>
               <li>

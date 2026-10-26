@@ -42,15 +42,20 @@ export default function ContentDetail({
     <main id="main-content" className={styles.page}>
       <article>
         <header className={styles.header}>
-          <Link href={backHref} className={styles.backLink}>
+          <Link
+            href={backHref}
+            className={styles.backLink}
+            data-enter
+            style={at(0)}
+          >
             ← {backLabel}
           </Link>
           {eyebrow && (
-            <p className={styles.eyebrow} data-enter style={at(0)}>
+            <p className={styles.eyebrow} data-enter style={at(1)}>
               {eyebrow}
             </p>
           )}
-          <h1 className={styles.title} data-enter style={at(1)}>
+          <h1 className={styles.title} data-enter style={at(2)}>
             {title}
           </h1>
           {date && (
@@ -58,7 +63,7 @@ export default function ContentDetail({
               dateTime={date}
               className={styles.date}
               data-enter
-              style={at(2)}
+              style={at(3)}
             >
               {formatDate(date)}
             </time>
@@ -132,7 +137,11 @@ export default function ContentDetail({
               className={styles.citationsSection}
               aria-labelledby="sources"
             >
-              <h2 id="sources" className={styles.citationsTitle}>
+              <h2
+                id="sources"
+                className={styles.citationsTitle}
+                data-reveal
+              >
                 Kaynakça
               </h2>
               <ol className={styles.citationsList}>
@@ -140,6 +149,8 @@ export default function ContentDetail({
                   <li
                     key={`${citation}-${index}`}
                     className={styles.citationItem}
+                    data-reveal
+                    style={{ "--i": index % 4 } as CSSProperties}
                   >
                     {citationParts(citation).map((part, partIndex) =>
                       EXTERNAL_LINK.test(part) ? (

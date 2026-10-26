@@ -86,19 +86,19 @@
   min-width: 0;
 }
 
-/* Dikey çerçeve; kırpma portre oranında, doktor ortada kalır. */
+/* Dikey çerçeve; beyaz önplanlı portre için zemin yüzey rengi. */
 .frame {
   position: relative;
   aspect-ratio: 4 / 5;
   max-height: 70svh;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  background: var(--color-bg-alt);
+  background: var(--color-surface);
 }
 
 .frameImage {
   object-fit: cover;
-  object-position: 52% center;
+  object-position: center top;
 }
 
 /* Çerçevenin alt-solundan taşan küçük yüzey kartı. */
@@ -151,7 +151,7 @@
 
 .aboutImage {
   object-fit: cover;
-  object-position: 50% 20%;
+  object-position: center;
 }
 
 .aboutText {
@@ -199,16 +199,12 @@
   gap: clamp(1rem, 2vw, 1.5rem);
 }
 
-/* Grid: kart, sütun genişliğini tam doldurur. */
-.articleItem {
-  display: grid;
-  min-width: 0;
-}
-
 /* ---------- 04 · Videolar (koyu bölüm) ---------- */
-/* Hemen ardından gelen koyu alt bilgiyle karışmasın diye yosun yeşili zemin. */
+/* Hemen ardından gelen koyu alt bilgiyle karışmasın diye yosun yeşili zemin.
+   Tek ve orta yükseklikte bant: bölüm boşluğu yerine kendi dolgusu. */
 .videos {
   --color-dark: var(--color-primary);
+  padding-block: clamp(3.5rem, 7vw, 5.5rem);
 }
 
 .videosContent {
@@ -220,8 +216,7 @@
 }
 
 .videosTitle {
-  composes: display from "../../styles/layout.module.css";
-  max-width: 14ch;
+  composes: h2 from "../../styles/layout.module.css";
   font-weight: 400;
 }
 
@@ -277,8 +272,11 @@
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   }
 
+  /* 4/5 oranı korunur; en fazla 560px yükseklik (genişlik 448px). */
   .frame {
-    max-height: none;
+    width: min(100%, 448px);
+    max-height: 560px;
+    margin-left: auto;
   }
 
   .idCard {

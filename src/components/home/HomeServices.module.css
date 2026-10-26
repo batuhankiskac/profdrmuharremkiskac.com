@@ -54,10 +54,11 @@
   color: var(--color-accent-ink);
 }
 
+/* Kart başlığı ölçeği; h2'den (step-4) belirgin biçimde küçük. */
 .title {
   grid-area: title;
-  font-size: var(--step-3);
-  line-height: 1.1;
+  font-size: var(--step-2);
+  line-height: 1.15;
   letter-spacing: var(--display-tracking);
   color: var(--color-heading);
   transition: transform var(--dur-base) var(--ease-out);

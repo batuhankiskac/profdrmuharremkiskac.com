@@ -43,9 +43,15 @@ export default function AboutPage() {
 
         <div className={styles.content}>
           <header className={styles.header}>
-            <p className={styles.eyebrow}>Hakkında</p>
-            <h1 className={styles.title}>{bioData.name}</h1>
-            <p className={styles.lead}>{bioData.title}</p>
+            <p className={styles.eyebrow} data-enter style={{ "--i": 0 } as CSSProperties}>
+              Hakkında
+            </p>
+            <h1 className={styles.title} data-enter style={{ "--i": 1 } as CSSProperties}>
+              {bioData.name}
+            </h1>
+            <p className={styles.lead} data-enter style={{ "--i": 2 } as CSSProperties}>
+              {bioData.title}
+            </p>
           </header>
 
           <p className={styles.statement} data-reveal>
@@ -65,7 +71,11 @@ export default function AboutPage() {
           </div>
 
           <section className={styles.career} aria-labelledby="kariyer-baslik">
-            <h2 id="kariyer-baslik" className={styles.careerTitle}>
+            <h2
+              id="kariyer-baslik"
+              className={styles.careerTitle}
+              data-reveal
+            >
               Kariyer
             </h2>
             <ol className={styles.timeline}>

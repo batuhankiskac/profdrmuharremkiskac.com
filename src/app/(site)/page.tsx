@@ -55,12 +55,12 @@ export default async function Home() {
               hedefliyoruz.
             </p>
             <div className={styles.ctas} data-enter style={stagger(3)}>
-              <Link href="/hakkinda" className={styles.primaryCta}>
-                Hakkımda
+              <Link href="/iletisim" className={styles.primaryCta}>
+                Randevu Al
                 <ArrowIcon className={buttonStyles.icon} />
               </Link>
-              <Link href="/hizmetler" className={styles.ghostCta}>
-                Hizmetlerimiz
+              <Link href="/hakkinda" className={styles.ghostCta}>
+                Hakkımda
               </Link>
             </div>
             <ul className={styles.milestones} data-enter style={stagger(4)}>
@@ -76,13 +76,13 @@ export default async function Home() {
           <div className={styles.visual}>
             <div className={styles.frame} data-enter="mask" style={stagger(1)}>
               <Image
-                src="/images/home-hero.avif"
+                src="/images/profile.jpg"
                 alt={bioData.name}
                 fill
                 unoptimized
                 preload
                 fetchPriority="high"
-                sizes="(max-width: 899px) 100vw, 42vw"
+                sizes="(max-width: 899px) 100vw, 40vw"
                 className={styles.frameImage}
               />
             </div>
@@ -101,9 +101,11 @@ export default async function Home() {
         aria-labelledby="home-about-title"
       >
         <div className={styles.aboutGrid}>
-          <div className={styles.aboutMedia} data-reveal="mask">
+          {/* "mask" yerine "scale": MotionObserver'ın clip-path tabanlı başlangıç
+              karesi IntersectionObserver'ı tetiklemez, görsel gizli kalırdı. */}
+          <div className={styles.aboutMedia} data-reveal="scale">
             <Image
-              src="/images/profile.jpg"
+              src="/images/home-hero.avif"
               alt={bioData.name}
               fill
               sizes="(max-width: 899px) 100vw, 40vw"
@@ -154,15 +156,9 @@ export default async function Home() {
             </div>
 
             <div className={styles.articleGrid}>
+              {/* Kartın reveal'ini ArticleCard yapar; çift animasyon olmasın. */}
               {latestArticles.map((article, index) => (
-                <div
-                  key={article.id}
-                  className={styles.articleItem}
-                  data-reveal
-                  style={stagger(index % 4)}
-                >
-                  <ArticleCard article={article} />
-                </div>
+                <ArticleCard key={article.id} article={article} index={index} />
               ))}
             </div>
           </div>
@@ -170,7 +166,7 @@ export default async function Home() {
       )}
 
       <section
-        className={`${layoutStyles.section} ${layoutStyles.dark} ${styles.videos}`}
+        className={`${layoutStyles.dark} ${styles.videos}`}
         aria-labelledby="home-videos-title"
       >
         <div className={layoutStyles.container}>

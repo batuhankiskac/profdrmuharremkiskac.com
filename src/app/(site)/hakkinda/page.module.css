@@ -9,10 +9,13 @@
   align-items: start;
 }
 
+/* Portre 4/5; dar ekranda genişliği sınırlı, yüksekliği kontrol altında. */
 .media {
   position: relative;
+  width: 100%;
+  max-width: 26rem;
   margin: 0;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: var(--radius-lg);
   background: var(--color-bg-alt);
@@ -56,12 +59,12 @@
 .statement {
   margin-top: clamp(2rem, 4vw, 2.75rem);
   font-family: var(--font-display), Georgia, serif;
-  font-size: var(--step-2);
+  font-size: var(--step-3);
   font-weight: 400;
-  line-height: 1.35;
+  line-height: 1.25;
   letter-spacing: -0.01em;
   color: var(--color-heading);
-  max-width: 30em;
+  max-width: 28em;
 }
 
 .prose {
@@ -156,6 +159,6 @@
   .media {
     position: sticky;
     top: calc(var(--header-h) + 2rem);
-    aspect-ratio: 4 / 5;
+    max-width: none;
   }
 }

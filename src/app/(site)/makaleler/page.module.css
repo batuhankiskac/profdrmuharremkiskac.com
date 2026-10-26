@@ -1,7 +1,7 @@
 /* Liste sayfası iskeleti src/styles/page.module.css'ten gelir. */
 .page {
   composes: page from "../../../styles/page.module.css";
-  --page-max: 1000px;
+  --page-max: 1200px;
 }
 
 .header {

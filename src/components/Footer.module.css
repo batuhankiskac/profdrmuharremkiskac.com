@@ -160,7 +160,7 @@
   padding-inline: var(--gutter);
   overflow: hidden;
   font-family: var(--font-display), Georgia, serif;
-  font-size: clamp(3rem, 12vw, 11rem);
+  font-size: clamp(2.5rem, 7vw, 6.5rem);
   font-weight: var(--heading-weight);
   line-height: 1;
   letter-spacing: var(--display-tracking);

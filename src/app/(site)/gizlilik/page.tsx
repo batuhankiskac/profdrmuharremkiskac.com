@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import bioData from "@/data/bio.json";
 import contactData from "@/data/contact.json";
 import { pageMetadata } from "@/lib/metadata";
@@ -27,14 +28,16 @@ export default function PrivacyPage() {
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.header}>
-        <p className={styles.eyebrow}>Yasal</p>
-        <h1 className={styles.title}>
+        <p className={styles.eyebrow} data-enter style={{ "--i": 0 } as CSSProperties}>
+          Yasal
+        </p>
+        <h1 className={styles.title} data-enter style={{ "--i": 1 } as CSSProperties}>
           Gizlilik ve Çerez Politikası / KVKK Aydınlatma Metni
         </h1>
       </header>
 
       <div className={styles.layout}>
-        <nav className={styles.toc} aria-label="İçindekiler">
+        <nav className={styles.toc} aria-label="İçindekiler" data-reveal>
           <p className={styles.tocLabel}>İçindekiler</p>
           <ol className={styles.tocList}>
             {TOC.map((item) => (
@@ -48,7 +51,7 @@ export default function PrivacyPage() {
         </nav>
 
         <div className={styles.prose}>
-          <section className={styles.section}>
+          <section className={styles.section} data-reveal style={{ "--i": 0 } as CSSProperties}>
             <h2 id="veri-sorumlusu" className={styles.subheading}>1. Veri sorumlusu</h2>
             <p>
               Bu sitede işlenen kişisel veriler bakımından veri sorumlusu{" "}
@@ -60,7 +63,7 @@ export default function PrivacyPage() {
             </ul>
           </section>
 
-          <section className={styles.section}>
+          <section className={styles.section} data-reveal style={{ "--i": 1 } as CSSProperties}>
             <h2 id="islenen-veriler" className={styles.subheading}>2. İşlenen veriler</h2>
             <ul className={styles.list}>
               <li>
@@ -91,7 +94,7 @@ export default function PrivacyPage() {
             </p>
           </section>
 
-          <section className={styles.section}>
+          <section className={styles.section} data-reveal style={{ "--i": 2 } as CSSProperties}>
             <h2 id="isleme-amaclari" className={styles.subheading}>3. İşleme amaçları</h2>
             <ul className={styles.list}>
               <li>Sitenin güvenli ve doğru çalışmasını sağlamak.</li>
@@ -106,7 +109,7 @@ export default function PrivacyPage() {
             </ul>
           </section>
 
-          <section className={styles.section}>
+          <section className={styles.section} data-reveal style={{ "--i": 3 } as CSSProperties}>
             <h2 id="hukuki-sebepler" className={styles.subheading}>4. Hukuki sebepler (KVKK m.5)</h2>
             <ul className={styles.list}>
               <li>
@@ -121,7 +124,7 @@ export default function PrivacyPage() {
             </ul>
           </section>
 
-          <section className={styles.section}>
+          <section className={styles.section} data-reveal style={{ "--i": 0 } as CSSProperties}>
             <h2 id="yurt-disina-aktarim" className={styles.subheading}>5. Yurt dışına aktarım</h2>
             <p>
               Google Tag Manager, Google Analytics ve Google Ads hizmetleri ile
@@ -133,7 +136,7 @@ export default function PrivacyPage() {
             </p>
           </section>
 
-          <section className={styles.section}>
+          <section className={styles.section} data-reveal style={{ "--i": 1 } as CSSProperties}>
             <h2 id="saklama-sureleri" className={styles.subheading}>6. Saklama süreleri</h2>
             <ul className={styles.list}>
               <li>
@@ -156,7 +159,7 @@ export default function PrivacyPage() {
             </ul>
           </section>
 
-          <section className={styles.section}>
+          <section className={styles.section} data-reveal style={{ "--i": 2 } as CSSProperties}>
             <h2 id="cerez-tercihleri" className={styles.subheading}>7. Çerez tercihleriniz</h2>
             <p>
               Sitenin altındaki <strong>&quot;Çerez tercihleri&quot;</strong>{" "}
@@ -169,7 +172,7 @@ export default function PrivacyPage() {
             </p>
           </section>
 
-          <section className={styles.section}>
+          <section className={styles.section} data-reveal style={{ "--i": 3 } as CSSProperties}>
             <h2 id="kvkk-haklari" className={styles.subheading}>8. KVKK kapsamındaki haklarınız (m.11)</h2>
             <ul className={styles.list}>
               <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme.</li>
@@ -206,7 +209,7 @@ export default function PrivacyPage() {
             </p>
           </section>
 
-          <p className={styles.notice}>
+          <p className={styles.notice} data-reveal>
             Bu metin bir şablondur. Yayımlanmadan önce veri sorumlusunun durumu,
             kullanılan hizmetler ve ilgili mevzuat bakımından bir avukat tarafından
             incelenmeli ve gerekirse güncellenmelidir.

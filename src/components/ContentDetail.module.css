@@ -43,11 +43,13 @@
   composes: eyebrow from "../styles/layout.module.css";
 }
 
+/* Sayfanın tek h1'i: en fazla --step-5, dar satır genişliğiyle en fazla 3 satır. */
 .title {
   max-width: 20ch;
-  font-size: var(--step-4);
-  line-height: 1.06;
+  font-size: var(--step-5);
+  line-height: 1.04;
   letter-spacing: var(--display-tracking, -0.03em);
+  text-wrap: balance;
   overflow-wrap: anywhere;
 }
 
@@ -58,11 +60,11 @@
   color: var(--color-text-light);
 }
 
-/* Tam genişlikte kapak: 16/9, en fazla ekranın %70'i kadar yüksek. */
+/* Tam genişlikte kapak: 16/9, en fazla 560px yüksek; fazlası kırpılır. */
 .media {
   position: relative;
   width: 100%;
-  max-height: 70svh;
+  max-height: 560px;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   margin-bottom: clamp(3rem, 6vw, 4.5rem);
@@ -74,9 +76,10 @@
   object-fit: cover;
 }
 
+/* Gövde metni --step-0; başlıklardan büyük gövde orantıyı bozar. */
 .prose {
   max-width: 68ch;
-  font-size: var(--step-1);
+  font-size: var(--step-0);
   line-height: 1.75;
   color: var(--color-text);
   overflow-wrap: anywhere;
@@ -316,10 +319,6 @@
 }
 
 @media (max-width: 640px) {
-  .prose {
-    font-size: var(--step-0);
-  }
-
   .prose blockquote {
     font-size: var(--step-1);
   }
