@@ -1,91 +1,103 @@
+/* Video kartı: kutusuz, 16:9 küçük resim. Alt kısımda koyu gradyan ve
+   ortada 64px beyaz daire içinde yeşil üçgen. Kart reveal'i transform
+   kullandığı için hover efektleri çocuk öğelerde tutulur. */
 .card {
-  composes: card from "../styles/card.module.css";
-  --card-lift: -5px;
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
-  text-decoration: none;
-  color: inherit;
 }
 
-.imageContainer {
-  composes: focusTarget from "../styles/card.module.css";
+.media {
   --ratio: 16 / 9;
-  background-color: #000;
-  display: block;
-  padding: 0;
-  border: 0;
+  --frame-bg: var(--color-dark);
   cursor: pointer;
-  text-align: inherit;
 }
 
-.videoContainer {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background-color: #000;
-}
-
-.iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-.imageContainer img {
-  transition: transform 0.3s ease;
-}
-
-.card:hover .imageContainer img {
-  transform: scale(1.05);
+.card:hover .media img {
+  transform: scale(1.045);
 }
 
 .playOverlay {
   position: absolute;
   inset: 0;
-  background: rgb(0 0 0 / 30%);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s ease;
+  background: linear-gradient(
+    to top,
+    rgb(var(--color-ink-rgb) / 46%) 0%,
+    rgb(var(--color-ink-rgb) / 0%) 55%
+  );
+  transition: background var(--dur-base) var(--ease-out);
 }
 
 .card:hover .playOverlay {
-  background: rgb(0 0 0 / 50%);
+  background: linear-gradient(
+    to top,
+    rgb(var(--color-ink-rgb) / 56%) 0%,
+    rgb(var(--color-ink-rgb) / 6%) 60%
+  );
 }
 
 .playButton {
-  width: 60px;
-  height: 60px;
-  background: rgb(255 255 255 / 90%);
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
+  background: var(--color-surface);
   color: var(--color-primary);
-  box-shadow: 0 4px 15px rgb(0 0 0 / 20%);
-  transition: transform 0.3s ease, background-color 0.3s ease;
-  padding-left: 4px; /* Optically center the play icon */
+  box-shadow: var(--shadow-md);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.playButton svg {
+  width: 24px;
+  height: 24px;
 }
 
 .card:hover .playButton {
-  transform: scale(1.1);
-  background: var(--color-surface);
+  transform: scale(1.08);
+}
+
+.iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.videoContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-dark);
 }
 
 .content {
-  padding: 1.5rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  padding-top: 1.25rem;
 }
 
 .title {
   composes: clamp from "../styles/card.module.css";
   --lines: 2;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin: 0;
-  line-height: 1.4;
+  font-size: var(--step-1);
+  line-height: 1.3;
+  color: var(--color-heading);
+}
+
+/* Başlık altı çizgisi soldan sağa dolar. */
+.titleText {
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size var(--dur-base) var(--ease-out);
+}
+
+.card:hover .titleText {
+  background-size: 100% 1px;
 }

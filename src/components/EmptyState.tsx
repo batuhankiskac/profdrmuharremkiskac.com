@@ -1,9 +1,20 @@
+import type { ReactNode } from "react";
 import styles from "./EmptyState.module.css";
 
-export default function EmptyState({ children }: { children: React.ReactNode }) {
+type EmptyStateProps = {
+  children: ReactNode;
+  eyebrow?: string;
+};
+
+// Boş liste durumu: küçük üst etiket ve mesaj. Eylem butonu yoktur.
+export default function EmptyState({
+  children,
+  eyebrow = "Yakında",
+}: EmptyStateProps) {
   return (
-    <p className={styles.empty} role="status">
-      {children}
-    </p>
+    <div className={styles.empty} role="status">
+      <span className={styles.eyebrow}>{eyebrow}</span>
+      <p className={styles.message}>{children}</p>
+    </div>
   );
 }

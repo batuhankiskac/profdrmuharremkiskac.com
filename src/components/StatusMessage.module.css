@@ -1,21 +1,36 @@
-.container {
-  min-height: 55vh;
-  display: grid;
-  place-content: center;
-  gap: 1rem;
-  padding: 3rem 1.5rem;
-  text-align: center;
+/* Hata ve 404: sol hizalı, dikey ortalanmış editoryal blok. */
+.page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 62vh;
+  padding-block: clamp(4rem, 10vw, 8rem);
+}
+
+.inner {
+  composes: container from "../styles/layout.module.css";
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.eyebrow {
+  composes: eyebrow from "../styles/layout.module.css";
+}
+
+.title {
+  composes: display from "../styles/layout.module.css";
+  max-width: 14ch;
 }
 
 .message {
-  max-width: 38rem;
-  color: var(--color-text-light);
+  composes: lead from "../styles/layout.module.css";
+  margin-top: 0.5rem;
 }
 
 .action {
   composes: button primary from "../styles/button.module.css";
   --btn-py: 0.85rem;
   --btn-px: 1.5rem;
-  --btn-radius: var(--radius-md);
-  justify-self: center;
 }

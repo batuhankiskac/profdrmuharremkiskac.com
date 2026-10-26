@@ -1,8 +1,21 @@
-.container {
-  composes: container from "../../../styles/page.module.css";
+/* Liste sayfası iskeleti src/styles/page.module.css'ten gelir. */
+.page {
+  composes: page from "../../../styles/page.module.css";
   --page-max: 1000px;
 }
 
-.heading {
-  composes: heading from "../../../styles/page.module.css";
+.header {
+  composes: header from "../../../styles/page.module.css";
+}
+
+.eyebrow {
+  composes: eyebrow from "../../../styles/page.module.css";
+}
+
+.title {
+  composes: title from "../../../styles/page.module.css";
+}
+
+.body {
+  composes: body from "../../../styles/page.module.css";
 }

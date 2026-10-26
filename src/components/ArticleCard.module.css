@@ -1,57 +1,89 @@
+/* Editoryal makale kartı: kutu yok. Hover'da yalnız görsel yakınlaşır,
+   başlık altı çizilir, ok kayar. Kart reveal'i transform kullandığı için
+   hover efektleri çocuk öğelerde tutulur. */
 .card {
-  composes: card from "../styles/card.module.css";
-  --card-shadow: var(--shadow-md);
+  position: relative;
   height: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
 .link {
-  composes: focusTarget from "../styles/card.module.css";
-  text-decoration: none;
-  color: inherit;
   display: flex;
   flex-direction: column;
   height: 100%;
+  color: inherit;
+  text-decoration: none;
 }
 
-.imageContainer {
-  background-color: var(--color-bg-alt);
+.media {
+  --ratio: 16 / 10;
+  --frame-bg: var(--color-bg-alt);
+}
+
+.card:hover .media img {
+  transform: scale(1.045);
 }
 
 .content {
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  padding-top: 1.5rem;
 }
 
 .date {
-  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+  font-size: var(--step--1);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--color-text-light);
-  margin-bottom: 0.5rem;
 }
 
 .title {
-  composes: title from "../styles/card.module.css";
-  font-size: 1.25rem;
-  color: var(--color-text);
-  margin-bottom: 0.75rem;
+  font-size: var(--step-2);
+  line-height: 1.2;
+  color: var(--color-heading);
+}
+
+/* Altı çizgi soldan sağa dolar; satır kırılırsa her satırda çizilir. */
+.titleText {
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size var(--dur-base) var(--ease-out);
+}
+
+.card:hover .titleText {
+  background-size: 100% 1px;
 }
 
 .summary {
   composes: clamp from "../styles/card.module.css";
   --lines: 3;
-  font-size: 1rem;
-  color: var(--color-text-light);
-  margin-bottom: 1.5rem;
+  margin-top: 0.875rem;
+  margin-bottom: 1.25rem;
+  font-size: var(--step-0);
   line-height: 1.6;
-  flex-grow: 1;
+  color: var(--color-text-light);
 }
 
-.readMore {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--color-primary);
+.more {
+  composes: link from "../styles/button.module.css";
   margin-top: auto;
+  font-size: var(--step--1);
+  letter-spacing: 0.02em;
+}
+
+.card:hover .more {
+  background-size: 100% 1px;
+}
+
+.card:hover .more svg {
+  transform: translateX(4px);
+}
+
+/* Görselsiz kart: üstte ince çizgi, metin doğrudan başlar. */
+.textOnly {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-line-strong);
 }

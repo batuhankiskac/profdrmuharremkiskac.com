@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, type CSSProperties } from "react";
 import LoadingState from "@/components/LoadingState";
 import PublicContentList from "@/components/PublicContentList";
 import VideoCard from "@/components/VideoCard";
@@ -14,15 +14,30 @@ export const metadata = pageMetadata({
 
 export default function VideosPage() {
   return (
-    <main id="main-content" className={styles.container}>
-      <h1 className={styles.heading}>Videolar</h1>
-      <Suspense fallback={<LoadingState />}>
-        <PublicContentList
-          load={getVideos}
-          emptyText="Henüz yayınlanmış bir video bulunmuyor."
-          renderItem={(video) => <VideoCard video={video} />}
-        />
-      </Suspense>
+    <main id="main-content" className={styles.page}>
+      <header className={styles.header}>
+        <p className={styles.eyebrow} data-enter>
+          Sağlıklı yaşam
+        </p>
+        <h1
+          className={styles.title}
+          data-enter
+          style={{ "--i": 1 } as CSSProperties}
+        >
+          Videolar
+        </h1>
+      </header>
+      <div className={styles.body}>
+        <Suspense fallback={<LoadingState />}>
+          <PublicContentList
+            load={getVideos}
+            emptyText="Henüz yayınlanmış bir video bulunmuyor."
+            renderItem={(video, index) => (
+              <VideoCard video={video} index={index} />
+            )}
+          />
+        </Suspense>
+      </div>
     </main>
   );
 }

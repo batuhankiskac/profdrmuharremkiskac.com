@@ -1,22 +1,25 @@
-.container {
-  composes: container from "../../../styles/page.module.css";
+/* Liste sayfası iskeleti src/styles/page.module.css'ten gelir. */
+.page {
+  composes: page from "../../../styles/page.module.css";
   --page-max: 1200px;
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 4rem;
+  composes: header from "../../../styles/page.module.css";
+}
+
+.eyebrow {
+  composes: eyebrow from "../../../styles/page.module.css";
 }
 
 .title {
-  composes: heading from "../../../styles/page.module.css";
-  --heading-size: 2.5rem;
-  --heading-mb: 1rem;
+  composes: title from "../../../styles/page.module.css";
 }
 
-.subtitle {
-  color: var(--color-text-light);
-  font-size: 1.125rem;
-  max-width: 600px;
-  margin: 0 auto;
+.lead {
+  composes: lead from "../../../styles/page.module.css";
+}
+
+.body {
+  composes: body from "../../../styles/page.module.css";
 }

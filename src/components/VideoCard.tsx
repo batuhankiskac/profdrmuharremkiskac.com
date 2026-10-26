@@ -1,12 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { videoThumbnail } from "@/lib/youtube";
 import type { Video } from "@/types/content";
 import CardMedia from "./CardMedia";
 import styles from "./VideoCard.module.css";
 
-export default function VideoCard({ video }: { video: Video }) {
+type VideoCardProps = {
+  video: Video;
+  // Liste içindeki sıra; giriş gecikmesi (--i) için kullanılır.
+  index?: number;
+};
+
+export default function VideoCard({ video, index = 0 }: VideoCardProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const thumbnail = videoThumbnail(video);
@@ -17,7 +23,11 @@ export default function VideoCard({ video }: { video: Video }) {
   }, [isPlaying]);
 
   return (
-    <article className={styles.card}>
+    <article
+      className={styles.card}
+      data-reveal
+      style={{ "--i": index % 3 } as CSSProperties}
+    >
       {isPlaying ? (
         <div className={styles.videoContainer}>
           <iframe
@@ -31,18 +41,24 @@ export default function VideoCard({ video }: { video: Video }) {
         </div>
       ) : (
         <CardMedia
-          className={styles.imageContainer}
+          className={styles.media}
           src={thumbnail}
           onClick={() => setIsPlaying(true)}
           buttonLabel={`${video.title} videosunu oynat`}
         >
           <span className={styles.playOverlay} aria-hidden="true">
-            <span className={styles.playButton}>▶</span>
+            <span className={styles.playButton}>
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M8 6.2v11.6L17.6 12z" fill="currentColor" />
+              </svg>
+            </span>
           </span>
         </CardMedia>
       )}
       <div className={styles.content}>
-        <h2 className={styles.title}>{video.title}</h2>
+        <h2 className={styles.title}>
+          <span className={styles.titleText}>{video.title}</span>
+        </h2>
       </div>
     </article>
   );

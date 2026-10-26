@@ -41,6 +41,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     <ContentDetail
       backHref="/makaleler"
       backLabel="Makalelere Dön"
+      eyebrow="Makale"
       title={article.title}
       imageUrl={article.imageUrl}
       imageAlt={`${article.title} makale kapak görseli`}

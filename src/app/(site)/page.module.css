@@ -2,138 +2,305 @@
   width: 100%;
 }
 
+/* ---------- Giriş: bölünmüş düzen, açık zemin ---------- */
 .hero {
-  min-height: 90vh;
-  min-height: 90dvh;
-  display: flex;
-  flex-direction: column;
+  padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3.5rem, 7vw, 6rem);
+}
+
+.heroGrid {
+  composes: container from "../../styles/layout.module.css";
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2.5rem, 5vw, 5rem);
   align-items: center;
-  justify-content: center;
-  gap: 2.5rem;
-  position: relative;
-  overflow: hidden;
-  padding: 2rem;
-  text-align: center;
-  color: var(--color-surface);
-}
-
-.heroBackground {
-  object-fit: cover;
-  object-position: center;
-  z-index: 0;
-}
-
-.heroOverlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgb(0 0 0 / 40%);
-  z-index: 1;
-}
-
-.heroContent {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.heroTitle {
-  font-size: 3.5rem;
-  font-weight: 700;
-  color: var(--color-surface);
-  max-width: 900px;
-  line-height: 1.1;
-  margin-bottom: 1rem;
-}
-
-.heroSubtitle {
-  font-style: italic;
-  color: var(--color-bg);
 }
 
 .heroText {
-  font-size: 1.25rem;
-  color: var(--color-bg-alt);
-  max-width: 700px;
-  line-height: 1.6;
-  margin: 0 auto 2rem auto;
-}
-
-.buttonGroup {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.5vw, 1.75rem);
+  min-width: 0;
 }
 
-.primaryButton {
+.heroTitle {
+  composes: display from "../../styles/layout.module.css";
+  font-weight: 400;
+}
+
+.heroEm {
+  display: block;
+  font-style: italic;
+  color: var(--color-accent-ink);
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.primaryCta {
   composes: button primary from "../../styles/button.module.css";
   --btn-py: 1rem;
-  --btn-px: 2.5rem;
-  --btn-shadow: var(--shadow-button);
+  --btn-px: 2rem;
 }
 
-.secondaryButton {
-  composes: button from "../../styles/button.module.css";
+.ghostCta {
+  composes: button ghost from "../../styles/button.module.css";
   --btn-py: 1rem;
-  --btn-px: 2.5rem;
-  --btn-border-color: var(--color-surface);
-  background: transparent;
-  color: var(--color-surface);
+  --btn-px: 2rem;
 }
 
-.secondaryButton:hover {
-  background: var(--color-surface);
-  color: var(--color-primary);
+/* Üç dönüm noktası: ince çizgilerle ayrılmış, yıl büyük, etiket kısa. */
+.milestones {
+  list-style: none;
+  margin-top: clamp(0.5rem, 2vw, 1.5rem);
+  border-top: 1px solid var(--color-line);
 }
 
-.videosSection {
-  padding: 5rem 2rem;
-  background: var(--color-bg-alt);
-  text-align: center;
+.milestone {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 1rem;
+  padding-block: 1.1rem;
+  border-bottom: 1px solid var(--color-line);
 }
 
-.sectionTitle {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
+.milestoneYear {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--step-3);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-heading);
 }
 
-.sectionText {
-  max-width: 600px;
-  margin: 0 auto 3rem auto;
+.milestoneLabel {
+  font-size: var(--step--1);
+  line-height: 1.45;
   color: var(--color-text-light);
 }
 
-.videosContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
+.visual {
+  position: relative;
+  min-width: 0;
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-  .heroTitle {
-    font-size: 2.25rem;
+/* Dikey çerçeve; kırpma portre oranında, doktor ortada kalır. */
+.frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  max-height: 70svh;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-alt);
+}
+
+.frameImage {
+  object-fit: cover;
+  object-position: 52% center;
+}
+
+/* Çerçevenin alt-solundan taşan küçük yüzey kartı. */
+.idCard {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  max-width: min(calc(100% - 2rem), 17rem);
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.idName {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--step-1);
+  line-height: 1.25;
+  color: var(--color-heading);
+}
+
+.idTitle {
+  margin-top: 0.25rem;
+  font-size: var(--step--1);
+  line-height: 1.4;
+  color: var(--color-text-light);
+}
+
+/* ---------- 02 · Hakkında (alternatif zemin) ---------- */
+.about {
+  background: var(--color-bg-alt);
+}
+
+.aboutGrid {
+  composes: container from "../../styles/layout.module.css";
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2.5rem, 5vw, 5rem);
+  align-items: center;
+}
+
+.aboutMedia {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+}
+
+.aboutImage {
+  object-fit: cover;
+  object-position: 50% 20%;
+}
+
+.aboutText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+.statement {
+  max-width: 28ch;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--step-3);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: var(--display-tracking);
+  color: var(--color-heading);
+}
+
+.body {
+  max-width: 68ch;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+/* ---------- 03 · Makaleler ---------- */
+.sectionHead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.sectionTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.articleGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* Grid: kart, sütun genişliğini tam doldurur. */
+.articleItem {
+  display: grid;
+  min-width: 0;
+}
+
+/* ---------- 04 · Videolar (koyu bölüm) ---------- */
+/* Hemen ardından gelen koyu alt bilgiyle karışmasın diye yosun yeşili zemin. */
+.videos {
+  --color-dark: var(--color-primary);
+}
+
+.videosContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  max-width: 56rem;
+}
+
+.videosTitle {
+  composes: display from "../../styles/layout.module.css";
+  max-width: 14ch;
+  font-weight: 400;
+}
+
+.videosText {
+  composes: lead from "../../styles/layout.module.css";
+  max-width: 52ch;
+}
+
+.videosActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.lightCta {
+  composes: button light from "../../styles/button.module.css";
+  --btn-py: 1rem;
+  --btn-px: 2rem;
+}
+
+.ghostLightCta {
+  composes: button ghostLight from "../../styles/button.module.css";
+  --btn-py: 1rem;
+  --btn-px: 2rem;
+}
+
+/* ---------- Mobil: görsel metnin altına, 4/5 ve en fazla 70svh ---------- */
+@media (min-width: 640px) {
+  .milestones {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .heroText {
-    font-size: 1rem;
-  }
-
-  .buttonGroup {
+  .milestone {
+    display: flex;
     flex-direction: column;
-    width: 100%;
-    max-width: 300px;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1.25rem clamp(0.75rem, 2vw, 1.5rem) 0;
+    border-bottom: 0;
+    border-left: 1px solid var(--color-line);
   }
 
-  .primaryButton,
-  .secondaryButton {
-    width: 100%;
+  .milestone:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@media (min-width: 900px) {
+  .heroGrid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   }
 
-  .videosSection {
-    padding: 3rem 1.5rem;
+  .frame {
+    max-height: none;
+  }
+
+  .idCard {
+    left: -2.5rem;
+    bottom: 2.5rem;
+  }
+
+  .aboutGrid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .aboutMedia {
+    aspect-ratio: 4 / 5;
+  }
+
+  .sectionHead {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .articleGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

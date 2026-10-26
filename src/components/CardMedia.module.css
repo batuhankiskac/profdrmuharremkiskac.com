@@ -1,9 +1,29 @@
-.placeholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-light);
-  background-color: var(--color-bg-alt);
+/* Kart görsel çerçevesi: 16/10 varsayılan oran, md köşe yarıçapı.
+   Kartlar --ratio ve --frame-bg değerlerini kendi sınıflarında verir. */
+.frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--ratio, 16 / 10);
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--frame-bg, var(--color-bg-alt));
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  isolation: isolate;
 }
+
+button.frame {
+  cursor: pointer;
+  appearance: none;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 1200ms var(--ease-out);
+}
+

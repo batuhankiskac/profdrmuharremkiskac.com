@@ -1,0 +1,112 @@
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.list {
+  list-style: none;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.item {
+  border-top: 1px solid var(--color-line);
+}
+
+/* Satır: sol dizin, başlık, kısa açıklama ve ok. Hover'da alttan dolar. */
+.row {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 1.25rem;
+  grid-template-areas:
+    "index title arrow"
+    ".     desc  arrow";
+  align-items: center;
+  column-gap: 1rem;
+  row-gap: 0.5rem;
+  padding: 1.5rem clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-bg-alt);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.row:hover::before,
+.row:focus-visible::before {
+  transform: scaleY(1);
+}
+
+.index {
+  grid-area: index;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--step-1);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent-ink);
+}
+
+.title {
+  grid-area: title;
+  font-size: var(--step-3);
+  line-height: 1.1;
+  letter-spacing: var(--display-tracking);
+  color: var(--color-heading);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.desc {
+  composes: clamp from "../../styles/card.module.css";
+  --lines: 2;
+  grid-area: desc;
+  max-width: 60ch;
+  font-size: var(--step--1);
+  line-height: 1.6;
+  color: var(--color-text-light);
+}
+
+.arrow {
+  grid-area: arrow;
+  justify-self: end;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-primary);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.row:hover .title,
+.row:focus-visible .title,
+.row:hover .arrow,
+.row:focus-visible .arrow {
+  transform: translateX(6px);
+}
+
+.more {
+  margin-top: 2rem;
+}
+
+@media (min-width: 900px) {
+  .row {
+    grid-template-columns: 4.5rem minmax(0, 1.25fr) minmax(0, 1fr) 1.5rem;
+    grid-template-areas: "index title desc arrow";
+    column-gap: 2rem;
+    padding-block: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .desc {
+    max-width: none;
+  }
+
+  .arrow {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}

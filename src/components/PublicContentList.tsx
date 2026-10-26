@@ -5,7 +5,8 @@ import EmptyState from "@/components/EmptyState";
 type PublicContentListProps<T extends { id: string }> = {
   load: () => Promise<T[]>;
   emptyText: string;
-  renderItem: (item: T) => ReactNode;
+  // index: kart giriş gecikmesi (--i) için sıra numarası.
+  renderItem: (item: T, index: number) => ReactNode;
 };
 
 // Liste sayfalarının ortak kalıbı: veriyi yükler, kartları ızgarada gösterir,
@@ -20,8 +21,8 @@ export default async function PublicContentList<T extends { id: string }>({
   return (
     <ContentGrid>
       {items.length > 0 ? (
-        items.map((item) => (
-          <Fragment key={item.id}>{renderItem(item)}</Fragment>
+        items.map((item, index) => (
+          <Fragment key={item.id}>{renderItem(item, index)}</Fragment>
         ))
       ) : (
         <EmptyState>{emptyText}</EmptyState>

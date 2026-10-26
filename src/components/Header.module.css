@@ -1,48 +1,102 @@
+/* Üst çubuk: yapışkan, yarı saydam kâğıt zemin. Bulanıklık ::before'da
+   durur; header üzerinde backdrop-filter olsaydı mobil menü (fixed) onun
+   içinde kalırdı. Mobil menü kırılımı Header.tsx'teki 1025px ile eşleşmeli. */
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 3rem;
-  background-color: rgb(var(--color-bg-rgb) / 95%);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-sm);
+  --header-current: var(--header-h);
+
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 50;
+  height: var(--header-current);
+  border-bottom: 1px solid transparent;
+  transition:
+    height var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgb(var(--color-bg-rgb) / 78%);
+  backdrop-filter: saturate(1.4) blur(14px);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+}
+
+.header[data-scrolled] {
+  --header-current: 64px;
+
+  border-bottom-color: var(--color-line);
+}
+
+.inner {
+  composes: container from "../styles/layout.module.css";
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .logo {
-  font-family: var(--font-playfair), serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  letter-spacing: -0.02em;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: var(--heading-weight);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--color-heading);
+  white-space: nowrap;
 }
 
+/* Masaüstü navigasyonu: alt çizgi soldan sağa uzar. */
 .nav {
   display: flex;
-  gap: 2.5rem;
   align-items: center;
+  gap: clamp(1.25rem, 2.6vw, 2.25rem);
 }
 
 .navLink {
-  color: var(--color-text);
+  position: relative;
+  padding-block: 0.5rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  font-size: 1rem;
-  transition: color 0.2s;
+  color: var(--color-text-light);
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.1rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-out);
 }
 
 .navLink:hover {
-  color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.navLink:hover::after {
+  transform: scaleX(1);
 }
 
 .navLink[aria-current="page"] {
-  color: var(--color-primary);
+  color: var(--color-text);
   font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: var(--color-secondary);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.4em;
+}
+
+.navLink[aria-current="page"]::after {
+  background: var(--color-accent);
+  transform: scaleX(1);
+}
+
+.navIndex {
+  display: none;
 }
 
 .ctaButton {
@@ -50,77 +104,137 @@
   --btn-shadow: 0 4px 14px 0 rgb(var(--color-primary-rgb) / 25%);
 }
 
+/* Masaüstünde CTA kompakt; iki sınıflı seçici sıra bağımsız olarak üstün gelir. */
+.nav .ctaButton {
+  --btn-py: 0.55rem;
+  --btn-px: 1.15rem;
+  min-height: 42px;
+  font-size: 0.9rem;
+}
+
+.hamburger {
+  display: none;
+  position: relative;
+  z-index: 120;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 44px;
+  height: 44px;
+  margin-right: -0.6rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* İki çizgi; açıldığında merkezde çapraz X'e dönüşür (7px boşluk → ±4.25px). */
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  border-radius: 1px;
+  background-color: var(--color-text);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(4.25px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  transform: translateY(-4.25px) rotate(-45deg);
+}
+
 /* Mobil menü kırılımı; Header.tsx içindeki DESKTOP_MEDIA_QUERY (1025px) ile eşleşmeli. */
 @media (max-width: 1024px) {
-  .header {
-    backdrop-filter: none;
-    background-color: var(--color-bg);
+  .hamburger {
+    display: flex;
   }
 
+  /* Tam ekran örtü: başlığın altından başlar, kâğıt zemin. */
   .nav {
     position: fixed;
-    inset: 0;
-    height: 100vh;
-    height: 100dvh;
-    background-color: var(--color-surface);
+    top: var(--header-current);
+    right: 0;
+    bottom: 0;
+    left: 0;
     z-index: 110;
     flex-direction: column;
-    padding: 6rem 2rem 2rem 2rem;
-    gap: 2rem;
+    align-items: stretch;
+    gap: 0;
+    padding: 0.5rem var(--gutter) calc(1.5rem + env(safe-area-inset-bottom));
+    background: var(--color-bg);
     overflow-y: auto;
-    transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
+    opacity: 0;
     visibility: hidden;
     pointer-events: none;
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      visibility var(--dur-base) var(--ease-out);
   }
 
   .nav.open {
-    transform: translateX(0);
+    opacity: 1;
     visibility: visible;
     pointer-events: auto;
   }
 
-  .hamburger {
+  /* Büyük display bağlantılar; her biri ince ayraçla ayrılır ve sırayla gelir. */
+  .navLink {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    position: relative;
-    z-index: 120;
-  }
-
-  .hamburger span {
-    width: 24px;
-    height: 2px;
-    background-color: var(--color-primary);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-  }
-
-  /* Hamburger Animation when open */
-  .hamburger.open span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 6px);
-  }
-
-  .hamburger.open span:nth-child(2) {
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-display), Georgia, serif;
+    font-size: var(--step-3);
+    font-weight: var(--heading-weight);
+    line-height: 1.1;
+    letter-spacing: var(--display-tracking);
+    color: var(--color-heading);
     opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out),
+      color var(--dur-base) var(--ease-out);
   }
 
-  .hamburger.open span:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -6px);
-  }
-}
-
-@media (max-width: 480px) {
-  .header {
-    padding: 1rem 1.25rem;
-  }
-}
-
-@media (min-width: 1025px) {
-  .hamburger {
+  .navLink::after {
     display: none;
+  }
+
+  .nav.open .navLink {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(var(--i) * 50ms);
+  }
+
+  .navLink[aria-current="page"] {
+    color: var(--color-primary);
+  }
+
+  .navIndex {
+    display: inline-block;
+    font-family: var(--font-body), sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-accent-ink);
+  }
+
+  /* Son bağlantıdan sonra CTA altta, tam genişlikte durur. */
+  .navLink:nth-last-child(2) {
+    margin-bottom: 2rem;
+  }
+
+  .nav .ctaButton {
+    width: 100%;
+    min-height: 52px;
+    margin-top: auto;
+    font-size: 1rem;
   }
 }

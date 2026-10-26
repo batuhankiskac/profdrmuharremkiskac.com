@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, type CSSProperties } from "react";
 import LoadingState from "@/components/LoadingState";
 import PublicContentList from "@/components/PublicContentList";
 import ServiceCard from "@/components/ServiceCard";
@@ -18,24 +18,41 @@ export const metadata = pageMetadata({
 // engeller.
 export default function ServicesPage() {
   return (
-    <main id="main-content" className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Hizmetlerimiz</h1>
-        <p className={styles.subtitle}>
+    <main id="main-content" className={styles.page}>
+      <header className={styles.header}>
+        <p className={styles.eyebrow} data-enter>
+          Hizmetler
+        </p>
+        <h1
+          className={styles.title}
+          data-enter
+          style={{ "--i": 1 } as CSSProperties}
+        >
+          Hizmetlerimiz
+        </h1>
+        <p
+          className={styles.lead}
+          data-enter
+          style={{ "--i": 2 } as CSSProperties}
+        >
           Modern tıp ve bütüncül yaklaşımlarla sağlığınız için kişiye özel
           hizmetler sunuyoruz.
         </p>
-      </div>
+      </header>
 
-      <section aria-label="Hizmet listesi">
-        <Suspense fallback={<LoadingState />}>
-          <PublicContentList
-            load={getServices}
-            emptyText="Hizmetlerimiz yakında eklenecektir."
-            renderItem={(service) => <ServiceCard service={service} />}
-          />
-        </Suspense>
-      </section>
+      <div className={styles.body}>
+        <section aria-label="Hizmet listesi">
+          <Suspense fallback={<LoadingState />}>
+            <PublicContentList
+              load={getServices}
+              emptyText="Hizmetlerimiz yakında eklenecektir."
+              renderItem={(service, index) => (
+                <ServiceCard service={service} index={index} />
+              )}
+            />
+          </Suspense>
+        </section>
+      </div>
     </main>
   );
 }

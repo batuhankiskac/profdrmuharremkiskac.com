@@ -4,14 +4,15 @@
   top: 1rem;
   left: 1rem;
   z-index: 200;
-  padding: 0.75rem 1.25rem;
-  border-radius: var(--radius-sm);
+  min-height: 44px;
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius-pill);
   background: var(--color-primary);
-  color: var(--color-surface);
+  color: var(--color-on-primary);
   font-weight: 600;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
   transform: translateY(-200%);
-  transition: transform 0.2s ease;
+  transition: transform var(--dur-base) var(--ease-out);
 }
 
 .skipLink:focus {

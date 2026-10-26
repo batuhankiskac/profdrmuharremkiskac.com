@@ -1,50 +1,108 @@
-.container {
-  composes: container from "../../../styles/page.module.css";
-  --page-max: 800px;
+.page {
+  composes: page from "../../../styles/page.module.css";
 }
 
-.heading {
-  composes: heading from "../../../styles/page.module.css";
-  --heading-size: 2.5rem;
+.header {
+  composes: header from "../../../styles/page.module.css";
 }
 
-.card {
-  background: var(--color-surface);
-  padding: 3rem;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  text-align: center;
+.eyebrow {
+  composes: eyebrow from "../../../styles/layout.module.css";
 }
 
-.map {
-  width: 100%;
-  height: min(400px, 60vh);
-  margin-bottom: 2rem;
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+.title {
+  composes: title from "../../../styles/page.module.css";
 }
 
-.map iframe {
-  border: 0;
+.lead {
+  composes: lead from "../../../styles/layout.module.css";
 }
 
-.section {
-  margin-bottom: 2rem;
+/* 5/7: solda bilgi satırları, sağda harita. Mobilde alt alta. */
+.layout {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  align-items: start;
 }
 
+.info {
+  min-width: 0;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding-block: 1.75rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.row:last-child {
+  border-bottom: 1px solid var(--color-line);
+}
+
+/* Küçük büyük harfli etiket; h2 olduğu için gövde yazı tipine döner. */
 .label {
-  display: block;
-  font-size: 0.875rem;
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   color: var(--color-text-light);
-  margin-bottom: 0.5rem;
 }
 
-.value {
-  font-size: 1.25rem;
+/* Telefon büyük görüntü yazı tipinde; altında ContactActions gelir. */
+.phone {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2rem, 1.5rem + 2.2vw, 3.25rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-heading);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.phone:hover {
   color: var(--color-primary);
-  font-weight: 500;
+}
+
+.address {
   font-style: normal;
+  font-size: var(--step-1);
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.textLink {
+  composes: link from "../../../styles/button.module.css";
+  min-height: 44px;
+}
+
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Harita çerçevesi: köşe yarıçapı MapEmbed çerçevesiyle aynı. */
+.map {
+  height: clamp(340px, 60vh, 560px);
+  border-radius: var(--radius-lg);
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .map {
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+  }
 }
