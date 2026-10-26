@@ -194,7 +194,7 @@ describe("saveContent (güncelleme)", () => {
       form(articleFields, png()),
     );
 
-    expect(result).toEqual({ error: "Makale bulunamadı." });
+    expect(result).toEqual({ error: articleCollection.notFound });
     expect(mocks.deleteImage).toHaveBeenCalledWith(
       "https://img/orphan",
       "articles/orphan.webp",
