@@ -19,7 +19,7 @@ const CAREER = [
   { year: "2010", label: "Bezmialem Vakıf Üniversitesi Tıp Fakültesi'nde çalışmaya başladı" },
   { year: "2015", label: "Yardımcı doçent doktor unvanını aldı" },
   { year: "2016", label: "Doçent doktor unvanını aldı" },
-  { year: "2022", label: "Profesörlük unvanını aldı" },
+  { year: "2021", label: "Profesörlük unvanını aldı" },
   { year: "2025", label: "Bakırköy'de özel muayenehanesinde hasta kabulüne devam ediyor" },
 ];
 

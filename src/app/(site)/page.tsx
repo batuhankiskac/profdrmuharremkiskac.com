@@ -20,11 +20,11 @@ export const metadata = pageMetadata({
   path: "/",
 });
 
-// Giriş şeridindeki üç dönüm noktası; bio.json metninden alınır.
-const MILESTONES = [
-  { year: "1996", label: "Çapa Tıp Fakültesi'ne birincilikle" },
-  { year: "2002", label: "TUS Türkiye 14.'sü" },
-  { year: "2022", label: "Profesörlük unvanı" },
+// Giriş şeridindeki üç çalışma alanı.
+const FOCUS_AREAS = [
+  { title: "İç Hastalıkları", label: "Erişkin sağlığında bütüncül değerlendirme" },
+  { title: "Diyabet", label: "Kişiye özel tedavi ve düzenli takip" },
+  { title: "Fonksiyonel Tıp", label: "Kök nedene odaklanan yaklaşım" },
 ];
 
 const ARTICLE_LIMIT = 3;
@@ -63,11 +63,11 @@ export default async function Home() {
                 Hakkımda
               </Link>
             </div>
-            <ul className={styles.milestones} data-enter style={stagger(4)}>
-              {MILESTONES.map((milestone) => (
-                <li key={milestone.year} className={styles.milestone}>
-                  <span className={styles.milestoneYear}>{milestone.year}</span>
-                  <span className={styles.milestoneLabel}>{milestone.label}</span>
+            <ul className={styles.focusAreas} data-enter style={stagger(4)}>
+              {FOCUS_AREAS.map((area) => (
+                <li key={area.title} className={styles.focusArea}>
+                  <span className={styles.focusTitle}>{area.title}</span>
+                  <span className={styles.focusLabel}>{area.label}</span>
                 </li>
               ))}
             </ul>

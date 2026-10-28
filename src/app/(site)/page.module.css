@@ -52,30 +52,29 @@
 }
 
 /* Üç dönüm noktası: ince çizgilerle ayrılmış, yıl büyük, etiket kısa. */
-.milestones {
+.focusAreas {
   list-style: none;
   margin-top: clamp(0.5rem, 2vw, 1.5rem);
   border-top: 1px solid var(--color-line);
 }
 
-.milestone {
+.focusArea {
   display: grid;
-  grid-template-columns: 5.5rem minmax(0, 1fr);
+  grid-template-columns: 9.5rem minmax(0, 1fr);
   align-items: baseline;
   gap: 1rem;
   padding-block: 1.1rem;
   border-bottom: 1px solid var(--color-line);
 }
 
-.milestoneYear {
+.focusTitle {
   font-family: var(--font-display), Georgia, serif;
-  font-size: var(--step-3);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
+  font-size: var(--step-2);
+  line-height: 1.15;
   color: var(--color-heading);
 }
 
-.milestoneLabel {
+.focusLabel {
   font-size: var(--step--1);
   line-height: 1.45;
   color: var(--color-text-light);
@@ -246,12 +245,12 @@
 
 /* ---------- Mobil: görsel metnin altına, 4/5 ve en fazla 70svh ---------- */
 @media (min-width: 640px) {
-  .milestones {
+  .focusAreas {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .milestone {
+  .focusArea {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -261,7 +260,7 @@
     border-left: 1px solid var(--color-line);
   }
 
-  .milestone:first-child {
+  .focusArea:first-child {
     padding-left: 0;
     border-left: 0;
   }
