@@ -4,7 +4,7 @@ import EmptyState from "@/components/EmptyState";
 
 type PublicContentListProps<T extends { id: string }> = {
   load: () => Promise<T[]>;
-  emptyText: string;
+  emptyText: ReactNode;
   // index: kart giriş gecikmesi (--i) için sıra numarası.
   renderItem: (item: T, index: number) => ReactNode;
 };
