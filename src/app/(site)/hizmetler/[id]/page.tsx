@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import ContentDetail from "@/components/ContentDetail";
 import { getService } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
+import { detailSchema } from "@/lib/schema";
 import { excerpt } from "@/lib/text";
 
 type PageProps = { params: Promise<{ id: string }> };
@@ -43,6 +44,15 @@ export default async function ServiceDetailPage({ params }: PageProps) {
       title={service.title}
       imageUrl={service.imageUrl}
       imageAlt={`${service.title} hizmeti`}
+      schema={detailSchema({
+        kind: "service",
+        path: `/hizmetler/${id}`,
+        title: service.title,
+        description: excerpt(service.description),
+        imageUrl: service.imageUrl,
+        createdAt: service.createdAt,
+        updatedAt: service.updatedAt,
+      })}
       markdown={service.description}
     />
   );

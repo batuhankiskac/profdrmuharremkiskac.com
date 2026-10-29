@@ -3,6 +3,7 @@ import {
   allowedImageSrc,
   citationParts,
   EXTERNAL_LINK,
+  sitePath,
 } from "@/lib/markdown-media";
 
 describe("allowedImageSrc", () => {
@@ -60,5 +61,22 @@ describe("EXTERNAL_LINK", () => {
     ["mailto:info@example.com", false],
   ])("%s dış bağlantı mı: %s", (href, expected) => {
     expect(EXTERNAL_LINK.test(href)).toBe(expected);
+  });
+});
+
+describe("sitePath", () => {
+  it("sitenin kendi tam adreslerini göreli yola çevirir", () => {
+    expect(sitePath("https://profdrmuharremkiskac.com/hizmetler/abc#ozet")).toBe(
+      "/hizmetler/abc#ozet",
+    );
+    expect(sitePath("https://www.profdrmuharremkiskac.com/makaleler?x=1")).toBe(
+      "/makaleler?x=1",
+    );
+  });
+
+  it("dış adresler ve geçersiz değerler için null döndürür", () => {
+    expect(sitePath("https://pubmed.ncbi.nlm.nih.gov/123")).toBeNull();
+    expect(sitePath("/goreli")).toBeNull();
+    expect(sitePath("mailto:a@profdrmuharremkiskac.com")).toBeNull();
   });
 });

@@ -6,7 +6,7 @@ import MotionObserver from "@/components/motion/MotionObserver";
 import AnalyticsConsent from "@/components/AnalyticsConsent";
 import contactData from "@/data/contact.json";
 import { CONSENT_DEFAULT_SCRIPT } from "@/lib/consent";
-import { SITE_URL } from "@/lib/site";
+import { jsonLd, siteSchema } from "@/lib/schema";
 import styles from "./layout.module.css";
 
 // Genel sayfalar ISR ile önceden üretilir ve en fazla 300 sn'de bir yenilenir.
@@ -15,23 +15,6 @@ import styles from "./layout.module.css";
 // RSC yanıtları next.config.ts içinde önbelleğe alınmaz; HTML yanıtları CDN'de
 // s-maxage süresince tutulabilir.
 export const revalidate = 300;
-
-const physicianSchema = {
-  "@context": "https://schema.org",
-  "@type": ["Physician", "MedicalBusiness"],
-  name: "Prof. Dr. Muharrem Kıskaç",
-  url: SITE_URL,
-  image: `${SITE_URL}/images/profile.jpg`,
-  telephone: contactData.tel,
-  address: {
-    "@type": "PostalAddress",
-    ...contactData.addressParts,
-  },
-  // Yalnız schema.org MedicalSpecialty listesindeki değerler geçerlidir;
-  // "InternalMedicine" bu listede yok.
-  medicalSpecialty: ["Endocrine", "PrimaryCare"],
-  sameAs: [contactData.social.instagram, contactData.social.youtube],
-};
 
 export default function SiteLayout({
   children,
@@ -46,7 +29,7 @@ export default function SiteLayout({
       </a>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(physicianSchema) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(siteSchema) }}
       />
       <Header />
       {/* Gezinmede sayfa içeriği yumuşak geçişle değişir (globals.css: .page). */}

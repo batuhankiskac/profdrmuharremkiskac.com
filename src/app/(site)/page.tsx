@@ -14,9 +14,9 @@ import layoutStyles from "@/styles/layout.module.css";
 import styles from "./page.module.css";
 
 export const metadata = pageMetadata({
-  title: "Prof. Dr. Muharrem Kıskaç | İç Hastalıkları Uzmanı",
+  title: "İç Hastalıkları Uzmanı Bakırköy | Prof. Dr. Muharrem Kıskaç",
   description:
-    "İç hastalıkları, diyabet ve fonksiyonel tıp alanında bilimsel ve bütüncül yaklaşım.",
+    "Prof. Dr. Muharrem Kıskaç, Bakırköy'deki muayenehanesinde iç hastalıkları, diyabet, tiroid ve obezite tedavisinde bilimsel ve bütüncül yaklaşım sunar.",
   path: "/",
 });
 
@@ -46,7 +46,7 @@ export default async function Home() {
               {bioData.title} · {addressLocality}, {addressRegion}
             </p>
             <h1 className={styles.heroTitle} data-enter style={stagger(1)}>
-              Sağlıklı Bir Yaşam İçin
+              Sağlıklı Bir Yaşam İçin{" "}
               <em className={styles.heroEm}>Bütüncül Yaklaşım</em>
             </h1>
             <p className={layoutStyles.lead} data-enter style={stagger(2)}>

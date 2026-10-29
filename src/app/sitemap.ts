@@ -10,15 +10,14 @@ import type { ArticleSummary, Service } from "@/types/content";
 // ISR'a alınmaz: boş liste yenileme süresince önbellekte kalırdı.
 export const dynamic = "force-dynamic";
 
-type ChangeFrequency = MetadataRoute.Sitemap[number]["changeFrequency"];
-
-const staticRoutes: [string, ChangeFrequency, number][] = [
-  ["", "weekly", 1],
-  ["/hakkinda", "monthly", 0.8],
-  ["/hizmetler", "weekly", 0.8],
-  ["/makaleler", "weekly", 0.8],
-  ["/iletisim", "yearly", 0.6],
-  ["/gizlilik", "yearly", 0.3],
+// changefreq/priority Google tarafından yok sayıldığı için üretilmez.
+const staticRoutes = [
+  "",
+  "/hakkinda",
+  "/hizmetler",
+  "/makaleler",
+  "/iletisim",
+  "/gizlilik",
 ];
 
 // Okuma hatası site haritasını 500'e çevirmesin: hata kaydedilir ve o koleksiyon
@@ -41,25 +40,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const videos = await readOrEmpty("videolar", getVideos);
 
   return [
-    ...staticRoutes.map(([path, changeFrequency, priority]) => ({
-      url: `${SITE_URL}${path}`,
-      changeFrequency,
-      priority,
-    })),
-    ...(videos.length > 0
-      ? [{ url: `${SITE_URL}/videolar`, changeFrequency: "weekly" as const, priority: 0.7 }]
-      : []),
+    ...staticRoutes.map((path) => ({ url: `${SITE_URL}${path}` })),
+    ...(videos.length > 0 ? [{ url: `${SITE_URL}/videolar` }] : []),
     ...articles.map((article) => ({
       url: `${SITE_URL}/makaleler/${article.id}`,
       lastModified: article.updatedAt ?? article.createdAt ?? undefined,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
     })),
     ...services.map((service) => ({
       url: `${SITE_URL}/hizmetler/${service.id}`,
       lastModified: service.updatedAt ?? service.createdAt ?? undefined,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
     })),
   ];
 }

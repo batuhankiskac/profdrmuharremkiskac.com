@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import ArrowIcon from "@/components/ArrowIcon";
+import { excerpt } from "@/lib/text";
 import buttonStyles from "@/styles/button.module.css";
 import layoutStyles from "@/styles/layout.module.css";
 import type { Service } from "@/types/content";
@@ -38,8 +39,10 @@ export default function HomeServices({ services }: { services: Service[] }) {
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <h3 className={styles.title}>{service.title}</h3>
+                {/* Açıklama markdown'dır ve hizmet sayfasının tamamını içerir;
+                    burada yalnız düz metin özeti gösterilir. */}
                 {service.description && (
-                  <p className={styles.desc}>{service.description}</p>
+                  <p className={styles.desc}>{excerpt(service.description, 140)}</p>
                 )}
                 <ArrowIcon className={styles.arrow} />
               </Link>

@@ -27,8 +27,15 @@ export function stripMarkdown(markdown: string): string {
     .trim();
 }
 
+// Metin bir başlıkla açılıyorsa (hizmet içerikleri böyle) başlık özete
+// karışmaz; ardından gövde metni yoksa başlık korunur.
+function withoutLeadingHeading(markdown: string): string {
+  const rest = markdown.replace(/^\s*#{1,6}\s+[^\n]*\n+/, "");
+  return rest.trim() ? rest : markdown;
+}
+
 export function excerpt(markdown: string, max = 160): string {
-  const plain = stripMarkdown(markdown);
+  const plain = stripMarkdown(withoutLeadingHeading(markdown));
   if (plain.length <= max) return plain;
 
   const cut = plain.slice(0, max);

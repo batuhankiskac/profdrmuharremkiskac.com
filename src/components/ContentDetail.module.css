@@ -60,6 +60,13 @@
   color: var(--color-text-light);
 }
 
+.author {
+  color: var(--color-text);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
 /* Tam genişlikte kapak: 16/9, en fazla 560px yüksek; fazlası kırpılır. */
 .media {
   position: relative;

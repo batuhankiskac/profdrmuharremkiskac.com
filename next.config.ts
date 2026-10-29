@@ -72,6 +72,17 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "i.ytimg.com" },
     ],
   },
+  // www alan adı ikinci bir kopya site olarak dizine girmesin.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.profdrmuharremkiskac.com" }],
+        destination: "https://profdrmuharremkiskac.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       { source: "/(.*)", headers: securityHeaders },

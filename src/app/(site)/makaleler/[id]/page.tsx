@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import ContentDetail from "@/components/ContentDetail";
 import { getArticle } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
+import { detailSchema } from "@/lib/schema";
+import { excerpt } from "@/lib/text";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -21,7 +23,7 @@ export async function generateMetadata({
 
   return pageMetadata({
     title: article.title,
-    description: article.summary,
+    description: excerpt(article.summary),
     path: `/makaleler/${id}`,
     image: article.imageUrl,
     type: "article",
@@ -46,6 +48,18 @@ export default async function ArticleDetailPage({ params }: PageProps) {
       imageUrl={article.imageUrl}
       imageAlt={`${article.title} makale kapak görseli`}
       date={article.createdAt}
+      updatedAt={article.updatedAt}
+      showAuthor
+      schema={detailSchema({
+        kind: "article",
+        path: `/makaleler/${id}`,
+        title: article.title,
+        description: excerpt(article.summary),
+        imageUrl: article.imageUrl,
+        createdAt: article.createdAt,
+        updatedAt: article.updatedAt,
+        citations: article.citations,
+      })}
       markdown={article.content}
       citations={article.citations}
     />

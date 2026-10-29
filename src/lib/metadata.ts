@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 
 export const SITE_NAME = "Prof. Dr. Muharrem Kıskaç";
 
+// 404 sayfaları ana sayfa başlığını devralmasın. noindex'i Next.js kendisi ekler.
+export const NOT_FOUND_METADATA: Metadata = {
+  title: "Sayfa Bulunamadı",
+};
+
 const FALLBACK_IMAGE = { url: "/og.png", width: 1200, height: 630 };
 
 type PageMetadataOptions = {

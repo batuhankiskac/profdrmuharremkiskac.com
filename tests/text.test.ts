@@ -70,6 +70,16 @@ describe("excerpt", () => {
     expect(excerpt("Bir, iki, üç, dört beş", 9)).toBe("Bir, iki…");
   });
 
+  it("baştaki başlığı atlayıp gövde metninden özet çıkarır", () => {
+    expect(excerpt("## Obezite Tedavisi\n\nObezite **kronik** bir hastalıktır.")).toBe(
+      "Obezite kronik bir hastalıktır.",
+    );
+  });
+
+  it("yalnız başlıktan oluşan metinde başlığı korur", () => {
+    expect(excerpt("## Yalnız Başlık")).toBe("Yalnız Başlık");
+  });
+
   it("varsayılan olarak 160 karakteri aşmaz", () => {
     const result = excerpt("kelime ".repeat(100));
     expect(result.length).toBeLessThanOrEqual(161);

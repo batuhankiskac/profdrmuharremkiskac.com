@@ -3,6 +3,20 @@ const URL_PATTERN = /(https?:\/\/[^\s]*[^\s.,;:!?)\]}'"])/g;
 
 export const EXTERNAL_LINK = /^https?:\/\//i;
 
+const SITE_HOSTS = new Set(["profdrmuharremkiskac.com", "www.profdrmuharremkiskac.com"]);
+
+// İçerikte sitenin kendi sayfalarına tam adresle verilen bağlantılar göreli
+// yola çevrilir; böylece yeni sekmede açılan dış bağlantı gibi davranmazlar.
+export function sitePath(href: string): string | null {
+  try {
+    const url = new URL(href);
+    if (!/^https?:$/.test(url.protocol) || !SITE_HOSTS.has(url.hostname)) return null;
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return null;
+  }
+}
+
 // Markdown görselleri yalnız Firebase Storage barındırmasından kabul edilir.
 // Not: Silme tarafındaki `parseDownloadUrl` (validation.ts) bilinçli olarak
 // yalnız `firebasestorage.googleapis.com` kabul eder. Uygulama görselleri bu

@@ -41,10 +41,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     images: ["/og.png"],
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  // robots burada tanımlanmaz: varsayılan zaten index/follow'dur ve 404
+  // sayfalarında Next.js'in eklediği noindex ile çelişirdi.
 };
 
 export default function RootLayout({

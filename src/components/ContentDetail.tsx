@@ -3,12 +3,15 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import bioData from "@/data/bio.json";
 import { formatDate } from "@/lib/format";
 import {
   allowedImageSrc,
   citationParts,
   EXTERNAL_LINK,
+  sitePath,
 } from "@/lib/markdown-media";
+import { jsonLd } from "@/lib/schema";
 import ExternalLink from "./ExternalLink";
 import styles from "./ContentDetail.module.css";
 
@@ -21,6 +24,12 @@ interface ContentDetailProps {
   imageUrl?: string | null;
   imageAlt?: string;
   date?: string | null;
+  // Gösterilen tarihten farklı bir günse "Son güncelleme" olarak yazılır.
+  updatedAt?: string | null;
+  // Yazar satırı (makalelerde hekim adı ve unvanı, hakkında sayfasına bağlı).
+  showAuthor?: boolean;
+  // Sayfaya özel JSON-LD (bkz. lib/schema.ts detailSchema).
+  schema?: object;
   markdown: string;
   citations?: string[];
 }
@@ -35,11 +44,25 @@ export default function ContentDetail({
   imageUrl,
   imageAlt = "",
   date,
+  updatedAt,
+  showAuthor = false,
+  schema,
   markdown,
   citations = [],
 }: ContentDetailProps) {
+  const updated =
+    date && updatedAt && updatedAt.slice(0, 10) !== date.slice(0, 10)
+      ? updatedAt
+      : null;
+
   return (
     <main id="main-content" className={styles.page}>
+      {schema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd(schema) }}
+        />
+      )}
       <article>
         <header className={styles.header}>
           <Link
@@ -58,15 +81,25 @@ export default function ContentDetail({
           <h1 className={styles.title} data-enter style={at(2)}>
             {title}
           </h1>
-          {date && (
-            <time
-              dateTime={date}
-              className={styles.date}
-              data-enter
-              style={at(3)}
-            >
-              {formatDate(date)}
-            </time>
+          {(date || showAuthor) && (
+            <p className={styles.date} data-enter style={at(3)}>
+              {showAuthor && (
+                <>
+                  <Link href="/hakkinda" rel="author" className={styles.author}>
+                    {bioData.name}
+                  </Link>
+                  , {bioData.title}
+                  {date && " · "}
+                </>
+              )}
+              {date && <time dateTime={date}>{formatDate(date)}</time>}
+              {updated && (
+                <>
+                  {" · Son güncelleme: "}
+                  <time dateTime={updated}>{formatDate(updated)}</time>
+                </>
+              )}
+            </p>
           )}
         </header>
 
@@ -77,6 +110,7 @@ export default function ContentDetail({
               alt={imageAlt}
               fill
               preload
+              fetchPriority="high"
               sizes="(max-width: 1240px) 100vw, 1240px"
               className={styles.image}
             />
@@ -96,6 +130,14 @@ export default function ContentDetail({
                 // react-markdown'ın verdiği `node` DOM'a aktarılmaz.
                 a: ({ node, href, children, ...props }) => {
                   void node;
+                  const internal = href ? sitePath(href) : null;
+                  if (internal) {
+                    return (
+                      <Link href={internal} {...props}>
+                        {children}
+                      </Link>
+                    );
+                  }
                   if (href && EXTERNAL_LINK.test(href)) {
                     return (
                       <ExternalLink href={href} {...props}>
